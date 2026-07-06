@@ -15,6 +15,7 @@ import { TrackedLink } from "./TrackedLink";
 export function Header({ locale }: { locale: Locale }) {
   const t = copy[locale];
   const nextLocale = locale === "en" ? "vi" : "en";
+  const homePath = `/${locale}`;
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -22,13 +23,14 @@ export function Header({ locale }: { locale: Locale }) {
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  const navLinks = [
+  const homeSectionLinks = [
     { href: "#menu", label: t.nav.menu },
     { href: "#story", label: locale === "en" ? "Story" : "Câu chuyện" },
     { href: "#gallery", label: locale === "en" ? "Gallery" : "Thư viện" },
     { href: "#reviews", label: locale === "en" ? "Reviews" : "Đánh giá" },
     { href: "#contact", label: t.nav.contact },
   ];
+  const navLinks = homeSectionLinks.map((link) => ({ ...link, href: `${homePath}${link.href}` }));
 
   useEffect(() => {
     setIsMounted(true);
@@ -150,7 +152,7 @@ export function Header({ locale }: { locale: Locale }) {
         <div className="mt-auto grid gap-3 pb-2">
           <a
             className="inline-flex min-h-12 items-center justify-center rounded-lg bg-tomato px-5 py-3 font-bold text-white shadow-hover transition hover:bg-tomato-hover"
-            href="#booking"
+            href={`${homePath}#booking`}
             onClick={() => {
               trackBookingStart("mobile_drawer");
               closeMenu();
@@ -220,7 +222,7 @@ export function Header({ locale }: { locale: Locale }) {
             </TrackedLink>
             <a
               className="hidden min-h-11 items-center rounded-lg bg-tomato px-4 py-2 text-sm font-bold text-white transition hover:bg-tomato-hover lg:inline-flex"
-              href="#booking"
+              href={`${homePath}#booking`}
               onClick={() => trackBookingStart("header")}
             >
               <CalendarCheck aria-hidden className="mr-2 h-4 w-4" />

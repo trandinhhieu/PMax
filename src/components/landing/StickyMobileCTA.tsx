@@ -43,7 +43,7 @@ export function StickyMobileCTA({ locale }: { locale: Locale }) {
       </Link>
       <a
         className="flex min-h-12 flex-col items-center justify-center rounded-lg px-2 text-xs font-bold text-charcoal"
-        href="#booking"
+        href={`/${locale}#booking`}
         onClick={() =>
           trackEvent(trackingEvents.bookingStart, {
             location: "sticky_mobile_cta",
