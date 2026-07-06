@@ -135,7 +135,7 @@ export function Header({ locale }: { locale: Locale }) {
             </a>
           ))}
           <Link
-            className="rounded-lg border border-white/10 bg-white/[0.06] px-4 py-4 text-porcelain transition hover:border-fire/50 hover:bg-white/10"
+            className="hidden"
             href={`/${nextLocale}`}
             onClick={() =>
               trackEvent(trackingEvents.languageSwitch, {
@@ -230,7 +230,7 @@ export function Header({ locale }: { locale: Locale }) {
             </a>
             <Link
               aria-label={locale === "en" ? "Switch language to Vietnamese" : "Chuyển ngôn ngữ sang tiếng Anh"}
-              className={`hidden min-h-11 rounded-lg border px-3 py-2 text-sm font-bold transition sm:inline-flex ${
+              className={`inline-flex min-h-11 items-center rounded-lg border px-3 py-2 text-sm font-bold transition ${
                 isScrolled ? "border-borderWarm text-charcoal hover:border-tomato" : "border-white/50 text-white hover:bg-white/10"
               }`}
               href={`/${nextLocale}`}
