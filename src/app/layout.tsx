@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { getDeploymentUrl } from "@/lib/site-url";
 import "./globals.css";
 
-const deploymentUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+const deploymentUrl = getDeploymentUrl();
 
 export const metadata: Metadata = {
   metadataBase: deploymentUrl ? new URL(deploymentUrl) : undefined,

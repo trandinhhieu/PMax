@@ -9,6 +9,7 @@ import { MenuPreview } from "@/components/landing/MenuPreview";
 import { ReviewsSection } from "@/components/landing/ReviewsSection";
 import { TrustBar } from "@/components/landing/TrustBar";
 import { WhySection } from "@/components/landing/WhySection";
+import { BackToTopButton } from "@/components/layout/BackToTopButton";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { businessInfo, siteConfig } from "@/config/business";
 import { restaurantJsonLd } from "@/lib/schema";
@@ -78,6 +79,7 @@ export default async function LandingPage({ params }: PageProps) {
       <BookingForm locale={typedLocale} />
       <MapContactSection locale={typedLocale} />
       <FaqSection locale={typedLocale} />
+      <BackToTopButton locale={typedLocale} />
     </main>
   );
 }

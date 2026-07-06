@@ -1,6 +1,7 @@
+import { getDeploymentUrl } from "@/lib/site-url";
 import type { LocalizedText } from "@/types/common";
 
-const deploymentUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+const deploymentUrl = getDeploymentUrl();
 
 export const businessInfo = {
   name: "Hermanos Wood-fired Pizza",
