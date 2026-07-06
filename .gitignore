@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+dist/
+
+# Vercel local metadata
+.vercel/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# Logs and local cache
+debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
+
+# Playwright and test artifacts
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# Local/e2e test sources not required for Vercel production deploy
+/tests/
+playwright.config.ts
+
+# AI/dev automation scripts not required for production runtime
+/scripts/
+
+# Local screenshots and generated review artifacts
+/screenshots/
+
+# AI/agent local workspace metadata
+/.agents/
+/.ai/
+
+# Source/reference assets not read by the production app
+/assets/
+
+# Draft content/reference docs not read by the production app
+/docs/
