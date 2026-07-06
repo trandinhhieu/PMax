@@ -6,12 +6,81 @@ import { businessInfo } from "@/config/business";
 import { trackingEvents } from "@/config/tracking";
 import { copy } from "@/data/content";
 import { trackEvent } from "@/lib/analytics";
-import { bookingSchema, type BookingField } from "@/lib/validation/booking";
+import { bookingSchema, type BookingField, type BookingFormValues } from "@/lib/validation/booking";
 import type { Locale } from "@/types/common";
 import { TrackedLink } from "./TrackedLink";
 
 type FormStatus = "idle" | "error" | "success";
 type FieldErrors = Partial<Record<BookingField, string>>;
+type BookingRequest = Omit<BookingFormValues, "date"> & {
+  date: string;
+};
+
+const contactChannelLabels: Record<BookingFormValues["contactChannel"], { en: string; vi: string }> = {
+  phone: { en: "Phone", vi: "Điện thoại" },
+  whatsapp: { en: "WhatsApp", vi: "WhatsApp" },
+  zalo: { en: "Zalo", vi: "Zalo" },
+  messenger: { en: "Facebook Messenger", vi: "Facebook Messenger" },
+};
+
+function buildWhatsAppBookingUrl(booking: BookingRequest, locale: Locale) {
+  const phone = businessInfo.phone.replace(/\D/g, "");
+  const contactChannel = contactChannelLabels[booking.contactChannel][locale];
+  const formattedDate = formatBookingDate(booking.date, locale);
+  const note = booking.note?.trim();
+  const lines =
+    locale === "en"
+      ? [
+          "Hello Hermanos, I would like to book a table.",
+          "",
+          "Booking details",
+          `- Name: ${booking.name}`,
+          `- Date: ${formattedDate}`,
+          `- Time: ${booking.time}`,
+          `- Guests: ${booking.guests}`,
+          "",
+          "Contact",
+          `- Contact: ${booking.contact}`,
+          `- Preferred channel: ${contactChannel}`,
+          note ? "" : null,
+          note ? "Note" : null,
+          note ? `- ${note}` : null,
+        ]
+      : [
+          "Chào Hermanos, mình muốn đặt bàn.",
+          "",
+          "Thông tin đặt bàn",
+          `- Tên: ${booking.name}`,
+          `- Ngày: ${formattedDate}`,
+          `- Giờ: ${booking.time}`,
+          `- Số khách: ${booking.guests}`,
+          "",
+          "Liên hệ",
+          `- Số điện thoại/chat: ${booking.contact}`,
+          `- Kênh ưu tiên: ${contactChannel}`,
+          note ? "" : null,
+          note ? "Ghi chú" : null,
+          note ? `- ${note}` : null,
+        ];
+
+  return `https://wa.me/${phone}?text=${encodeURIComponent(lines.filter(Boolean).join("\n"))}`;
+}
+
+function formatBookingDate(value: string, locale: Locale) {
+  const [year, month, day] = value.split("-");
+  if (!year || !month || !day) return value;
+
+  if (locale === "vi") {
+    return `${day}/${month}/${year}`;
+  }
+
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  return new Intl.DateTimeFormat("en", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
 
 export function BookingForm({ locale }: { locale: Locale }) {
   const t = copy[locale];
@@ -121,13 +190,28 @@ export function BookingForm({ locale }: { locale: Locale }) {
               return;
             }
 
+            const booking: BookingRequest = {
+              ...parsed.data,
+              date: String(formData.get("date") ?? ""),
+            };
+            const whatsappUrl = buildWhatsAppBookingUrl(booking, locale);
+            const openedWindow = window.open(whatsappUrl, "_blank");
+            if (openedWindow) {
+              openedWindow.opener = null;
+            }
+
             setErrors({});
             setStatus("success");
             event.currentTarget.reset();
             trackEvent(trackingEvents.bookingSuccess, {
               location: "booking_section",
               page_language: locale,
+              handoff_channel: "whatsapp",
             });
+
+            if (!openedWindow) {
+              window.location.href = whatsappUrl;
+            }
           }}
         >
           {status === "error" ? (
