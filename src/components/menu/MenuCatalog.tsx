@@ -77,13 +77,71 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
     });
   };
 
+  const categoryButtons = menuCategories.map((category) => (
+    <button
+      className={cn(
+        "inline-flex min-h-10 shrink-0 snap-start items-center rounded-lg border px-3.5 py-2 text-sm font-bold shadow-small transition sm:min-h-11 sm:px-4",
+        activeCategory === category.id
+          ? "border-tomato bg-tomato text-white"
+          : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato hover:text-tomato",
+      )}
+      key={category.id}
+      onClick={() => chooseCategory(category.id)}
+      type="button"
+    >
+      {category.label[locale]}
+    </button>
+  ));
+
+  const groupFilterButtons = (
+    <>
+      <button
+        className={cn(
+          "min-h-10 shrink-0 snap-start rounded-lg border px-3.5 py-2 text-left text-sm font-bold transition sm:px-4",
+          activeGroupId === "all" ? "border-charcoal bg-charcoal text-white" : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato",
+        )}
+        onClick={() => chooseGroup("all")}
+        type="button"
+      >
+        {locale === "en" ? "All" : "Tất cả"}
+        <span className="ml-2 text-xs opacity-70">{menuItems.filter((item) => item.category === activeCategory).length}</span>
+      </button>
+      {activeGroups.map((group) => {
+        const count = menuItems.filter((item) => item.groupId === group.id).length;
+
+        return (
+          <button
+            className={cn(
+              "min-h-10 shrink-0 snap-start rounded-lg border px-3.5 py-2 text-left text-sm font-bold transition sm:px-4",
+              activeGroupId === group.id ? "border-charcoal bg-charcoal text-white" : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato",
+            )}
+            key={group.id}
+            onClick={() => chooseGroup(group.id)}
+            type="button"
+          >
+            {group.title[locale]}
+            <span className="ml-2 text-xs opacity-70">{count}</span>
+          </button>
+        );
+      })}
+    </>
+  );
+
   return (
     <section className="mt-6 sm:mt-8" id="menu-catalog">
+      <div className="sticky top-16 z-20 -mx-4 border-y border-borderWarm bg-cream/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6 sm:py-3 md:top-[72px] lg:hidden">
+        <nav aria-label={locale === "en" ? "Menu categories" : "Danh mục menu"}>
+          <div className="scrollbar-none flex snap-x gap-2 overflow-x-auto pb-1">{categoryButtons}</div>
+        </nav>
+        <nav aria-label={locale === "en" ? "Menu groups" : "Nhóm món"} className="mt-2 border-t border-borderWarm pt-2">
+          <div className="scrollbar-none flex snap-x gap-2 overflow-x-auto">{groupFilterButtons}</div>
+        </nav>
+      </div>
       <nav
         aria-label={locale === "en" ? "Menu categories" : "Danh mục menu"}
-        className="sticky top-16 z-20 -mx-4 border-y border-borderWarm bg-cream/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6 sm:py-3 md:top-[72px] lg:-mx-8 lg:px-8"
+        className="sticky top-[72px] z-20 -mx-8 hidden border-y border-borderWarm bg-cream/95 px-8 py-3 backdrop-blur lg:block"
       >
-        <div className="flex snap-x gap-2 overflow-x-auto pb-1">
+        <div className="scrollbar-none flex snap-x gap-2 overflow-x-auto pb-1">
           {menuCategories.map((category) => (
             <button
               className={cn(
@@ -109,7 +167,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
               <p className="text-sm font-bold uppercase tracking-wide text-tomato">{activeCategoryMeta.label[locale]}</p>
               <p className="mt-2 text-sm leading-6 text-muted sm:mt-3">{activeCategoryMeta.description[locale]}</p>
             </div>
-            <div className="mt-4 flex snap-x gap-2 overflow-x-auto pb-2 sm:mt-5 lg:grid lg:overflow-visible lg:pb-0">
+            <div className="scrollbar-none mt-5 hidden snap-x gap-2 overflow-x-auto lg:grid lg:overflow-visible lg:pb-0">
               <button
                 className={cn(
                   "min-h-10 shrink-0 snap-start rounded-lg border px-3.5 py-2 text-left text-sm font-bold transition sm:px-4",
@@ -142,7 +200,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
             </div>
           </aside>
 
-          <div className="min-w-0" id="menu-items">
+          <div className="menu-items-anchor min-w-0" id="menu-items">
             <div className="mb-4 flex flex-col gap-2 border-b border-borderWarm pb-4 sm:mb-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-sm font-bold text-olive">
