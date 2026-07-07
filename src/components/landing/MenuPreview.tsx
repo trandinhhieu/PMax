@@ -2,13 +2,11 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { CalendarCheck, MapPin } from "lucide-react";
 import { PriceTag } from "@/components/menu/PriceTag";
 import { RecommendedBadge } from "@/components/menu/RecommendedBadge";
 import type { Locale } from "@/types/common";
 import { getMenuItemDescription, getMenuItemImage, getMenuPreviewItems, menuCategories, type MenuCategory } from "@/data/menu";
 import { copy } from "@/data/content";
-import { businessInfo } from "@/config/business";
 import { trackingEvents } from "@/config/tracking";
 import { trackEvent } from "@/lib/analytics";
 import { TrackedLink } from "./TrackedLink";
@@ -21,26 +19,21 @@ export function MenuPreview({ locale }: { locale: Locale }) {
   return (
     <section className="bg-porcelain px-4 py-16 sm:px-6 lg:px-8" id="menu">
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
           <div className="max-w-2xl">
             <p className="text-sm font-bold uppercase tracking-wide text-tomato">Menu</p>
             <h2 className="mt-3 font-display text-4xl font-bold text-charcoal sm:text-5xl">{t.sections.menuTitle}</h2>
             <p className="mt-3 text-base leading-7 text-muted sm:text-lg">{t.sections.menuBody}</p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <a className="inline-flex min-h-12 items-center justify-center rounded-lg bg-charcoal px-5 py-3 font-bold text-white transition hover:bg-charcoal/90" href="#booking">
-              <CalendarCheck aria-hidden className="mr-2 h-5 w-5" />
-              {t.hero.booking}
-            </a>
+          <div className="hidden xl:flex">
             <TrackedLink
-              className="inline-flex min-h-12 items-center justify-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal transition hover:border-tomato hover:text-tomato"
-              event={trackingEvents.clickGetDirections}
-              href={businessInfo.googleMapsUrl}
+              className="inline-flex min-h-12 items-center justify-center rounded-lg bg-charcoal px-5 py-3 font-bold text-white transition hover:bg-charcoal/90"
+              event={trackingEvents.viewMenu}
+              href={`/${locale}/menu`}
               locale={locale}
               location="menu_preview"
             >
-              <MapPin aria-hidden className="mr-2 h-5 w-5" />
-              {t.hero.directions}
+              View Full Menu
             </TrackedLink>
           </div>
         </div>
