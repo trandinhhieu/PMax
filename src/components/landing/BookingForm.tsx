@@ -6,86 +6,23 @@ import { businessInfo } from "@/config/business";
 import { trackingEvents } from "@/config/tracking";
 import { copy } from "@/data/content";
 import { trackEvent } from "@/lib/analytics";
-import { bookingSchema, type BookingField, type BookingFormValues } from "@/lib/validation/booking";
+import { bookingSchema, type BookingField } from "@/lib/validation/booking";
 import type { Locale } from "@/types/common";
 import { TrackedLink } from "./TrackedLink";
 
-type FormStatus = "idle" | "error" | "success";
+type FormStatus = "idle" | "submitting" | "error" | "success";
 type FieldErrors = Partial<Record<BookingField, string>>;
-type BookingRequest = Omit<BookingFormValues, "date"> & {
-  date: string;
+type BookingApiResponse = {
+  ok: boolean;
+  message?: string;
+  fieldErrors?: FieldErrors;
 };
-
-const contactChannelLabels: Record<BookingFormValues["contactChannel"], { en: string; vi: string }> = {
-  phone: { en: "Phone", vi: "Điện thoại" },
-  whatsapp: { en: "WhatsApp", vi: "WhatsApp" },
-  zalo: { en: "Zalo", vi: "Zalo" },
-  messenger: { en: "Facebook Messenger", vi: "Facebook Messenger" },
-};
-
-function buildWhatsAppBookingUrl(booking: BookingRequest, locale: Locale) {
-  const phone = businessInfo.phone.replace(/\D/g, "");
-  const contactChannel = contactChannelLabels[booking.contactChannel][locale];
-  const formattedDate = formatBookingDate(booking.date, locale);
-  const note = booking.note?.trim();
-  const lines =
-    locale === "en"
-      ? [
-          "Hello Hermanos, I would like to book a table.",
-          "",
-          "Booking details",
-          `- Name: ${booking.name}`,
-          `- Date: ${formattedDate}`,
-          `- Time: ${booking.time}`,
-          `- Guests: ${booking.guests}`,
-          "",
-          "Contact",
-          `- Contact: ${booking.contact}`,
-          `- Preferred channel: ${contactChannel}`,
-          note ? "" : null,
-          note ? "Note" : null,
-          note ? `- ${note}` : null,
-        ]
-      : [
-          "Chào Hermanos, mình muốn đặt bàn.",
-          "",
-          "Thông tin đặt bàn",
-          `- Tên: ${booking.name}`,
-          `- Ngày: ${formattedDate}`,
-          `- Giờ: ${booking.time}`,
-          `- Số khách: ${booking.guests}`,
-          "",
-          "Liên hệ",
-          `- Số điện thoại/chat: ${booking.contact}`,
-          `- Kênh ưu tiên: ${contactChannel}`,
-          note ? "" : null,
-          note ? "Ghi chú" : null,
-          note ? `- ${note}` : null,
-        ];
-
-  return `https://wa.me/${phone}?text=${encodeURIComponent(lines.filter(Boolean).join("\n"))}`;
-}
-
-function formatBookingDate(value: string, locale: Locale) {
-  const [year, month, day] = value.split("-");
-  if (!year || !month || !day) return value;
-
-  if (locale === "vi") {
-    return `${day}/${month}/${year}`;
-  }
-
-  const date = new Date(Number(year), Number(month) - 1, Number(day));
-  return new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}
 
 export function BookingForm({ locale }: { locale: Locale }) {
   const t = copy[locale];
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [submitMessage, setSubmitMessage] = useState("");
   const [hasStarted, setHasStarted] = useState(false);
 
   const minDate = useMemo(() => new Date().toISOString().slice(0, 10), []);
@@ -116,6 +53,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
   };
 
   const fieldError = (field: BookingField) => errors[field];
+  const defaultErrorMessage = locale === "en" ? "Please check the highlighted fields before sending." : "Vui long kiem tra cac truong bi loi truoc khi gui.";
 
   return (
     <section className="bg-cream px-4 py-20 sm:px-6 lg:px-8" id="booking">
@@ -157,10 +95,14 @@ export function BookingForm({ locale }: { locale: Locale }) {
         <form
           className="rounded-lg border border-borderWarm bg-porcelain p-6 pb-24 shadow-large md:pb-6"
           noValidate
-          onSubmit={(event) => {
+          onSubmit={async (event) => {
             event.preventDefault();
+            const form = event.currentTarget;
+            setStatus("submitting");
+            setErrors({});
+            setSubmitMessage("");
 
-            const formData = new FormData(event.currentTarget);
+            const formData = new FormData(form);
             const parsed = bookingSchema.safeParse({
               name: formData.get("name"),
               contact: formData.get("contact"),
@@ -189,34 +131,65 @@ export function BookingForm({ locale }: { locale: Locale }) {
               setStatus("error");
               return;
             }
+            let result: BookingApiResponse;
+            let responseOk = false;
 
-            const booking: BookingRequest = {
-              ...parsed.data,
-              date: String(formData.get("date") ?? ""),
-            };
-            const whatsappUrl = buildWhatsAppBookingUrl(booking, locale);
-            const openedWindow = window.open(whatsappUrl, "_blank");
-            if (openedWindow) {
-              openedWindow.opener = null;
+            try {
+              const response = await fetch("/api/booking", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  name: parsed.data.name,
+                  contact: parsed.data.contact,
+                  contactChannel: parsed.data.contactChannel,
+                  date: String(formData.get("date") ?? ""),
+                  time: parsed.data.time,
+                  guests: parsed.data.guests,
+                  note: parsed.data.note,
+                  locale,
+                }),
+              });
+              responseOk = response.ok;
+              result = (await response.json()) as BookingApiResponse;
+            } catch {
+              setErrors({});
+              setSubmitMessage(t.form.error);
+              setStatus("error");
+              return;
+            }
+
+            if (!responseOk || !result.ok) {
+              const nextErrors: FieldErrors = {};
+              for (const [field, message] of Object.entries(result.fieldErrors ?? {})) {
+                nextErrors[field as BookingField] = localizeError(field as BookingField, message);
+              }
+
+              setErrors(nextErrors);
+              setSubmitMessage(result.message ?? t.form.error);
+              setStatus("error");
+              return;
             }
 
             setErrors({});
+            setSubmitMessage("");
             setStatus("success");
-            event.currentTarget.reset();
-            trackEvent(trackingEvents.bookingSuccess, {
-              location: "booking_section",
-              page_language: locale,
-              handoff_channel: "whatsapp",
-            });
-
-            if (!openedWindow) {
-              window.location.href = whatsappUrl;
+            form.reset();
+            try {
+              trackEvent(trackingEvents.bookingSuccess, {
+                location: "booking_section",
+                page_language: locale,
+                handoff_channel: "email",
+              });
+            } catch {
+              // Tracking must never turn a successful booking into an error.
             }
           }}
         >
           {status === "error" ? (
             <div className="mb-5 rounded-lg border border-error/30 bg-error/10 px-4 py-3 text-sm font-semibold text-error" role="alert">
-              {locale === "en" ? "Please check the highlighted fields before sending." : "Vui lòng kiểm tra các trường được báo lỗi trước khi gửi."}
+              {submitMessage || defaultErrorMessage}
             </div>
           ) : null}
 
@@ -349,11 +322,16 @@ export function BookingForm({ locale }: { locale: Locale }) {
             </p>
           ) : null}
 
-          <button className="mt-6 min-h-12 w-full rounded-lg bg-tomato px-6 py-4 font-bold text-white transition hover:bg-tomato-hover" type="submit">
-            {t.form.submit}
+          <button
+            className="mt-6 min-h-12 w-full rounded-lg bg-tomato px-6 py-4 font-bold text-white transition hover:bg-tomato-hover disabled:cursor-not-allowed disabled:opacity-70"
+            disabled={status === "submitting"}
+            type="submit"
+          >
+            {status === "submitting" ? (locale === "en" ? "Sending..." : "Äang gá»­i...") : t.form.submit}
           </button>
         </form>
       </div>
     </section>
   );
 }
+
