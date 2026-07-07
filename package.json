@@ -4,9 +4,12 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "predev": "node scripts/generate-menu-data.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/generate-menu-data.mjs",
     "build": "next build",
     "start": "next start",
+    "menu:generate": "node scripts/generate-menu-data.mjs",
     "screenshots": "playwright test tests/screenshot-all.spec.ts --project=chromium",
     "lint": "eslint .",
     "ai:validate-context": "node scripts/ai/validate-context.mjs",

@@ -26,6 +26,7 @@ export const businessInfo = {
     opens: "16:00",
     closes: "23:00",
   },
+  timeZone: "Asia/Ho_Chi_Minh",
   googleMapsUrl: "https://maps.app.goo.gl/xHLMf8XpVJvTmfmp9",
   priceRange: "$$",
   menuUrl: "/menu",
@@ -43,8 +44,8 @@ export const businessInfo = {
     instagram: "https://www.instagram.com/hermanospizzadanang/",
     tripadvisor:
       "https://www.tripadvisor.com/Restaurant_Review-g298085-d20300702-Reviews-Hermanos_Wood_fired_Pizza-Da_Nang.html",
-    tiktok: "",
-    zalo: "",
+    tiktok: "https://www.tiktok.com/@pizzalocui.danang",
+    zalo: "https://zalo.me/84905906842",
     whatsapp: "https://wa.me/84905906842",
   },
   cuisine: [

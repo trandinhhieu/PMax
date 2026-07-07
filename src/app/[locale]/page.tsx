@@ -12,6 +12,7 @@ import { WhySection } from "@/components/landing/WhySection";
 import { BackToTopButton } from "@/components/layout/BackToTopButton";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { businessInfo, siteConfig } from "@/config/business";
+import { getLocalizedPaths } from "@/lib/locale-routing";
 import { restaurantJsonLd } from "@/lib/schema";
 import { isLocale, type Locale } from "@/types/common";
 
@@ -31,6 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     locale === "en"
       ? "Fresh wood-fired pizza, cold drinks, and cozy open-air dining near My Khe Beach in Da Nang. View menu, get directions or book a table."
       : "Thưởng thức pizza nướng củi, món ăn dễ chia sẻ và không gian open-air gần biển Mỹ Khê. Xem menu, chỉ đường hoặc đặt bàn nhanh.";
+  const localizedPaths = getLocalizedPaths();
 
   return {
     title,
@@ -40,8 +42,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       languages:
         siteConfig.domain
           ? {
-              en: `${siteConfig.domain}/en`,
-              vi: `${siteConfig.domain}/vi`,
+              en: `${siteConfig.domain}${localizedPaths.en}`,
+              vi: `${siteConfig.domain}${localizedPaths.vi}`,
             }
           : undefined,
     },

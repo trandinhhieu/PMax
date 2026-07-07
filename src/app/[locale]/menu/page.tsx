@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { BackToTopButton } from "@/components/layout/BackToTopButton";
 import { MenuCatalog } from "@/components/menu/MenuCatalog";
 import { businessInfo, siteConfig } from "@/config/business";
+import { getLocalizedPaths } from "@/lib/locale-routing";
 import { isLocale, type Locale } from "@/types/common";
 
 type PageProps = {
@@ -18,6 +19,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     locale === "en"
       ? "Browse the full Hermanos menu with wood-fired pizza, pasta, salads, burgers, Mexican dishes, beer, wine and fresh drinks."
       : "Xem menu đầy đủ của Hermanos với pizza nướng củi, pasta, salad, burger, món Mexico, bia, rượu vang và đồ uống tươi.";
+  const localizedPaths = getLocalizedPaths("/menu");
 
   return {
     title,
@@ -26,8 +28,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       canonical: siteConfig.domain ? `${siteConfig.domain}/${locale}/menu` : undefined,
       languages: siteConfig.domain
         ? {
-            en: `${siteConfig.domain}/en/menu`,
-            vi: `${siteConfig.domain}/vi/menu`,
+            en: `${siteConfig.domain}${localizedPaths.en}`,
+            vi: `${siteConfig.domain}${localizedPaths.vi}`,
           }
         : undefined,
     },

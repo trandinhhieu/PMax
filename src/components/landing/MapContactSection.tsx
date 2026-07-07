@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, Facebook, Instagram, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Copy, Facebook, Instagram, MapPin, MessageCircle, Music2, Phone } from "lucide-react";
 import type { Locale } from "@/types/common";
 import { businessInfo } from "@/config/business";
 import { trackingEvents } from "@/config/tracking";
@@ -40,7 +40,6 @@ export function MapContactSection({ locale }: { locale: Locale }) {
             <TrackedLink
               className="inline-flex min-h-12 items-center justify-center rounded-lg bg-tomato px-5 py-3 font-bold text-white hover:bg-tomato-hover"
               event={trackingEvents.clickGetDirections}
-              external
               href={businessInfo.googleMapsUrl}
               locale={locale}
               location="map_section"
@@ -70,7 +69,6 @@ export function MapContactSection({ locale }: { locale: Locale }) {
             <TrackedLink
               className="inline-flex min-h-12 items-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal hover:border-tomato"
               event={trackingEvents.clickFacebookMessage}
-              external
               href={businessInfo.socials.facebook}
               locale={locale}
               location="contact_section"
@@ -81,7 +79,6 @@ export function MapContactSection({ locale }: { locale: Locale }) {
             <TrackedLink
               className="inline-flex min-h-12 items-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal hover:border-tomato"
               event={trackingEvents.socialClick}
-              external
               href={businessInfo.socials.instagram}
               locale={locale}
               location="contact_section"
@@ -92,7 +89,6 @@ export function MapContactSection({ locale }: { locale: Locale }) {
             <TrackedLink
               className="inline-flex min-h-12 items-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal hover:border-tomato"
               event={trackingEvents.clickWhatsapp}
-              external
               href={businessInfo.socials.whatsapp}
               locale={locale}
               location="contact_section"
@@ -100,17 +96,30 @@ export function MapContactSection({ locale }: { locale: Locale }) {
               <MessageCircle aria-hidden className="mr-3 h-5 w-5" />
               WhatsApp
             </TrackedLink>
-            <TrackedLink
-              className="inline-flex min-h-12 items-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal hover:border-tomato"
-              event={trackingEvents.clickZalo}
-              external
-              href={businessInfo.socials.zalo}
-              locale={locale}
-              location="contact_section"
-            >
-              <MessageCircle aria-hidden className="mr-3 h-5 w-5" />
-              Zalo
-            </TrackedLink>
+            {businessInfo.socials.zalo ? (
+              <TrackedLink
+                className="inline-flex min-h-12 items-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal hover:border-tomato"
+                event={trackingEvents.clickZalo}
+                href={businessInfo.socials.zalo}
+                locale={locale}
+                location="contact_section"
+              >
+                <MessageCircle aria-hidden className="mr-3 h-5 w-5" />
+                Zalo
+              </TrackedLink>
+            ) : null}
+            {businessInfo.socials.tiktok ? (
+              <TrackedLink
+                className="inline-flex min-h-12 items-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal hover:border-tomato"
+                event={trackingEvents.socialClick}
+                href={businessInfo.socials.tiktok}
+                locale={locale}
+                location="contact_section"
+              >
+                <Music2 aria-hidden className="mr-3 h-5 w-5" />
+                TikTok
+              </TrackedLink>
+            ) : null}
           </div>
         </div>
       </div>

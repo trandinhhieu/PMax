@@ -44,7 +44,6 @@ export function HeroSection({ locale }: { locale: Locale }) {
             <TrackedLink
               className="inline-flex min-h-12 items-center justify-center rounded-lg bg-porcelain px-6 py-4 font-bold text-charcoal transition hover:-translate-y-0.5"
               event={trackingEvents.clickGetDirections}
-              external
               href={businessInfo.googleMapsUrl}
               locale={locale}
               location="hero"

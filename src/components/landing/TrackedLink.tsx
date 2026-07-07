@@ -27,6 +27,9 @@ export function TrackedLink({
 }: TrackedLinkProps) {
   const isTodoLink = href.trim().length === 0;
   const safeHref = isTodoLink ? "#" : href;
+  const isHttpLink = /^https?:\/\//i.test(href);
+  const isPhoneLink = href.startsWith("tel:");
+  const shouldUseAnchor = external || isHttpLink || isPhoneLink;
 
   const handleClick = (clickEvent: MouseEvent<HTMLAnchorElement>) => {
     if (isTodoLink) {
@@ -40,9 +43,9 @@ export function TrackedLink({
     });
   };
 
-  if (external || href.startsWith("tel:")) {
+  if (shouldUseAnchor) {
     return (
-      <a className={className} href={safeHref} onClick={handleClick} rel="noreferrer" target={href.startsWith("http") ? "_blank" : undefined}>
+      <a className={className} href={safeHref} onClick={handleClick} rel="noreferrer" target={isHttpLink ? "_blank" : undefined}>
         {children}
       </a>
     );

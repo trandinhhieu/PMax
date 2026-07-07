@@ -20,7 +20,6 @@ export function GallerySection({ locale }: { locale: Locale }) {
             <TrackedLink
               className="mt-6 inline-flex min-h-12 items-center rounded-lg border border-white/35 px-5 py-3 font-bold text-white transition hover:bg-white/10"
               event={trackingEvents.socialClick}
-              external
               href={businessInfo.socials.instagram}
               locale={locale}
               location="gallery_section"

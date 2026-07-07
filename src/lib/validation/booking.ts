@@ -1,9 +1,16 @@
 import { z } from "zod";
+import { businessInfo } from "@/config/business";
+import { formatDateStringInTimeZone, isIsoDateString } from "@/lib/date";
 
-const bookingDateSchema = z.coerce.date().refine((date) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return date >= today;
+export const otpCodeSchema = z.string().trim().regex(/^\d{4,10}$/, "Please enter the verification code.");
+
+const bookingDateSchema = z.string().trim().refine((value) => {
+  if (!isIsoDateString(value)) {
+    return false;
+  }
+
+  const today = formatDateStringInTimeZone(new Date(), businessInfo.timeZone);
+  return value >= today;
 }, "Please choose today or a future date.");
 
 export const bookingSchema = z.object({
@@ -27,6 +34,7 @@ export const bookingRequestSchema = z
     time: z.string().min(1, "Please choose a time."),
     guests: z.coerce.number().int().min(1, "Please enter at least 1 guest.").max(20, "Please contact us directly for groups over 20."),
     note: z.string().trim().max(300, "Please keep your note under 300 characters.").optional(),
+    otpCode: otpCodeSchema.optional().or(z.literal("")),
     locale: z.enum(["en", "vi"]).default("en"),
   })
   .refine((booking) => Boolean(booking.contact || booking.phone || booking.email), {
@@ -39,6 +47,10 @@ export const bookingRequestSchema = z
     phone: booking.phone || undefined,
     contact: booking.contact || booking.phone || booking.email || "",
   }));
+
+export const bookingOtpStartSchema = z.object({
+  contact: z.string().trim().min(6, "Please enter a phone number."),
+});
 
 export type BookingFormValues = z.infer<typeof bookingSchema>;
 export type BookingRequestValues = z.output<typeof bookingRequestSchema>;

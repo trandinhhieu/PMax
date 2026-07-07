@@ -10,6 +10,7 @@ import { businessInfo } from "@/config/business";
 import { trackingEvents } from "@/config/tracking";
 import { copy } from "@/data/content";
 import { trackEvent } from "@/lib/analytics";
+import { switchLocalePath } from "@/lib/locale-routing";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/types/common";
 import { TrackedLink } from "./TrackedLink";
@@ -19,11 +20,13 @@ export function Header({ locale }: { locale: Locale }) {
   const t = copy[locale];
   const nextLocale = locale === "en" ? "vi" : "en";
   const homePath = `/${locale}`;
+  const [locationSuffix, setLocationSuffix] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [activeHref, setActiveHref] = useState(`${homePath}/menu`);
+  const nextLocalePath = `${switchLocalePath(pathname, nextLocale)}${locationSuffix}`;
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -64,6 +67,17 @@ export function Header({ locale }: { locale: Locale }) {
     window.addEventListener("hashchange", updateActiveHref);
 
     return () => window.removeEventListener("hashchange", updateActiveHref);
+  }, [pathname]);
+
+  useEffect(() => {
+    const updateLocationSuffix = () => {
+      setLocationSuffix(`${window.location.search}${window.location.hash}`);
+    };
+
+    updateLocationSuffix();
+    window.addEventListener("hashchange", updateLocationSuffix);
+
+    return () => window.removeEventListener("hashchange", updateLocationSuffix);
   }, [pathname]);
 
   useEffect(() => {
@@ -191,7 +205,7 @@ export function Header({ locale }: { locale: Locale }) {
           ))}
           <Link
             className="hidden"
-            href={`/${nextLocale}`}
+            href={nextLocalePath}
             onClick={() =>
               trackEvent(trackingEvents.languageSwitch, {
                 location: "mobile_drawer",
@@ -220,7 +234,6 @@ export function Header({ locale }: { locale: Locale }) {
           <TrackedLink
             className="inline-flex min-h-12 items-center justify-center rounded-lg border border-borderWarm bg-porcelain px-5 py-3 font-bold text-charcoal transition hover:border-tomato hover:text-tomato"
             event={trackingEvents.clickGetDirections}
-            external
             href={businessInfo.googleMapsUrl}
             locale={locale}
             location="mobile_drawer"
@@ -268,7 +281,6 @@ export function Header({ locale }: { locale: Locale }) {
                 isScrolled ? "border-borderWarm bg-porcelain text-charcoal hover:border-tomato" : "border-white/50 text-white hover:bg-white/10"
               }`}
               event={trackingEvents.clickGetDirections}
-              external
               href={businessInfo.googleMapsUrl}
               locale={locale}
               location="header"
@@ -289,7 +301,7 @@ export function Header({ locale }: { locale: Locale }) {
               className={`inline-flex min-h-11 items-center rounded-lg border px-3 py-2 text-sm font-bold transition ${
                 isScrolled ? "border-borderWarm text-charcoal hover:border-tomato" : "border-white/50 text-white hover:bg-white/10"
               }`}
-              href={`/${nextLocale}`}
+              href={nextLocalePath}
               onClick={() =>
                 trackEvent(trackingEvents.languageSwitch, {
                   location: "header",

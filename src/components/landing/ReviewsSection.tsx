@@ -29,7 +29,6 @@ export function ReviewsSection({ locale }: { locale: Locale }) {
               <TrackedLink
                 className="mt-5 inline-flex items-center font-bold text-tomato underline-offset-4 hover:underline"
                 event={trackingEvents.reviewClick}
-                external
                 href={sourceUrls[index]}
                 locale={locale}
                 location="reviews_section"

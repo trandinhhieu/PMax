@@ -1,7 +1,34 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { siteConfig } from "@/config/business";
+import { getLocalizedPaths } from "@/lib/locale-routing";
 import { isLocale } from "@/types/common";
 
-export default async function PrivacyPolicyPage({ params }: { params: Promise<{ locale: string }> }) {
+type PageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+
+  const localizedPaths = getLocalizedPaths("/privacy-policy");
+
+  return {
+    title: locale === "en" ? "Privacy Policy" : "Chính sách riêng tư",
+    alternates: {
+      canonical: siteConfig.domain ? `${siteConfig.domain}/${locale}/privacy-policy` : undefined,
+      languages: siteConfig.domain
+        ? {
+            en: `${siteConfig.domain}${localizedPaths.en}`,
+            vi: `${siteConfig.domain}${localizedPaths.vi}`,
+          }
+        : undefined,
+    },
+  };
+}
+
+export default async function PrivacyPolicyPage({ params }: PageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 

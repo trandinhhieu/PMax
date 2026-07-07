@@ -1,4 +1,5 @@
 import { businessInfo } from "@/config/business";
+import { formatIsoDateForDisplay } from "@/lib/date";
 import type { BookingRequestValues } from "@/lib/validation/booking";
 import { EmailConfigurationError, sendEmail } from "@/server/email/resend";
 
@@ -34,20 +35,15 @@ function escapeHtml(value: string) {
     .replace(/'/g, "&#039;");
 }
 
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    timeZone: "Asia/Ho_Chi_Minh",
-  }).format(date);
+function formatDate(date: string) {
+  return formatIsoDateForDisplay(date, businessInfo.timeZone);
 }
 
 function formatTimestamp(date: Date) {
   return new Intl.DateTimeFormat("en-GB", {
     dateStyle: "medium",
     timeStyle: "short",
-    timeZone: "Asia/Ho_Chi_Minh",
+    timeZone: businessInfo.timeZone,
   }).format(date);
 }
 
