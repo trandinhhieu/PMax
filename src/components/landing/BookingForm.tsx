@@ -448,7 +448,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
               <input
                 aria-describedby={fieldError("date") ? "booking-date-error" : undefined}
                 aria-invalid={Boolean(fieldError("date"))}
-                className="ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
+                className="booking-native-date-control ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                 id="booking-date"
                 min={minDate}
                 name="date"
@@ -467,7 +467,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
               <input
                 aria-describedby={fieldError("time") ? "booking-time-error" : undefined}
                 aria-invalid={Boolean(fieldError("time"))}
-                className="ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
+                className="booking-native-date-control ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                 id="booking-time"
                 max={businessInfo.openingHoursStructured.closes}
                 min={businessInfo.openingHoursStructured.opens}
