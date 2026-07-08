@@ -1,11 +1,11 @@
-name: Playwright Tests
+name: Quality Gates
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
 jobs:
-  test:
+  quality:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -17,8 +17,16 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
+    - name: Lint
+      run: npm run lint
+    - name: Typecheck
+      run: npm run typecheck
+    - name: Unit and characterization tests
+      run: npm run test
+    - name: Build
+      run: npm run build
+    - name: Product E2E
+      run: npm run test:e2e
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:

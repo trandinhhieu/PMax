@@ -32,16 +32,12 @@ pnpm-debug.log*
 /playwright/.cache/
 /playwright/.auth/
 
-# Local/e2e test sources not required for Vercel production deploy
-/tests/
-playwright.config.ts
-
 # Local screenshots and generated review artifacts
 /screenshots/
 
 # AI/agent local workspace metadata
 /.agents/
-/.ai/
+/.codex/
 
 # Source/reference assets not read by the production app
 /assets/
