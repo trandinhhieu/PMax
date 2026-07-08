@@ -36,9 +36,6 @@ pnpm-debug.log*
 /tests/
 playwright.config.ts
 
-# AI/dev automation scripts not required for production runtime
-/scripts/
-
 # Local screenshots and generated review artifacts
 /screenshots/
 

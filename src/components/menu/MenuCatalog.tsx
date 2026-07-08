@@ -1,140 +1,53 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { menuCategories, menuGroups, menuItems, type MenuCategory } from "@/data/menu";
-import { cn } from "@/lib/utils";
 import type { Locale } from "@/types/common";
+import { CategoryTabs } from "./CategoryTabs";
+import { GroupFilterList } from "./GroupFilterList";
 import { MenuItemCard } from "./MenuItemCard";
+import { useMenuCatalogController } from "./useMenuCatalogController";
 
 type MenuCatalogProps = {
   locale: Locale;
 };
 
-const pageSize = 12;
-
 export function MenuCatalog({ locale }: MenuCatalogProps) {
-  const [activeCategory, setActiveCategory] = useState<MenuCategory>("pizza");
-  const [activeGroupId, setActiveGroupId] = useState("all");
-  const [visibleCount, setVisibleCount] = useState(pageSize);
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-
-  const activeCategoryMeta = menuCategories.find((category) => category.id === activeCategory) ?? menuCategories[0];
-  const activeCategoryIndex = menuCategories.findIndex((category) => category.id === activeCategory);
-  const nextCategory = menuCategories[(activeCategoryIndex + 1) % menuCategories.length];
-  const activeGroups = useMemo(() => menuGroups.filter((group) => group.category === activeCategory), [activeCategory]);
-  const filteredItems = useMemo(
-    () =>
-      menuItems.filter((item) => {
-        if (item.category !== activeCategory) return false;
-        if (activeGroupId === "all") return true;
-        return item.groupId === activeGroupId;
-      }),
-    [activeCategory, activeGroupId],
-  );
-  const visibleItems = filteredItems.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredItems.length;
-
-  useEffect(() => {
-    setActiveGroupId("all");
-    setVisibleCount(pageSize);
-  }, [activeCategory]);
-
-  useEffect(() => {
-    setVisibleCount(pageSize);
-  }, [activeGroupId]);
-
-  useEffect(() => {
-    if (!hasMore) return;
-
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setVisibleCount((current) => Math.min(current + pageSize, filteredItems.length));
-        }
-      },
-      { rootMargin: "500px 0px" },
-    );
-
-    observer.observe(sentinel);
-
-    return () => observer.disconnect();
-  }, [filteredItems.length, hasMore]);
-
-  const chooseCategory = (category: MenuCategory) => {
-    setActiveCategory(category);
-    window.requestAnimationFrame(() => {
-      document.getElementById("menu-catalog")?.scrollIntoView({ block: "start" });
-    });
-  };
-
-  const chooseGroup = (groupId: string) => {
-    setActiveGroupId(groupId);
-    window.requestAnimationFrame(() => {
-      document.getElementById("menu-items")?.scrollIntoView({ block: "start" });
-    });
-  };
-
-  const categoryButtons = menuCategories.map((category) => (
-    <button
-      className={cn(
-        "inline-flex min-h-10 shrink-0 snap-start items-center rounded-lg border px-3.5 py-2 text-sm font-bold shadow-small transition sm:min-h-11 sm:px-4",
-        activeCategory === category.id
-          ? "border-tomato bg-tomato text-white"
-          : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato hover:text-tomato",
-      )}
-      key={category.id}
-      onClick={() => chooseCategory(category.id)}
-      type="button"
-    >
-      {category.label[locale]}
-    </button>
-  ));
-
-  const groupFilterButtons = (
-    <>
-      <button
-        className={cn(
-          "min-h-10 shrink-0 snap-start rounded-lg border px-3.5 py-2 text-left text-sm font-bold transition sm:px-4",
-          activeGroupId === "all" ? "border-charcoal bg-charcoal text-white" : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato",
-        )}
-        onClick={() => chooseGroup("all")}
-        type="button"
-      >
-        {locale === "en" ? "All" : "Tất cả"}
-        <span className="ml-2 text-xs opacity-70">{menuItems.filter((item) => item.category === activeCategory).length}</span>
-      </button>
-      {activeGroups.map((group) => {
-        const count = menuItems.filter((item) => item.groupId === group.id).length;
-
-        return (
-          <button
-            className={cn(
-              "min-h-10 shrink-0 snap-start rounded-lg border px-3.5 py-2 text-left text-sm font-bold transition sm:px-4",
-              activeGroupId === group.id ? "border-charcoal bg-charcoal text-white" : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato",
-            )}
-            key={group.id}
-            onClick={() => chooseGroup(group.id)}
-            type="button"
-          >
-            {group.title[locale]}
-            <span className="ml-2 text-xs opacity-70">{count}</span>
-          </button>
-        );
-      })}
-    </>
-  );
+  const {
+    activeCategory,
+    activeCategoryMeta,
+    activeGroups,
+    activeGroupId,
+    chooseCategory,
+    chooseGroup,
+    filteredItems,
+    groupCountMap,
+    hasMore,
+    loadMore,
+    nextCategory,
+    sentinelRef,
+    visibleCount,
+    visibleItems,
+    visibleTotalCount,
+  } = useMenuCatalogController();
 
   return (
     <section className="mt-6 sm:mt-8" id="menu-catalog">
       <div className="sticky top-16 z-20 -mx-4 border-y border-borderWarm bg-cream/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6 sm:py-3 md:top-[72px] lg:hidden">
         <nav aria-label={locale === "en" ? "Menu categories" : "Danh mục menu"}>
-          <div className="scrollbar-none flex snap-x gap-2 overflow-x-auto pb-1">{categoryButtons}</div>
+          <div className="scrollbar-none flex snap-x gap-2 overflow-x-auto pb-1">
+            <CategoryTabs activeCategory={activeCategory} locale={locale} onSelect={chooseCategory} />
+          </div>
         </nav>
         <nav aria-label={locale === "en" ? "Menu groups" : "Nhóm món"} className="mt-2 border-t border-borderWarm pt-2">
-          <div className="scrollbar-none flex snap-x gap-2 overflow-x-auto">{groupFilterButtons}</div>
+          <div className="scrollbar-none flex snap-x gap-2 overflow-x-auto">
+            <GroupFilterList
+              activeGroupId={activeGroupId}
+              allCount={visibleTotalCount}
+              groupCountMap={groupCountMap}
+              groups={activeGroups}
+              locale={locale}
+              onSelect={chooseGroup}
+            />
+          </div>
         </nav>
       </div>
       <nav
@@ -142,21 +55,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
         className="sticky top-[72px] z-20 -mx-8 hidden border-y border-borderWarm bg-cream/95 px-8 py-3 backdrop-blur lg:block"
       >
         <div className="scrollbar-none flex snap-x gap-2 overflow-x-auto pb-1">
-          {menuCategories.map((category) => (
-            <button
-              className={cn(
-                "inline-flex min-h-10 shrink-0 snap-start items-center rounded-lg border px-3.5 py-2 text-sm font-bold shadow-small transition sm:min-h-11 sm:px-4",
-                activeCategory === category.id
-                  ? "border-tomato bg-tomato text-white"
-                  : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato hover:text-tomato",
-              )}
-              key={category.id}
-              onClick={() => chooseCategory(category.id)}
-              type="button"
-            >
-              {category.label[locale]}
-            </button>
-          ))}
+          <CategoryTabs activeCategory={activeCategory} locale={locale} onSelect={chooseCategory} />
         </div>
       </nav>
 
@@ -168,35 +67,14 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
               <p className="mt-2 text-sm leading-6 text-muted sm:mt-3">{activeCategoryMeta.description[locale]}</p>
             </div>
             <div className="scrollbar-none mt-5 hidden snap-x gap-2 overflow-x-auto lg:grid lg:overflow-visible lg:pb-0">
-              <button
-                className={cn(
-                  "min-h-10 shrink-0 snap-start rounded-lg border px-3.5 py-2 text-left text-sm font-bold transition sm:px-4",
-                  activeGroupId === "all" ? "border-charcoal bg-charcoal text-white" : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato",
-                )}
-                onClick={() => chooseGroup("all")}
-                type="button"
-              >
-                {locale === "en" ? "All" : "Tất cả"}
-                <span className="ml-2 text-xs opacity-70">{menuItems.filter((item) => item.category === activeCategory).length}</span>
-              </button>
-              {activeGroups.map((group) => {
-                const count = menuItems.filter((item) => item.groupId === group.id).length;
-
-                return (
-                  <button
-                    className={cn(
-                      "min-h-10 shrink-0 snap-start rounded-lg border px-3.5 py-2 text-left text-sm font-bold transition sm:px-4",
-                      activeGroupId === group.id ? "border-charcoal bg-charcoal text-white" : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato",
-                    )}
-                    key={group.id}
-                    onClick={() => chooseGroup(group.id)}
-                    type="button"
-                  >
-                    {group.title[locale]}
-                    <span className="ml-2 text-xs opacity-70">{count}</span>
-                  </button>
-                );
-              })}
+              <GroupFilterList
+                activeGroupId={activeGroupId}
+                allCount={visibleTotalCount}
+                groupCountMap={groupCountMap}
+                groups={activeGroups}
+                locale={locale}
+                onSelect={chooseGroup}
+              />
             </div>
           </aside>
 
@@ -238,7 +116,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
               <div className="mt-10 flex justify-center" ref={sentinelRef}>
                 <button
                   className="inline-flex min-h-12 items-center justify-center rounded-lg border border-borderWarm bg-porcelain px-5 py-3 text-sm font-bold text-charcoal shadow-small transition hover:border-tomato hover:text-tomato"
-                  onClick={() => setVisibleCount((current) => Math.min(current + pageSize, filteredItems.length))}
+                  onClick={loadMore}
                   type="button"
                 >
                   {locale === "en" ? "Load more" : "Xem thêm"}
