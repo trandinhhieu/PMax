@@ -1,13 +1,16 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, MessageCircle, Phone } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { businessInfo } from "@/config/business";
 import { trackingEvents } from "@/config/tracking";
 import { copy } from "@/data/content";
 import { trackEvent } from "@/lib/analytics";
 import { formatDateStringInTimeZone } from "@/lib/date";
-import { bookingSchema, type BookingField } from "@/lib/validation/booking";
+import { bookingSchema, otpCodeSchema, type BookingField, type BookingFormValues } from "@/lib/validation/booking";
 import type { Locale } from "@/types/common";
 import { TrackedLink } from "./TrackedLink";
 
@@ -27,27 +30,27 @@ type OtpApiResponse = {
   message?: string;
 };
 
-type RequiredValues = {
-  name: string;
-  contact: string;
-  contactChannel: string;
-  date: string;
-  time: string;
-  guests: string;
-  otpCode?: string;
+type BookingFormInput = BookingFormValues & {
+  otpCode: string;
 };
 
-const initialRequiredValues: RequiredValues = {
+const bookingFormSchema = bookingSchema.extend({
+  otpCode: z.string(),
+});
+
+const initialValues: BookingFormInput = {
   name: "",
   contact: "",
   contactChannel: "phone",
   date: "",
   time: "",
-  guests: "",
+  guests: 1,
+  note: "",
   otpCode: "",
 };
 
 const isOtpEnabled = process.env.NEXT_PUBLIC_BOOKING_OTP_ENABLED?.toLowerCase() === "true";
+const phoneChannel = "phone";
 
 function RequiredMark() {
   return (
@@ -63,31 +66,33 @@ export function BookingForm({ locale }: { locale: Locale }) {
   const [otpStatus, setOtpStatus] = useState<OtpStatus>("idle");
   const [otpMessage, setOtpMessage] = useState("");
   const [otpContact, setOtpContact] = useState("");
-  const [errors, setErrors] = useState<FieldErrors>({});
   const [submitMessage, setSubmitMessage] = useState("");
   const [hasStarted, setHasStarted] = useState(false);
-  const [requiredValues, setRequiredValues] = useState<RequiredValues>(initialRequiredValues);
-  const [canSubmitBooking, setCanSubmitBooking] = useState(false);
 
   const minDate = useMemo(() => formatDateStringInTimeZone(new Date(), businessInfo.timeZone), []);
-  const hasValidContact = requiredValues.contact.trim().length >= 6;
 
-  const canSubmitValues = (values: RequiredValues) => {
-    const guests = Number(values.guests);
-    const hasValidGuests = Number.isInteger(guests) && guests >= 1 && guests <= 20;
-    const hasValidRequiredFields =
-      values.name.trim().length >= 2 &&
-      values.contact.trim().length >= 6 &&
-      ["phone", "whatsapp", "zalo", "messenger"].includes(values.contactChannel) &&
-      values.date >= minDate &&
-      Boolean(values.time) &&
-      hasValidGuests;
-    const hasValidOtp =
-      !isOtpEnabled ||
-      (/^\d{4,10}$/.test(values.otpCode?.trim() ?? "") && otpStatus === "sent" && otpContact === values.contact.trim());
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    getValues,
+    setError,
+    clearErrors,
+    formState: { errors, touchedFields, submitCount },
+  } = useForm<BookingFormInput>({
+    defaultValues: initialValues,
+    mode: "onBlur",
+    reValidateMode: "onChange",
+    resolver: zodResolver(bookingFormSchema),
+    shouldFocusError: true,
+  });
 
-    return hasValidRequiredFields && hasValidOtp;
-  };
+  const values = watch();
+  const watchedContact = values.contact ?? "";
+  const watchedContactChannel = values.contactChannel ?? phoneChannel;
+  const watchedOtpCode = values.otpCode ?? "";
+  const hasValidContact = bookingSchema.shape.contact.safeParse(watchedContact).success;
 
   const trackStartOnce = () => {
     if (hasStarted) return;
@@ -98,77 +103,114 @@ export function BookingForm({ locale }: { locale: Locale }) {
     });
   };
 
-  const localizeError = (field: BookingFormField, message: string) => {
+  const localizeError = useCallback((field: BookingFormField, message: string) => {
     if (locale === "en") return message;
 
+    if (field === "contact") {
+      if (message.includes("before requesting OTP")) return "Vui lòng nhập số điện thoại trước khi lấy mã OTP.";
+      if (message.includes("valid phone number")) return "Vui lòng nhập số điện thoại hợp lệ để nhận mã OTP.";
+      return isOtpEnabled ? "Vui lòng nhập số điện thoại hợp lệ để nhận mã SMS." : "Vui lòng nhập số điện thoại hoặc liên hệ chat hợp lệ.";
+    }
+
+    if (field === "contactChannel" && message.includes("choose Phone")) {
+      return "Vui lòng chọn Điện thoại để nhận mã xác thực SMS.";
+    }
+
+    if (field === "otpCode" && message.includes("request a new")) {
+      return "Vui lòng lấy mã SMS mới cho đúng số điện thoại đang nhập.";
+    }
+
     const viMessages: Partial<Record<BookingFormField, string>> = {
-      name: "Vui lòng nhập tên của bạn.",
-      contact: isOtpEnabled ? "Vui lòng nhập số điện thoại để nhận mã SMS." : "Vui lòng nhập số điện thoại hoặc WhatsApp.",
+      name: "Vui lòng nhập tên hợp lệ.",
       contactChannel: "Vui lòng chọn kênh liên hệ.",
-      date: "Vui lòng chọn hôm nay hoặc một ngày sắp tới.",
-      time: "Vui lòng chọn giờ.",
-      guests: "Vui lòng nhập số khách từ 1 đến 20.",
+      date: "Vui lòng chọn ngày hợp lệ từ hôm nay trở đi.",
+      time: "Vui lòng chọn giờ hợp lệ trong giờ mở cửa.",
+      guests: "Vui lòng nhập số khách nguyên từ 1 đến 20.",
       note: "Vui lòng giữ ghi chú dưới 300 ký tự.",
-      otpCode: "Vui lòng nhập mã xác thực SMS.",
+      otpCode: "Vui lòng nhập mã xác thực SMS hợp lệ.",
     };
 
     return viMessages[field] ?? message;
+  }, [locale]);
+
+  const fieldError = (field: BookingFormField) => {
+    const shouldShow = touchedFields[field as keyof typeof touchedFields] || submitCount > 0;
+    if (!shouldShow) return undefined;
+
+    if (field === "otpCode") {
+      return errors.otpCode?.message;
+    }
+
+    return errors[field as BookingField]?.message;
   };
 
-  const fieldError = (field: BookingFormField) => errors[field];
-  const defaultErrorMessage = locale === "en" ? "Please check the highlighted fields before sending." : "Vui lòng kiểm tra các trường bị lỗi trước khi gửi.";
-  const applyRequiredValues = (values: RequiredValues) => {
-    setRequiredValues(values);
-    setCanSubmitBooking(canSubmitValues(values));
-  };
+  const defaultErrorMessage = locale === "en" ? "Please check the highlighted fields before sending." : "Vui lòng kiểm tra các trường đang bị lỗi trước khi gửi.";
 
-  const syncRequiredValues = (form: HTMLFormElement) => {
-    const formData = new FormData(form);
-
-    applyRequiredValues({
-      name: String(formData.get("name") ?? ""),
-      contact: String(formData.get("contact") ?? ""),
-      contactChannel: String(formData.get("contactChannel") ?? "phone"),
-      date: String(formData.get("date") ?? ""),
-      time: String(formData.get("time") ?? ""),
-      guests: String(formData.get("guests") ?? ""),
-      otpCode: String(formData.get("otpCode") ?? ""),
-    });
-  };
-
-  const updateRequiredValue = (field: keyof RequiredValues, value: string) => {
-    setRequiredValues((current) => {
-      const next = { ...current, [field]: value };
-      setCanSubmitBooking(canSubmitValues(next));
-      return next;
-    });
-
-    if (isOtpEnabled && field === "contact" && value.trim() !== otpContact) {
+  useEffect(() => {
+    if (otpContact && watchedContact.trim() !== otpContact) {
       setOtpStatus("idle");
       setOtpMessage("");
       setOtpContact("");
-      setErrors((current) => ({ ...current, otpCode: undefined }));
+
+      if (watchedOtpCode.trim()) {
+        setError("otpCode", {
+          type: "manual",
+          message: localizeError("otpCode", "Please request a new SMS verification code for this phone number."),
+        });
+      } else {
+        clearErrors("otpCode");
+      }
+    }
+  }, [clearErrors, localizeError, otpContact, setError, watchedContact, watchedOtpCode]);
+
+  useEffect(() => {
+    if (!isOtpEnabled) return;
+
+    if (watchedContactChannel !== phoneChannel) {
+      setError("contactChannel", {
+        type: "manual",
+        message: localizeError("contactChannel", "Please choose Phone to receive the SMS verification code."),
+      });
+      return;
     }
 
-    if (status === "success") {
-      setStatus("idle");
+    if (errors.contactChannel?.type === "manual") {
+      clearErrors("contactChannel");
     }
-  };
+  }, [clearErrors, errors.contactChannel?.type, localizeError, setError, watchedContactChannel]);
 
-  const requestOtp = async (form: HTMLFormElement) => {
+  const requestOtp = async () => {
+    const contact = getValues("contact").trim();
+    const contactChannel = getValues("contactChannel");
+
     setOtpStatus("sending");
     setOtpMessage("");
     setSubmitMessage("");
-    setErrors((current) => ({ ...current, contact: undefined, otpCode: undefined }));
-
-    const formData = new FormData(form);
-    const contact = String(formData.get("contact") ?? "").trim();
+    clearErrors(["contact", "contactChannel", "otpCode"]);
 
     if (!contact) {
-      setErrors((current) => ({
-        ...current,
-        contact: localizeError("contact", "Please enter a phone number before requesting OTP."),
-      }));
+      setError("contact", {
+        type: "manual",
+        message: localizeError("contact", "Please enter a phone number before requesting OTP."),
+      });
+      setOtpStatus("error");
+      return;
+    }
+
+    if (!bookingSchema.shape.contact.safeParse(contact).success) {
+      setError("contact", {
+        type: "manual",
+        message: localizeError("contact", "Please enter a valid phone number before requesting OTP."),
+      });
+      setOtpStatus("error");
+      return;
+    }
+
+    if (contactChannel !== phoneChannel) {
+      setError("contactChannel", {
+        type: "manual",
+        message: localizeError("contactChannel", "Please choose Phone to receive the SMS verification code."),
+      });
       setOtpStatus("error");
       return;
     }
@@ -192,11 +234,185 @@ export function BookingForm({ locale }: { locale: Locale }) {
       setOtpStatus("sent");
       setOtpContact(contact);
       setOtpMessage(locale === "en" ? "Verification code sent by SMS." : "Mã xác thực đã được gửi qua SMS.");
+      clearErrors("otpCode");
     } catch {
       setOtpStatus("error");
       setOtpMessage(locale === "en" ? "We could not send the verification code." : "Không thể gửi mã xác thực.");
     }
   };
+
+  const onSubmit = handleSubmit(async (data) => {
+    setStatus("submitting");
+    setSubmitMessage("");
+
+    trackEvent(trackingEvents.bookingSubmit, {
+      location: "booking_section",
+      page_language: locale,
+    });
+
+    if (isOtpEnabled && data.contactChannel !== phoneChannel) {
+      setError("contactChannel", {
+        type: "manual",
+        message: localizeError("contactChannel", "Please choose Phone to receive the SMS verification code."),
+      });
+      setStatus("error");
+      return;
+    }
+
+    if (isOtpEnabled && !data.otpCode.trim()) {
+      setError("otpCode", {
+        type: "manual",
+        message: localizeError("otpCode", "Please enter the SMS verification code."),
+      });
+      setStatus("error");
+      return;
+    }
+
+    if (isOtpEnabled && !otpCodeSchema.safeParse(data.otpCode.trim()).success) {
+      setError("otpCode", {
+        type: "manual",
+        message: localizeError("otpCode", "Please enter a valid SMS verification code."),
+      });
+      setStatus("error");
+      return;
+    }
+
+    if (isOtpEnabled && (otpStatus !== "sent" || otpContact !== data.contact.trim())) {
+      setError("otpCode", {
+        type: "manual",
+        message: localizeError("otpCode", "Please request a new SMS verification code for this phone number."),
+      });
+      setStatus("error");
+      return;
+    }
+
+    let result: BookingApiResponse;
+    let responseOk = false;
+
+    try {
+      const response = await fetch("/api/booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.name,
+          contact: data.contact,
+          contactChannel: data.contactChannel,
+          date: data.date,
+          time: data.time,
+          guests: data.guests,
+          note: data.note,
+          otpCode: isOtpEnabled ? data.otpCode.trim() : undefined,
+          locale,
+        }),
+      });
+      responseOk = response.ok;
+      result = (await response.json()) as BookingApiResponse;
+    } catch {
+      setSubmitMessage(t.form.error);
+      setStatus("error");
+      return;
+    }
+
+    if (!responseOk || !result.ok) {
+      for (const [field, message] of Object.entries(result.fieldErrors ?? {})) {
+        setError(field as keyof BookingFormInput, {
+          type: "server",
+          message: localizeError(field as BookingFormField, message),
+        });
+      }
+
+      setSubmitMessage(result.message ?? t.form.error);
+      setStatus("error");
+      return;
+    }
+
+    setStatus("success");
+    setSubmitMessage("");
+    setOtpStatus("idle");
+    setOtpMessage("");
+    setOtpContact("");
+    reset(initialValues);
+
+    try {
+      trackEvent(trackingEvents.bookingSuccess, {
+        location: "booking_section",
+        page_language: locale,
+        handoff_channel: "email",
+      });
+    } catch {
+      // Tracking must never turn a successful booking into an error.
+    }
+  }, () => {
+    setStatus("error");
+    setSubmitMessage("");
+  });
+
+  const contactRegister = register("contact", {
+    onChange: () => {
+      if (status === "success") setStatus("idle");
+      if (status === "error") setSubmitMessage("");
+    },
+    onBlur: trackStartOnce,
+  });
+
+  const otpRegister = register("otpCode", {
+    onChange: () => {
+      if (status === "success") setStatus("idle");
+      if (status === "error") setSubmitMessage("");
+    },
+    onBlur: trackStartOnce,
+  });
+
+  const nameRegister = register("name", {
+    onChange: () => {
+      if (status === "success") setStatus("idle");
+      if (status === "error") setSubmitMessage("");
+    },
+    onBlur: trackStartOnce,
+  });
+
+  const dateRegister = register("date", {
+    onChange: () => {
+      if (status === "success") setStatus("idle");
+      if (status === "error") setSubmitMessage("");
+    },
+    onBlur: trackStartOnce,
+  });
+
+  const timeRegister = register("time", {
+    onChange: () => {
+      if (status === "success") setStatus("idle");
+      if (status === "error") setSubmitMessage("");
+    },
+    onBlur: trackStartOnce,
+  });
+
+  const guestsRegister = register("guests", {
+    valueAsNumber: true,
+    onChange: () => {
+      if (status === "success") setStatus("idle");
+      if (status === "error") setSubmitMessage("");
+    },
+    onBlur: trackStartOnce,
+  });
+
+  const channelRegister = register("contactChannel", {
+    onChange: () => {
+      if (status === "success") setStatus("idle");
+      if (status === "error") setSubmitMessage("");
+    },
+    onBlur: trackStartOnce,
+  });
+
+  const noteRegister = register("note", {
+    onChange: () => {
+      if (status === "success") setStatus("idle");
+      if (status === "error") setSubmitMessage("");
+    },
+    onBlur: trackStartOnce,
+  });
 
   return (
     <section className="safe-area-inline overflow-x-clip bg-cream py-20" id="booking">
@@ -234,117 +450,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
           </div>
         </div>
 
-        <form
-          className="overflow-x-clip rounded-lg border border-borderWarm bg-porcelain p-5 pb-24 shadow-large sm:p-6 md:pb-6"
-          noValidate
-          onChange={(event) => syncRequiredValues(event.currentTarget)}
-          onInput={(event) => syncRequiredValues(event.currentTarget)}
-          onSubmit={async (event) => {
-            event.preventDefault();
-            const form = event.currentTarget;
-            setStatus("submitting");
-            setErrors({});
-            setSubmitMessage("");
-
-            const formData = new FormData(form);
-            const parsed = bookingSchema.safeParse({
-              name: formData.get("name"),
-              contact: formData.get("contact"),
-              contactChannel: formData.get("contactChannel"),
-              date: formData.get("date"),
-              time: formData.get("time"),
-              guests: formData.get("guests"),
-              note: formData.get("note"),
-            });
-            const otpCode = String(formData.get("otpCode") ?? "").trim();
-
-            trackEvent(trackingEvents.bookingSubmit, {
-              location: "booking_section",
-              page_language: locale,
-            });
-
-            if (!parsed.success) {
-              const nextErrors: FieldErrors = {};
-              for (const issue of parsed.error.issues) {
-                const field = issue.path[0] as BookingField | undefined;
-                if (field && !nextErrors[field]) {
-                  nextErrors[field] = localizeError(field, issue.message);
-                }
-              }
-
-              setErrors(nextErrors);
-              setStatus("error");
-              return;
-            }
-
-            if (isOtpEnabled && !otpCode) {
-              setErrors({ otpCode: localizeError("otpCode", "Please enter the SMS verification code.") });
-              setStatus("error");
-              return;
-            }
-
-            let result: BookingApiResponse;
-            let responseOk = false;
-
-            try {
-              const response = await fetch("/api/booking", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  name: parsed.data.name,
-                  contact: parsed.data.contact,
-                  contactChannel: parsed.data.contactChannel,
-                  date: String(formData.get("date") ?? ""),
-                  time: parsed.data.time,
-                  guests: parsed.data.guests,
-                  note: parsed.data.note,
-                  otpCode: isOtpEnabled ? otpCode : undefined,
-                  locale,
-                }),
-              });
-              responseOk = response.ok;
-              result = (await response.json()) as BookingApiResponse;
-            } catch {
-              setErrors({});
-              setSubmitMessage(t.form.error);
-              setStatus("error");
-              return;
-            }
-
-            if (!responseOk || !result.ok) {
-              const nextErrors: FieldErrors = {};
-              for (const [field, message] of Object.entries(result.fieldErrors ?? {})) {
-                nextErrors[field as BookingFormField] = localizeError(field as BookingFormField, message);
-              }
-
-              setErrors(nextErrors);
-              setSubmitMessage(result.message ?? t.form.error);
-              setStatus("error");
-              return;
-            }
-
-            setErrors({});
-            setSubmitMessage("");
-            setStatus("success");
-            setOtpStatus("idle");
-            setOtpMessage("");
-            setOtpContact("");
-            setRequiredValues(initialRequiredValues);
-            setCanSubmitBooking(false);
-            form.reset();
-            try {
-              trackEvent(trackingEvents.bookingSuccess, {
-                location: "booking_section",
-                page_language: locale,
-                handoff_channel: "email",
-              });
-            } catch {
-              // Tracking must never turn a successful booking into an error.
-            }
-          }}
-        >
+        <form className="overflow-x-clip rounded-lg border border-borderWarm bg-porcelain p-5 pb-24 shadow-large sm:p-6 md:pb-6" noValidate onSubmit={onSubmit}>
           <p className="mb-5 rounded-lg border border-borderWarm bg-white px-4 py-3 text-sm font-semibold text-muted">
             {isOtpEnabled
               ? locale === "en"
@@ -371,23 +477,16 @@ export function BookingForm({ locale }: { locale: Locale }) {
                   aria-invalid={Boolean(fieldError("contact"))}
                   className="ios-form-control min-h-12 flex-1 rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                   id="booking-contact"
-                  name="contact"
-                  onChange={(event) => updateRequiredValue("contact", event.currentTarget.value)}
-                  onFocus={trackStartOnce}
-                  onInput={(event) => updateRequiredValue("contact", event.currentTarget.value)}
                   placeholder="+84905906842"
                   required
                   type="tel"
+                  {...contactRegister}
                 />
                 {isOtpEnabled ? (
                   <button
                     className="min-h-12 shrink-0 rounded-lg border border-borderWarm bg-charcoal px-4 py-3 text-sm font-bold text-white transition hover:bg-charcoal/90 disabled:cursor-not-allowed disabled:opacity-70"
                     disabled={!hasValidContact || otpStatus === "sending" || status === "submitting"}
-                    onClick={(event) => {
-                      if (event.currentTarget.form) {
-                        void requestOtp(event.currentTarget.form);
-                      }
-                    }}
+                    onClick={() => void requestOtp()}
                     type="button"
                   >
                     {otpStatus === "sending" ? (locale === "en" ? "Sending" : "Đang gửi") : "OTP"}
@@ -412,13 +511,10 @@ export function BookingForm({ locale }: { locale: Locale }) {
                   className="ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                   id="booking-otp"
                   inputMode="numeric"
-                  name="otpCode"
-                  onChange={(event) => updateRequiredValue("otpCode", event.currentTarget.value)}
-                  onFocus={trackStartOnce}
-                  onInput={(event) => updateRequiredValue("otpCode", event.currentTarget.value)}
                   placeholder="123456"
                   required
                   type="text"
+                  {...otpRegister}
                 />
                 {fieldError("otpCode") ? <span className="mt-2 block text-sm text-error" id="booking-otp-error">{fieldError("otpCode")}</span> : null}
               </label>
@@ -432,12 +528,9 @@ export function BookingForm({ locale }: { locale: Locale }) {
                 aria-invalid={Boolean(fieldError("name"))}
                 className="ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                 id="booking-name"
-                name="name"
-                onChange={(event) => updateRequiredValue("name", event.currentTarget.value)}
-                onFocus={trackStartOnce}
-                onInput={(event) => updateRequiredValue("name", event.currentTarget.value)}
                 required
                 type="text"
+                {...nameRegister}
               />
               {fieldError("name") ? <span className="mt-2 block text-sm text-error" id="booking-name-error">{fieldError("name")}</span> : null}
             </label>
@@ -451,12 +544,9 @@ export function BookingForm({ locale }: { locale: Locale }) {
                 className="booking-native-date-control ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                 id="booking-date"
                 min={minDate}
-                name="date"
-                onChange={(event) => updateRequiredValue("date", event.currentTarget.value)}
-                onFocus={trackStartOnce}
-                onInput={(event) => updateRequiredValue("date", event.currentTarget.value)}
                 required
                 type="date"
+                {...dateRegister}
               />
               {fieldError("date") ? <span className="mt-2 block text-sm text-error" id="booking-date-error">{fieldError("date")}</span> : null}
             </label>
@@ -471,12 +561,9 @@ export function BookingForm({ locale }: { locale: Locale }) {
                 id="booking-time"
                 max={businessInfo.openingHoursStructured.closes}
                 min={businessInfo.openingHoursStructured.opens}
-                name="time"
-                onChange={(event) => updateRequiredValue("time", event.currentTarget.value)}
-                onFocus={trackStartOnce}
-                onInput={(event) => updateRequiredValue("time", event.currentTarget.value)}
                 required
                 type="time"
+                {...timeRegister}
               />
               {fieldError("time") ? <span className="mt-2 block text-sm text-error" id="booking-time-error">{fieldError("time")}</span> : null}
             </label>
@@ -491,12 +578,10 @@ export function BookingForm({ locale }: { locale: Locale }) {
                 id="booking-guests"
                 max={20}
                 min={1}
-                name="guests"
-                onChange={(event) => updateRequiredValue("guests", event.currentTarget.value)}
-                onFocus={trackStartOnce}
-                onInput={(event) => updateRequiredValue("guests", event.currentTarget.value)}
                 required
+                step={1}
                 type="number"
+                {...guestsRegister}
               />
               {fieldError("guests") ? <span className="mt-2 block text-sm text-error" id="booking-guests-error">{fieldError("guests")}</span> : null}
             </label>
@@ -510,10 +595,8 @@ export function BookingForm({ locale }: { locale: Locale }) {
                   aria-invalid={Boolean(fieldError("contactChannel"))}
                   className="ios-form-control min-h-12 w-full appearance-none rounded-lg border border-borderWarm bg-white px-3 py-3 pr-12 text-base outline-none focus:border-olive"
                   id="booking-channel"
-                  name="contactChannel"
-                  onChange={(event) => updateRequiredValue("contactChannel", event.currentTarget.value)}
-                  onFocus={trackStartOnce}
                   required
+                  {...channelRegister}
                 >
                   <option value="phone">{locale === "en" ? "Phone" : "Điện thoại"}</option>
                   <option value="whatsapp">WhatsApp</option>
@@ -529,6 +612,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
               {fieldError("contactChannel") ? <span className="mt-2 block text-sm text-error" id="booking-channel-error">{fieldError("contactChannel")}</span> : null}
             </label>
           </div>
+
           <label className="mt-4 block min-w-0 text-sm font-semibold text-charcoal" htmlFor="booking-note">
             {t.form.note}
             <textarea
@@ -537,8 +621,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
               className="ios-form-control mt-2 min-h-28 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
               id="booking-note"
               maxLength={300}
-              name="note"
-              onFocus={trackStartOnce}
+              {...noteRegister}
             />
             {fieldError("note") ? <span className="mt-2 block text-sm text-error" id="booking-note-error">{fieldError("note")}</span> : null}
           </label>
@@ -551,28 +634,15 @@ export function BookingForm({ locale }: { locale: Locale }) {
             </p>
           ) : null}
 
-          {canSubmitBooking ? (
-            <button
-              className="mt-6 min-h-12 w-full rounded-lg bg-tomato px-6 py-4 font-bold text-white transition hover:bg-tomato-hover disabled:cursor-not-allowed disabled:opacity-70"
-              disabled={status === "submitting"}
-              type="submit"
-            >
-              {status === "submitting" ? (locale === "en" ? "Sending..." : "Đang gửi...") : t.form.submit}
-            </button>
-          ) : (
-            <p className="mt-6 rounded-lg border border-borderWarm bg-white px-4 py-3 text-sm font-semibold text-muted" role="status">
-              {isOtpEnabled
-                ? locale === "en"
-                  ? "Complete the required fields and SMS code to send your booking request."
-                  : "Hoàn tất các trường bắt buộc và mã SMS để gửi yêu cầu đặt bàn."
-                : locale === "en"
-                  ? "Complete the required fields to send your booking request."
-                  : "Hoàn tất các trường bắt buộc để gửi yêu cầu đặt bàn."}
-            </p>
-          )}
+          <button
+            className="mt-6 min-h-12 w-full rounded-lg bg-tomato px-6 py-4 font-bold text-white transition hover:bg-tomato-hover disabled:cursor-not-allowed disabled:opacity-70"
+            disabled={status === "submitting"}
+            type="submit"
+          >
+            {status === "submitting" ? (locale === "en" ? "Sending..." : "Đang gửi...") : t.form.submit}
+          </button>
         </form>
       </div>
     </section>
   );
 }
-

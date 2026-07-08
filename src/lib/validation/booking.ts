@@ -2,38 +2,95 @@ import { z } from "zod";
 import { businessInfo } from "@/config/business";
 import { formatDateStringInTimeZone, isIsoDateString } from "@/lib/date";
 
-export const otpCodeSchema = z.string().trim().regex(/^\d{4,10}$/, "Please enter the verification code.");
+const bookingContactChannels = ["phone", "whatsapp", "zalo", "messenger"] as const;
+const bookingTimePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
+const contactValuePattern = /^[\d\s+().-]+$/;
 
-const bookingDateSchema = z.string().trim().refine((value) => {
+function isExistingIsoDateString(value: string) {
   if (!isIsoDateString(value)) {
     return false;
   }
 
-  const today = formatDateStringInTimeZone(new Date(), businessInfo.timeZone);
-  return value >= today;
-}, "Please choose today or a future date.");
+  const [year, month, day] = value.split("-").map(Number);
+  const utcDate = new Date(Date.UTC(year, month - 1, day));
+
+  return (
+    utcDate.getUTCFullYear() === year &&
+    utcDate.getUTCMonth() === month - 1 &&
+    utcDate.getUTCDate() === day
+  );
+}
+
+export const otpCodeSchema = z.string().trim().regex(/^\d{4,10}$/, "Please enter the verification code.");
+
+const bookingDateSchema = z
+  .string()
+  .trim()
+  .min(1, "Please choose a date.")
+  .refine(isExistingIsoDateString, "Please choose a valid date.")
+  .refine((value) => {
+    const today = formatDateStringInTimeZone(new Date(), businessInfo.timeZone);
+    return value >= today;
+  }, "Please choose today or a future date.");
+
+const bookingTimeSchema = z
+  .string()
+  .trim()
+  .min(1, "Please choose a time.")
+  .regex(bookingTimePattern, "Please choose a valid time.")
+  .refine((value) => value >= businessInfo.openingHoursStructured.opens && value <= businessInfo.openingHoursStructured.closes, {
+    message: `Please choose a time between ${businessInfo.openingHoursStructured.opens} and ${businessInfo.openingHoursStructured.closes}.`,
+  });
+
+const bookingNameSchema = z
+  .string()
+  .trim()
+  .min(2, "Please enter your name.")
+  .max(80, "Please keep your name under 80 characters.");
+
+const bookingContactSchema = z
+  .string()
+  .trim()
+  .min(6, "Please enter a phone number or chat contact.")
+  .max(50, "Please keep the contact detail under 50 characters.")
+  .refine((value) => contactValuePattern.test(value), "Please enter only digits and phone symbols.");
+
+const bookingPhoneSchema = z
+  .string()
+  .trim()
+  .min(6, "Please enter a phone number.")
+  .max(50, "Please keep the phone number under 50 characters.")
+  .refine((value) => contactValuePattern.test(value), "Please enter only digits and phone symbols.");
+
+const bookingNoteSchema = z
+  .string()
+  .trim()
+  .max(300, "Please keep your note under 300 characters.")
+  .optional();
+
+const bookingGuestsSchema = z.coerce.number().int("Please enter a whole number of guests.").min(1, "Please enter at least 1 guest.").max(20, "Please contact us directly for groups over 20.");
 
 export const bookingSchema = z.object({
-  name: z.string().trim().min(2, "Please enter your name."),
-  contact: z.string().trim().min(6, "Please enter a phone number or chat contact."),
-  contactChannel: z.enum(["phone", "whatsapp", "zalo", "messenger"]),
+  name: bookingNameSchema,
+  contact: bookingContactSchema,
+  contactChannel: z.enum(bookingContactChannels),
   date: bookingDateSchema,
-  time: z.string().min(1, "Please choose a time."),
-  guests: z.coerce.number().int().min(1, "Please enter at least 1 guest.").max(20, "Please contact us directly for groups over 20."),
-  note: z.string().trim().max(300, "Please keep your note under 300 characters.").optional(),
+  time: bookingTimeSchema,
+  guests: bookingGuestsSchema,
+  note: bookingNoteSchema,
 });
 
 export const bookingRequestSchema = z
   .object({
-    name: z.string().trim().min(2, "Please enter your name."),
+    name: bookingNameSchema,
     email: z.string().trim().email("Please enter a valid email address.").optional().or(z.literal("")),
-    phone: z.string().trim().min(6, "Please enter a phone number.").optional().or(z.literal("")),
-    contact: z.string().trim().min(6, "Please enter a phone number or chat contact.").optional().or(z.literal("")),
-    contactChannel: z.enum(["phone", "whatsapp", "zalo", "messenger"]).default("phone"),
+    phone: bookingPhoneSchema.optional().or(z.literal("")),
+    contact: bookingContactSchema.optional().or(z.literal("")),
+    contactChannel: z.enum(bookingContactChannels).default("phone"),
     date: bookingDateSchema,
-    time: z.string().min(1, "Please choose a time."),
-    guests: z.coerce.number().int().min(1, "Please enter at least 1 guest.").max(20, "Please contact us directly for groups over 20."),
-    note: z.string().trim().max(300, "Please keep your note under 300 characters.").optional(),
+    time: bookingTimeSchema,
+    guests: bookingGuestsSchema,
+    note: bookingNoteSchema,
     otpCode: otpCodeSchema.optional().or(z.literal("")),
     locale: z.enum(["en", "vi"]).default("en"),
   })
@@ -49,7 +106,7 @@ export const bookingRequestSchema = z
   }));
 
 export const bookingOtpStartSchema = z.object({
-  contact: z.string().trim().min(6, "Please enter a phone number."),
+  contact: bookingPhoneSchema,
 });
 
 export type BookingFormValues = z.infer<typeof bookingSchema>;
