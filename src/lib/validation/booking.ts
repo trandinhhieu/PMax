@@ -1,8 +1,18 @@
 import { z } from "zod";
 import { businessInfo } from "@/config/business";
+import {
+  bookingContactChannels,
+  bookingLocales,
+  isBookingFieldErrorCode,
+  type BookingApiField,
+  type BookingField,
+  type BookingFieldErrorCodes,
+  type BookingFieldErrorCode,
+  type BookingFieldErrors,
+} from "@/features/booking/contracts/api";
+import { getBookingFieldErrorMessage } from "@/features/booking/domain/validation-errors";
 import { formatDateStringInTimeZone, isIsoDateString } from "@/lib/date";
 
-const bookingContactChannels = ["phone", "whatsapp", "zalo", "messenger"] as const;
 const bookingTimePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
 const contactValuePattern = /^[\d\s+().-]+$/;
 
@@ -21,94 +31,160 @@ function isExistingIsoDateString(value: string) {
   );
 }
 
-export const otpCodeSchema = z.string().trim().regex(/^\d{4,10}$/, "Please enter the verification code.");
+type BookingSchemaOptions = {
+  now?: Date;
+};
 
-const bookingDateSchema = z
-  .string()
-  .trim()
-  .min(1, "Please choose a date.")
-  .refine(isExistingIsoDateString, "Please choose a valid date.")
-  .refine((value) => {
-    const today = formatDateStringInTimeZone(new Date(), businessInfo.timeZone);
-    return value >= today;
-  }, "Please choose today or a future date.");
+const messageCode = (code: BookingFieldErrorCode) => code;
+const enumErrorMap = (code: BookingFieldErrorCode) => () => ({ message: messageCode(code) });
+
+export const otpCodeSchema = z.string().trim().regex(/^\d{4,10}$/, messageCode("BOOKING_OTP_INVALID_CODE"));
+
+function createBookingDateSchema(options: BookingSchemaOptions = {}) {
+  return z
+    .string()
+    .trim()
+    .min(1, messageCode("BOOKING_DATE_REQUIRED"))
+    .refine(isExistingIsoDateString, messageCode("BOOKING_DATE_INVALID"))
+    .refine((value) => {
+      const today = formatDateStringInTimeZone(options.now ?? new Date(), businessInfo.timeZone);
+      return value >= today;
+    }, messageCode("BOOKING_DATE_PAST"));
+}
 
 const bookingTimeSchema = z
   .string()
   .trim()
-  .min(1, "Please choose a time.")
-  .regex(bookingTimePattern, "Please choose a valid time.")
+  .min(1, messageCode("BOOKING_TIME_REQUIRED"))
+  .regex(bookingTimePattern, messageCode("BOOKING_TIME_INVALID"))
   .refine((value) => value >= businessInfo.openingHoursStructured.opens && value <= businessInfo.openingHoursStructured.closes, {
-    message: `Please choose a time between ${businessInfo.openingHoursStructured.opens} and ${businessInfo.openingHoursStructured.closes}.`,
+    message: messageCode("BOOKING_TIME_OUTSIDE_OPENING_HOURS"),
   });
 
 const bookingNameSchema = z
   .string()
   .trim()
-  .min(2, "Please enter your name.")
-  .max(80, "Please keep your name under 80 characters.");
+  .min(2, messageCode("BOOKING_NAME_REQUIRED"))
+  .max(80, messageCode("BOOKING_NAME_TOO_LONG"));
 
-const bookingContactSchema = z
-  .string()
-  .trim()
-  .min(6, "Please enter a phone number or chat contact.")
-  .max(50, "Please keep the contact detail under 50 characters.")
-  .refine((value) => contactValuePattern.test(value), "Please enter only digits and phone symbols.");
+function createContactSchema(requiredCode: BookingFieldErrorCode) {
+  return z
+    .string()
+    .trim()
+    .min(6, messageCode(requiredCode))
+    .max(50, messageCode("BOOKING_CONTACT_TOO_LONG"))
+    .refine((value) => contactValuePattern.test(value), messageCode("BOOKING_CONTACT_INVALID_SYMBOLS"));
+}
 
-const bookingPhoneSchema = z
-  .string()
-  .trim()
-  .min(6, "Please enter a phone number.")
-  .max(50, "Please keep the phone number under 50 characters.")
-  .refine((value) => contactValuePattern.test(value), "Please enter only digits and phone symbols.");
+const bookingContactSchema = createContactSchema("BOOKING_CONTACT_REQUIRED");
+const bookingPhoneSchema = createContactSchema("BOOKING_OTP_PHONE_REQUIRED");
 
 const bookingNoteSchema = z
   .string()
   .trim()
-  .max(300, "Please keep your note under 300 characters.")
+  .max(300, messageCode("BOOKING_NOTE_TOO_LONG"))
   .optional();
 
-const bookingGuestsSchema = z.coerce.number().int("Please enter a whole number of guests.").min(1, "Please enter at least 1 guest.").max(20, "Please contact us directly for groups over 20.");
+const bookingGuestsSchema = z.coerce
+  .number({
+    invalid_type_error: messageCode("BOOKING_GUESTS_INTEGER"),
+    required_error: messageCode("BOOKING_GUESTS_MIN"),
+  })
+  .int(messageCode("BOOKING_GUESTS_INTEGER"))
+  .min(1, messageCode("BOOKING_GUESTS_MIN"))
+  .max(20, messageCode("BOOKING_GUESTS_MAX"));
 
-export const bookingSchema = z.object({
-  name: bookingNameSchema,
-  contact: bookingContactSchema,
-  contactChannel: z.enum(bookingContactChannels),
-  date: bookingDateSchema,
-  time: bookingTimeSchema,
-  guests: bookingGuestsSchema,
-  note: bookingNoteSchema,
-});
-
-export const bookingRequestSchema = z
-  .object({
+export function createBookingSchemas(options: BookingSchemaOptions = {}) {
+  const bookingDateSchema = createBookingDateSchema(options);
+  const bookingBaseSchema = z.object({
     name: bookingNameSchema,
-    email: z.string().trim().email("Please enter a valid email address.").optional().or(z.literal("")),
+    contact: bookingContactSchema,
+    contactChannel: z.enum(bookingContactChannels, { errorMap: enumErrorMap("BOOKING_CONTACT_CHANNEL_INVALID") }),
+    date: bookingDateSchema,
+    time: bookingTimeSchema,
+    guests: bookingGuestsSchema,
+    note: bookingNoteSchema,
+  });
+
+  const bookingRequestBaseSchema = z.object({
+    name: bookingNameSchema,
+    email: z.string().trim().email(messageCode("BOOKING_EMAIL_INVALID")).optional().or(z.literal("")),
     phone: bookingPhoneSchema.optional().or(z.literal("")),
     contact: bookingContactSchema.optional().or(z.literal("")),
-    contactChannel: z.enum(bookingContactChannels).default("phone"),
+    contactChannel: z.enum(bookingContactChannels, { errorMap: enumErrorMap("BOOKING_CONTACT_CHANNEL_INVALID") }).default("phone"),
     date: bookingDateSchema,
     time: bookingTimeSchema,
     guests: bookingGuestsSchema,
     note: bookingNoteSchema,
     otpCode: otpCodeSchema.optional().or(z.literal("")),
-    locale: z.enum(["en", "vi"]).default("en"),
-  })
-  .refine((booking) => Boolean(booking.contact || booking.phone || booking.email), {
-    message: "Please enter a phone number, email, or chat contact.",
-    path: ["contact"],
-  })
-  .transform((booking) => ({
-    ...booking,
-    email: booking.email || undefined,
-    phone: booking.phone || undefined,
-    contact: booking.contact || booking.phone || booking.email || "",
-  }));
+    locale: z.enum(bookingLocales).default("en"),
+  });
 
-export const bookingOtpStartSchema = z.object({
-  contact: bookingPhoneSchema,
-});
+  return {
+    bookingSchema: bookingBaseSchema,
+    bookingRequestSchema: bookingRequestBaseSchema
+      .refine((booking) => Boolean(booking.contact || booking.phone || booking.email), {
+        message: messageCode("BOOKING_CONTACT_METHOD_REQUIRED"),
+        path: ["contact"],
+      })
+      .transform((booking) => ({
+        ...booking,
+        email: booking.email || undefined,
+        phone: booking.phone || undefined,
+        contact: booking.contact || booking.phone || booking.email || "",
+      })),
+    bookingOtpStartSchema: z.object({
+      contact: bookingPhoneSchema,
+    }),
+  };
+}
+
+const currentSchemas = createBookingSchemas();
+
+export const bookingSchema = currentSchemas.bookingSchema;
+export const bookingRequestSchema = currentSchemas.bookingRequestSchema;
+export const bookingOtpStartSchema = currentSchemas.bookingOtpStartSchema;
+
+export function formatBookingValidationIssues(error: z.ZodError): {
+  fieldErrors: BookingFieldErrors;
+  fieldErrorCodes: BookingFieldErrorCodes;
+} {
+  const fieldErrors: BookingFieldErrors = {};
+  const fieldErrorCodes: BookingFieldErrorCodes = {};
+
+  for (const issue of error.issues) {
+    const field = issue.path[0] as BookingApiField | undefined;
+    if (!field || fieldErrors[field]) continue;
+
+    const code = getBookingFieldErrorCode(field, issue.message);
+    fieldErrorCodes[field] = code;
+    fieldErrors[field] = getBookingFieldErrorMessage(code);
+  }
+
+  return { fieldErrors, fieldErrorCodes };
+}
+
+function getBookingFieldErrorCode(field: BookingApiField, message: string): BookingFieldErrorCode {
+  if (isBookingFieldErrorCode(message)) {
+    return message;
+  }
+
+  const defaultCodes: Record<BookingApiField, BookingFieldErrorCode> = {
+    name: "BOOKING_NAME_REQUIRED",
+    contact: "BOOKING_CONTACT_REQUIRED",
+    contactChannel: "BOOKING_CONTACT_CHANNEL_INVALID",
+    date: "BOOKING_DATE_INVALID",
+    time: "BOOKING_TIME_INVALID",
+    guests: "BOOKING_GUESTS_INTEGER",
+    note: "BOOKING_NOTE_TOO_LONG",
+    email: "BOOKING_EMAIL_INVALID",
+    phone: "BOOKING_CONTACT_REQUIRED",
+    otpCode: "BOOKING_OTP_INVALID_CODE",
+  };
+
+  return defaultCodes[field];
+}
 
 export type BookingFormValues = z.infer<typeof bookingSchema>;
 export type BookingRequestValues = z.output<typeof bookingRequestSchema>;
-export type BookingField = keyof BookingFormValues;
+export type { BookingField };

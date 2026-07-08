@@ -8,6 +8,14 @@ import { z } from "zod";
 import { businessInfo } from "@/config/business";
 import { trackingEvents } from "@/config/tracking";
 import { copy } from "@/data/content";
+import {
+  isBookingFieldErrorCode,
+  type BookingApiField,
+  type BookingFieldErrorCode,
+  type StartBookingOtpResult,
+  type SubmitBookingResult,
+} from "@/features/booking/contracts/api";
+import { getLocalizedBookingFieldError } from "@/features/booking/presentation/error-copy";
 import { trackEvent } from "@/lib/analytics";
 import { formatDateStringInTimeZone } from "@/lib/date";
 import { bookingSchema, otpCodeSchema, type BookingField, type BookingFormValues } from "@/lib/validation/booking";
@@ -17,18 +25,6 @@ import { TrackedLink } from "./TrackedLink";
 type FormStatus = "idle" | "submitting" | "error" | "success";
 type OtpStatus = "idle" | "sending" | "sent" | "error";
 type BookingFormField = BookingField | "otpCode";
-type FieldErrors = Partial<Record<BookingFormField, string>>;
-
-type BookingApiResponse = {
-  ok: boolean;
-  message?: string;
-  fieldErrors?: FieldErrors;
-};
-
-type OtpApiResponse = {
-  ok: boolean;
-  message?: string;
-};
 
 type BookingFormInput = BookingFormValues & {
   otpCode: string;
@@ -103,45 +99,18 @@ export function BookingForm({ locale }: { locale: Locale }) {
     });
   };
 
-  const localizeError = useCallback((field: BookingFormField, message: string) => {
-    if (locale === "en") return message;
-
-    if (field === "contact") {
-      if (message.includes("before requesting OTP")) return "Vui lòng nhập số điện thoại trước khi lấy mã OTP.";
-      if (message.includes("valid phone number")) return "Vui lòng nhập số điện thoại hợp lệ để nhận mã OTP.";
-      return isOtpEnabled ? "Vui lòng nhập số điện thoại hợp lệ để nhận mã SMS." : "Vui lòng nhập số điện thoại hoặc liên hệ chat hợp lệ.";
-    }
-
-    if (field === "contactChannel" && message.includes("choose Phone")) {
-      return "Vui lòng chọn Điện thoại để nhận mã xác thực SMS.";
-    }
-
-    if (field === "otpCode" && message.includes("request a new")) {
-      return "Vui lòng lấy mã SMS mới cho đúng số điện thoại đang nhập.";
-    }
-
-    const viMessages: Partial<Record<BookingFormField, string>> = {
-      name: "Vui lòng nhập tên hợp lệ.",
-      contactChannel: "Vui lòng chọn kênh liên hệ.",
-      date: "Vui lòng chọn ngày hợp lệ từ hôm nay trở đi.",
-      time: "Vui lòng chọn giờ hợp lệ trong giờ mở cửa.",
-      guests: "Vui lòng nhập số khách nguyên từ 1 đến 20.",
-      note: "Vui lòng giữ ghi chú dưới 300 ký tự.",
-      otpCode: "Vui lòng nhập mã xác thực SMS hợp lệ.",
-    };
-
-    return viMessages[field] ?? message;
+  const localizeError = useCallback((field: BookingApiField, message: string, code?: BookingFieldErrorCode) => {
+    return getLocalizedBookingFieldError(locale, field, message, code);
   }, [locale]);
 
   const fieldError = (field: BookingFormField) => {
     const shouldShow = touchedFields[field as keyof typeof touchedFields] || submitCount > 0;
     if (!shouldShow) return undefined;
 
-    if (field === "otpCode") {
-      return errors.otpCode?.message;
-    }
+    const message = field === "otpCode" ? errors.otpCode?.message : errors[field as BookingField]?.message;
+    if (!message) return undefined;
 
-    return errors[field as BookingField]?.message;
+    return localizeError(field, message, isBookingFieldErrorCode(message) ? message : undefined);
   };
 
   const defaultErrorMessage = locale === "en" ? "Please check the highlighted fields before sending." : "Vui lòng kiểm tra các trường đang bị lỗi trước khi gửi.";
@@ -155,7 +124,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
       if (watchedOtpCode.trim()) {
         setError("otpCode", {
           type: "manual",
-          message: localizeError("otpCode", "Please request a new SMS verification code for this phone number."),
+          message: localizeError("otpCode", "Please request a new SMS verification code for this phone number.", "BOOKING_OTP_CONTACT_CHANGED"),
         });
       } else {
         clearErrors("otpCode");
@@ -169,7 +138,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
     if (watchedContactChannel !== phoneChannel) {
       setError("contactChannel", {
         type: "manual",
-        message: localizeError("contactChannel", "Please choose Phone to receive the SMS verification code."),
+        message: localizeError("contactChannel", "Please choose Phone to receive the SMS verification code.", "BOOKING_OTP_CHANNEL_REQUIRED"),
       });
       return;
     }
@@ -191,7 +160,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
     if (!contact) {
       setError("contact", {
         type: "manual",
-        message: localizeError("contact", "Please enter a phone number before requesting OTP."),
+        message: localizeError("contact", "Please enter a phone number before requesting OTP.", "BOOKING_OTP_PHONE_REQUIRED"),
       });
       setOtpStatus("error");
       return;
@@ -200,7 +169,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
     if (!bookingSchema.shape.contact.safeParse(contact).success) {
       setError("contact", {
         type: "manual",
-        message: localizeError("contact", "Please enter a valid phone number before requesting OTP."),
+        message: localizeError("contact", "Please enter a valid phone number before requesting OTP.", "BOOKING_OTP_PHONE_INVALID"),
       });
       setOtpStatus("error");
       return;
@@ -209,7 +178,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
     if (contactChannel !== phoneChannel) {
       setError("contactChannel", {
         type: "manual",
-        message: localizeError("contactChannel", "Please choose Phone to receive the SMS verification code."),
+        message: localizeError("contactChannel", "Please choose Phone to receive the SMS verification code.", "BOOKING_OTP_CHANNEL_REQUIRED"),
       });
       setOtpStatus("error");
       return;
@@ -223,7 +192,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
         },
         body: JSON.stringify({ contact }),
       });
-      const result = (await response.json()) as OtpApiResponse;
+      const result = (await response.json()) as StartBookingOtpResult;
 
       if (!response.ok || !result.ok) {
         setOtpStatus("error");
@@ -253,7 +222,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
     if (isOtpEnabled && data.contactChannel !== phoneChannel) {
       setError("contactChannel", {
         type: "manual",
-        message: localizeError("contactChannel", "Please choose Phone to receive the SMS verification code."),
+        message: localizeError("contactChannel", "Please choose Phone to receive the SMS verification code.", "BOOKING_OTP_CHANNEL_REQUIRED"),
       });
       setStatus("error");
       return;
@@ -262,7 +231,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
     if (isOtpEnabled && !data.otpCode.trim()) {
       setError("otpCode", {
         type: "manual",
-        message: localizeError("otpCode", "Please enter the SMS verification code."),
+        message: localizeError("otpCode", "Please enter the SMS verification code.", "BOOKING_OTP_REQUIRED"),
       });
       setStatus("error");
       return;
@@ -271,7 +240,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
     if (isOtpEnabled && !otpCodeSchema.safeParse(data.otpCode.trim()).success) {
       setError("otpCode", {
         type: "manual",
-        message: localizeError("otpCode", "Please enter a valid SMS verification code."),
+        message: localizeError("otpCode", "Please enter a valid SMS verification code.", "BOOKING_OTP_INVALID_CODE"),
       });
       setStatus("error");
       return;
@@ -280,14 +249,13 @@ export function BookingForm({ locale }: { locale: Locale }) {
     if (isOtpEnabled && (otpStatus !== "sent" || otpContact !== data.contact.trim())) {
       setError("otpCode", {
         type: "manual",
-        message: localizeError("otpCode", "Please request a new SMS verification code for this phone number."),
+        message: localizeError("otpCode", "Please request a new SMS verification code for this phone number.", "BOOKING_OTP_CONTACT_CHANGED"),
       });
       setStatus("error");
       return;
     }
 
-    let result: BookingApiResponse;
-    let responseOk = false;
+    let result: SubmitBookingResult;
 
     try {
       const response = await fetch("/api/booking", {
@@ -307,19 +275,19 @@ export function BookingForm({ locale }: { locale: Locale }) {
           locale,
         }),
       });
-      responseOk = response.ok;
-      result = (await response.json()) as BookingApiResponse;
+      result = (await response.json()) as SubmitBookingResult;
     } catch {
       setSubmitMessage(t.form.error);
       setStatus("error");
       return;
     }
 
-    if (!responseOk || !result.ok) {
+    if (!result.ok) {
       for (const [field, message] of Object.entries(result.fieldErrors ?? {})) {
+        const typedField = field as BookingApiField;
         setError(field as keyof BookingFormInput, {
           type: "server",
-          message: localizeError(field as BookingFormField, message),
+          message: localizeError(typedField, message, result.fieldErrorCodes?.[typedField]),
         });
       }
 

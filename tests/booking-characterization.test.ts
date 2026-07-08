@@ -1,5 +1,8 @@
 import { expect, test } from "@playwright/test";
-import { bookingRequestSchema } from "../src/lib/validation/booking";
+import { getLocalizedBookingFieldError } from "../src/features/booking/presentation/error-copy";
+import { isValidBookingOtpPhoneNumber, normalizeBookingPhoneNumber } from "../src/features/booking/domain/phone-policy";
+import { bookingRequestSchema, createBookingSchemas, formatBookingValidationIssues } from "../src/lib/validation/booking";
+import { startBookingOtp } from "../src/server/booking/booking-otp-service";
 import { submitBooking } from "../src/server/booking/booking-service";
 
 const validFutureDate = "2099-01-01";
@@ -62,5 +65,92 @@ test.describe("booking behavior characterization", () => {
       time: "Please choose a time between 16:00 and 23:00.",
       guests: "Please enter a whole number of guests.",
     });
+    expect(result.fieldErrorCodes).toMatchObject({
+      name: "BOOKING_NAME_REQUIRED",
+      contact: "BOOKING_CONTACT_INVALID_SYMBOLS",
+      date: "BOOKING_DATE_INVALID",
+      time: "BOOKING_TIME_OUTSIDE_OPENING_HOURS",
+      guests: "BOOKING_GUESTS_INTEGER",
+    });
+  });
+
+  test("validates booking dates deterministically from controlled time", () => {
+    const { bookingRequestSchema: controlledSchema } = createBookingSchemas({
+      now: new Date("2026-07-09T01:00:00+07:00"),
+    });
+
+    const parsed = controlledSchema.safeParse({
+      name: "Nguyen Van A",
+      contact: "+84905906842",
+      contactChannel: "phone",
+      date: "2026-07-08",
+      time: "18:30",
+      guests: 2,
+      locale: "en",
+    });
+
+    expect(parsed.success).toBe(false);
+    if (parsed.success) return;
+
+    expect(formatBookingValidationIssues(parsed.error)).toMatchObject({
+      fieldErrors: {
+        date: "Please choose today or a future date.",
+      },
+      fieldErrorCodes: {
+        date: "BOOKING_DATE_PAST",
+      },
+    });
+  });
+
+  test("localizes booking field errors from stable codes", () => {
+    expect(getLocalizedBookingFieldError("en", "contact", "ignored", "BOOKING_OTP_PHONE_INVALID")).toBe(
+      "Please enter a valid phone number before requesting OTP.",
+    );
+    expect(getLocalizedBookingFieldError("vi", "otpCode", "ignored", "BOOKING_OTP_CONTACT_CHANGED")).toBe(
+      "Vui lòng lấy mã SMS mới cho đúng số điện thoại đang nhập.",
+    );
+  });
+
+  test("uses one booking OTP phone normalization policy", () => {
+    expect(normalizeBookingPhoneNumber("0905 906 842")).toBe("+84905906842");
+    expect(normalizeBookingPhoneNumber("0084905906842")).toBe("+84905906842");
+    expect(isValidBookingOtpPhoneNumber("0905 906 842")).toBe(true);
+    expect(isValidBookingOtpPhoneNumber("123456")).toBe(false);
+  });
+
+  test("keeps OTP start failure responses compatible while exposing field codes", async () => {
+    const previousServerOtp = process.env.BOOKING_OTP_ENABLED;
+    const previousPublicOtp = process.env.NEXT_PUBLIC_BOOKING_OTP_ENABLED;
+    process.env.BOOKING_OTP_ENABLED = "true";
+    process.env.NEXT_PUBLIC_BOOKING_OTP_ENABLED = "true";
+
+    try {
+      const result = await startBookingOtp({ contact: "abc" });
+
+      expect(result).toMatchObject({
+        ok: false,
+        status: 400,
+        message: "Please enter a valid phone number before requesting OTP.",
+        code: "INVALID_OTP_PAYLOAD",
+        fieldErrors: {
+          contact: "Please enter a valid phone number before requesting OTP.",
+        },
+        fieldErrorCodes: {
+          contact: "BOOKING_OTP_PHONE_INVALID",
+        },
+      });
+    } finally {
+      if (previousServerOtp === undefined) {
+        delete process.env.BOOKING_OTP_ENABLED;
+      } else {
+        process.env.BOOKING_OTP_ENABLED = previousServerOtp;
+      }
+
+      if (previousPublicOtp === undefined) {
+        delete process.env.NEXT_PUBLIC_BOOKING_OTP_ENABLED;
+      } else {
+        process.env.NEXT_PUBLIC_BOOKING_OTP_ENABLED = previousPublicOtp;
+      }
+    }
   });
 });

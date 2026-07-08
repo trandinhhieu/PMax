@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { StartBookingOtpResult } from "@/features/booking/contracts/api";
 import { startBookingOtp } from "@/server/booking/booking-otp-service";
 
 export async function POST(request: Request) {
@@ -7,7 +8,14 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false, message: "Invalid JSON payload." }, { status: 400 });
+    const result: StartBookingOtpResult = {
+      ok: false,
+      status: 400,
+      message: "Invalid JSON payload.",
+      code: "INVALID_OTP_PAYLOAD",
+    };
+
+    return NextResponse.json(result, { status: result.status });
   }
 
   const result = await startBookingOtp(body);

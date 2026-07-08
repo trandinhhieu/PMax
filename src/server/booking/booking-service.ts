@@ -1,37 +1,15 @@
 import { isBookingOtpEnabled } from "@/config/booking";
-import { bookingRequestSchema, type BookingField } from "@/lib/validation/booking";
+import type { SubmitBookingResult } from "@/features/booking/contracts/api";
+import { formatBookingValidationIssues, bookingRequestSchema } from "@/lib/validation/booking";
 import { sendBookingEmail } from "@/server/booking/booking-email";
 import { EmailConfigurationError, EmailDeliveryError } from "@/server/email/resend";
 import { OtpConfigurationError, OtpDeliveryError, OtpVerificationError, verifySmsOtp } from "@/server/otp/twilio-verify";
-
-type SubmitBookingResult =
-  | { ok: true; emailId: string }
-  | {
-      ok: false;
-      status: 400 | 500 | 502;
-      message: string;
-      code:
-        | "INVALID_BOOKING_PAYLOAD"
-        | "BOOKING_OTP_NOT_CONFIGURED"
-        | "BOOKING_OTP_INVALID"
-        | "BOOKING_EMAIL_NOT_CONFIGURED"
-        | "RESEND_DELIVERY_FAILED"
-        | "BOOKING_EMAIL_FAILED";
-      fieldErrors?: Partial<Record<BookingField | "email" | "phone" | "otpCode", string>>;
-    };
 
 export async function submitBooking(input: unknown): Promise<SubmitBookingResult> {
   const parsed = bookingRequestSchema.safeParse(input);
 
   if (!parsed.success) {
-    const fieldErrors: Partial<Record<BookingField | "email" | "phone" | "otpCode", string>> = {};
-
-    for (const issue of parsed.error.issues) {
-      const field = issue.path[0] as BookingField | undefined;
-      if (field && !fieldErrors[field]) {
-        fieldErrors[field] = issue.message;
-      }
-    }
+    const { fieldErrors, fieldErrorCodes } = formatBookingValidationIssues(parsed.error);
 
     return {
       ok: false,
@@ -39,6 +17,7 @@ export async function submitBooking(input: unknown): Promise<SubmitBookingResult
       message: "Invalid booking request.",
       code: "INVALID_BOOKING_PAYLOAD",
       fieldErrors,
+      fieldErrorCodes,
     };
   }
 
@@ -51,6 +30,9 @@ export async function submitBooking(input: unknown): Promise<SubmitBookingResult
         code: "BOOKING_OTP_INVALID",
         fieldErrors: {
           otpCode: "Please enter the SMS verification code.",
+        },
+        fieldErrorCodes: {
+          otpCode: "BOOKING_OTP_REQUIRED",
         },
       };
     }
@@ -77,6 +59,9 @@ export async function submitBooking(input: unknown): Promise<SubmitBookingResult
           code: "BOOKING_OTP_INVALID",
           fieldErrors: {
             otpCode: error.message,
+          },
+          fieldErrorCodes: {
+            otpCode: "BOOKING_OTP_INVALID_CODE",
           },
         };
       }

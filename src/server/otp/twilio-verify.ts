@@ -1,3 +1,5 @@
+import { isE164BookingPhoneNumber, normalizeBookingPhoneNumber } from "@/features/booking/domain/phone-policy";
+
 type TwilioVerificationResponse = {
   sid?: string;
   status?: string;
@@ -56,20 +58,7 @@ function getConfig(): TwilioVerifyConfig {
   return { accountSid, authToken, serviceSid };
 }
 
-export function normalizePhoneNumber(value: string) {
-  const compact = value.trim().replace(/[\s().-]/g, "");
-
-  if (compact.startsWith("+")) return compact;
-  if (compact.startsWith("00")) return `+${compact.slice(2)}`;
-  if (compact.startsWith("0")) return `+84${compact.slice(1)}`;
-  if (compact.startsWith("84")) return `+${compact}`;
-
-  return compact;
-}
-
-function isE164Phone(value: string) {
-  return /^\+[1-9]\d{7,14}$/.test(value);
-}
+export const normalizePhoneNumber = normalizeBookingPhoneNumber;
 
 async function callTwilioVerify(path: string, body: URLSearchParams) {
   const config = getConfig();
@@ -95,7 +84,7 @@ async function callTwilioVerify(path: string, body: URLSearchParams) {
 export async function startSmsOtp(rawPhone: string) {
   const phone = normalizePhoneNumber(rawPhone);
 
-  if (!isE164Phone(phone)) {
+  if (!isE164BookingPhoneNumber(phone)) {
     throw new OtpVerificationError("Please enter a valid phone number with country code, for example +84905906842.");
   }
 
@@ -114,7 +103,7 @@ export async function startSmsOtp(rawPhone: string) {
 export async function verifySmsOtp(rawPhone: string, code: string) {
   const phone = normalizePhoneNumber(rawPhone);
 
-  if (!isE164Phone(phone)) {
+  if (!isE164BookingPhoneNumber(phone)) {
     throw new OtpVerificationError("Please enter a valid phone number with country code, for example +84905906842.");
   }
 

@@ -1,15 +1,8 @@
 import { isBookingOtpEnabled } from "@/config/booking";
+import type { StartBookingOtpResult } from "@/features/booking/contracts/api";
+import { getBookingFieldErrorMessage } from "@/features/booking/domain/validation-errors";
 import { bookingOtpStartSchema } from "@/lib/validation/booking";
 import { OtpConfigurationError, OtpDeliveryError, OtpVerificationError, startSmsOtp } from "@/server/otp/twilio-verify";
-
-type StartBookingOtpResult =
-  | { ok: true; message: string }
-  | {
-      ok: false;
-      status: 400 | 500 | 502;
-      message: string;
-      code: "BOOKING_OTP_DISABLED" | "INVALID_OTP_PAYLOAD" | "OTP_NOT_CONFIGURED" | "OTP_DELIVERY_FAILED";
-    };
 
 export async function startBookingOtp(input: unknown): Promise<StartBookingOtpResult> {
   if (!isBookingOtpEnabled()) {
@@ -29,6 +22,12 @@ export async function startBookingOtp(input: unknown): Promise<StartBookingOtpRe
       status: 400,
       message: "Please enter a valid phone number before requesting OTP.",
       code: "INVALID_OTP_PAYLOAD",
+      fieldErrors: {
+        contact: getBookingFieldErrorMessage("BOOKING_OTP_PHONE_INVALID"),
+      },
+      fieldErrorCodes: {
+        contact: "BOOKING_OTP_PHONE_INVALID",
+      },
     };
   }
 
