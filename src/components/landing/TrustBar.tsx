@@ -1,8 +1,8 @@
-import { Clock, Flame, MapPin, Navigation } from "lucide-react";
+import { Bike, Clock, Flame, MapPin } from "lucide-react";
 import type { Locale } from "@/types/common";
 import { copy, trustItems } from "@/data/content";
 
-const icons = [Clock, MapPin, Flame, Navigation];
+const icons = [Clock, MapPin, Flame, Bike];
 
 export function TrustBar({ locale }: { locale: Locale }) {
   const t = copy[locale];

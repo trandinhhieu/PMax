@@ -24,12 +24,28 @@ body {
   padding-bottom: calc(76px + env(safe-area-inset-bottom));
 }
 
+.safe-area-inline {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+.ios-form-control {
+  max-width: 100%;
+  min-width: 0;
+}
+
 button,
 a,
 input,
 select,
 textarea {
   font: inherit;
+}
+
+input,
+select,
+textarea {
+  box-sizing: border-box;
 }
 
 ::selection {
@@ -59,11 +75,21 @@ textarea {
   body {
     padding-bottom: 0;
   }
+
+  .safe-area-inline {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
 }
 
 @media (min-width: 1024px) {
   .menu-items-anchor {
     scroll-margin-top: 112px;
+  }
+
+  .safe-area-inline {
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 }
 

@@ -131,8 +131,8 @@ export const gallery = [
 ] satisfies Array<{ src: string; alt: LocalizedText }>;
 
 export const trustItems = {
-  en: ["Open daily 4:00 PM - 11:00 PM", "169 To Hien Thanh, Son Tra", "Wood-fired pizza", "Near My Khe Beach"],
-  vi: ["Mở cửa hằng ngày 16:00 - 23:00", "169 Tô Hiến Thành, Sơn Trà", "Pizza nướng củi", "Gần biển Mỹ Khê"],
+  en: ["Open daily 4:00 PM - 11:00 PM", "169 To Hien Thanh, Son Tra", "Wood-fired pizza", "Free delivery within 3 km"],
+  vi: ["Mở cửa hằng ngày 16:00 - 23:00", "169 Tô Hiến Thành, Sơn Trà", "Pizza nướng củi", "Miễn phí giao hàng dưới 3 km"],
 } satisfies Record<Locale, string[]>;
 
 export const reviewSources = {

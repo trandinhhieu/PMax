@@ -199,7 +199,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
   };
 
   return (
-    <section className="bg-cream px-4 py-20 sm:px-6 lg:px-8" id="booking">
+    <section className="safe-area-inline overflow-x-clip bg-cream py-20" id="booking">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
           <p className="text-sm font-bold uppercase tracking-wide text-tomato">{locale === "en" ? "Booking" : "Đặt bàn"}</p>
@@ -235,7 +235,7 @@ export function BookingForm({ locale }: { locale: Locale }) {
         </div>
 
         <form
-          className="rounded-lg border border-borderWarm bg-porcelain p-6 pb-24 shadow-large md:pb-6"
+          className="overflow-x-clip rounded-lg border border-borderWarm bg-porcelain p-5 pb-24 shadow-large sm:p-6 md:pb-6"
           noValidate
           onChange={(event) => syncRequiredValues(event.currentTarget)}
           onInput={(event) => syncRequiredValues(event.currentTarget)}
@@ -362,14 +362,14 @@ export function BookingForm({ locale }: { locale: Locale }) {
           ) : null}
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="text-sm font-semibold text-charcoal" htmlFor="booking-contact">
+            <label className="min-w-0 text-sm font-semibold text-charcoal" htmlFor="booking-contact">
               {t.form.phone}
               <RequiredMark />
-              <span className="mt-2 flex gap-2">
+              <span className="mt-2 flex min-w-0 gap-2">
                 <input
                   aria-describedby={fieldError("contact") ? "booking-contact-error" : undefined}
                   aria-invalid={Boolean(fieldError("contact"))}
-                  className="min-h-12 min-w-0 flex-1 rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
+                  className="ios-form-control min-h-12 flex-1 rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                   id="booking-contact"
                   name="contact"
                   onChange={(event) => updateRequiredValue("contact", event.currentTarget.value)}
@@ -403,13 +403,13 @@ export function BookingForm({ locale }: { locale: Locale }) {
             </label>
 
             {isOtpEnabled ? (
-              <label className="text-sm font-semibold text-charcoal" htmlFor="booking-otp">
+              <label className="min-w-0 text-sm font-semibold text-charcoal" htmlFor="booking-otp">
                 {locale === "en" ? "SMS code" : "Mã SMS"}
                 <RequiredMark />
                 <input
                   aria-describedby={fieldError("otpCode") ? "booking-otp-error" : undefined}
                   aria-invalid={Boolean(fieldError("otpCode"))}
-                  className="mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
+                  className="ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                   id="booking-otp"
                   inputMode="numeric"
                   name="otpCode"
@@ -424,13 +424,13 @@ export function BookingForm({ locale }: { locale: Locale }) {
               </label>
             ) : null}
 
-            <label className="text-sm font-semibold text-charcoal" htmlFor="booking-name">
+            <label className="min-w-0 text-sm font-semibold text-charcoal" htmlFor="booking-name">
               {t.form.name}
               <RequiredMark />
               <input
                 aria-describedby={fieldError("name") ? "booking-name-error" : undefined}
                 aria-invalid={Boolean(fieldError("name"))}
-                className="mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
+                className="ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                 id="booking-name"
                 name="name"
                 onChange={(event) => updateRequiredValue("name", event.currentTarget.value)}
@@ -442,13 +442,13 @@ export function BookingForm({ locale }: { locale: Locale }) {
               {fieldError("name") ? <span className="mt-2 block text-sm text-error" id="booking-name-error">{fieldError("name")}</span> : null}
             </label>
 
-            <label className="text-sm font-semibold text-charcoal" htmlFor="booking-date">
+            <label className="min-w-0 text-sm font-semibold text-charcoal" htmlFor="booking-date">
               {t.form.date}
               <RequiredMark />
               <input
                 aria-describedby={fieldError("date") ? "booking-date-error" : undefined}
                 aria-invalid={Boolean(fieldError("date"))}
-                className="mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
+                className="ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                 id="booking-date"
                 min={minDate}
                 name="date"
@@ -461,13 +461,13 @@ export function BookingForm({ locale }: { locale: Locale }) {
               {fieldError("date") ? <span className="mt-2 block text-sm text-error" id="booking-date-error">{fieldError("date")}</span> : null}
             </label>
 
-            <label className="text-sm font-semibold text-charcoal" htmlFor="booking-time">
+            <label className="min-w-0 text-sm font-semibold text-charcoal" htmlFor="booking-time">
               {t.form.time}
               <RequiredMark />
               <input
                 aria-describedby={fieldError("time") ? "booking-time-error" : undefined}
                 aria-invalid={Boolean(fieldError("time"))}
-                className="mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
+                className="ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                 id="booking-time"
                 max={businessInfo.openingHoursStructured.closes}
                 min={businessInfo.openingHoursStructured.opens}
@@ -481,13 +481,13 @@ export function BookingForm({ locale }: { locale: Locale }) {
               {fieldError("time") ? <span className="mt-2 block text-sm text-error" id="booking-time-error">{fieldError("time")}</span> : null}
             </label>
 
-            <label className="text-sm font-semibold text-charcoal" htmlFor="booking-guests">
+            <label className="min-w-0 text-sm font-semibold text-charcoal" htmlFor="booking-guests">
               {t.form.guests}
               <RequiredMark />
               <input
                 aria-describedby={fieldError("guests") ? "booking-guests-error" : undefined}
                 aria-invalid={Boolean(fieldError("guests"))}
-                className="mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
+                className="ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
                 id="booking-guests"
                 max={20}
                 min={1}
@@ -501,14 +501,14 @@ export function BookingForm({ locale }: { locale: Locale }) {
               {fieldError("guests") ? <span className="mt-2 block text-sm text-error" id="booking-guests-error">{fieldError("guests")}</span> : null}
             </label>
 
-            <label className="text-sm font-semibold text-charcoal sm:col-span-2" htmlFor="booking-channel">
+            <label className="min-w-0 text-sm font-semibold text-charcoal sm:col-span-2" htmlFor="booking-channel">
               {t.form.channel}
               <RequiredMark />
-              <span className="relative mt-2 block">
+              <span className="relative mt-2 block min-w-0">
                 <select
                   aria-describedby={fieldError("contactChannel") ? "booking-channel-error" : undefined}
                   aria-invalid={Boolean(fieldError("contactChannel"))}
-                  className="min-h-12 w-full appearance-none rounded-lg border border-borderWarm bg-white px-3 py-3 pr-12 text-base outline-none focus:border-olive"
+                  className="ios-form-control min-h-12 w-full appearance-none rounded-lg border border-borderWarm bg-white px-3 py-3 pr-12 text-base outline-none focus:border-olive"
                   id="booking-channel"
                   name="contactChannel"
                   onChange={(event) => updateRequiredValue("contactChannel", event.currentTarget.value)}
@@ -529,12 +529,12 @@ export function BookingForm({ locale }: { locale: Locale }) {
               {fieldError("contactChannel") ? <span className="mt-2 block text-sm text-error" id="booking-channel-error">{fieldError("contactChannel")}</span> : null}
             </label>
           </div>
-          <label className="mt-4 block text-sm font-semibold text-charcoal" htmlFor="booking-note">
+          <label className="mt-4 block min-w-0 text-sm font-semibold text-charcoal" htmlFor="booking-note">
             {t.form.note}
             <textarea
               aria-describedby={fieldError("note") ? "booking-note-error" : undefined}
               aria-invalid={Boolean(fieldError("note"))}
-              className="mt-2 min-h-28 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
+              className="ios-form-control mt-2 min-h-28 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
               id="booking-note"
               maxLength={300}
               name="note"
