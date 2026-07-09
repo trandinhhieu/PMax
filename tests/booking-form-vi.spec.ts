@@ -48,6 +48,9 @@ test("Vietnamese booking form enables submit only when valid, handles contact ch
   await expect(page.getByLabel(/Tên/)).toHaveValue("");
   await expect(page.getByLabel(/Số khách/)).toHaveValue("1");
   await expect(page.getByLabel(/Kênh liên hệ/)).toHaveValue("phone");
+  await expect.poll(async () => page.evaluate(() => {
+    return ((window as Window & { dataLayer?: Array<Record<string, unknown>> }).dataLayer ?? []).map((event) => event.event);
+  })).toEqual(["booking_start", "booking_submit", "booking_success"]);
 
   expect(bookingPayload).toMatchObject({
     contact: "+84905906842",

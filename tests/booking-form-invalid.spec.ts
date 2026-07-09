@@ -64,6 +64,9 @@ test.describe("booking form invalid states", () => {
     await submitBookingForm(page);
 
     await expect(bookingSummaryAlert(page)).toBeVisible();
+    await expect(page.locator("#booking-contact")).toBeFocused();
+    await expect(page.locator("#booking-contact")).toHaveAttribute("aria-invalid", "true");
+    await expect(page.locator("#booking-contact")).toHaveAttribute("aria-describedby", "booking-contact-error");
     await expect(page.locator("#booking-contact-error")).toBeVisible();
     await expect(page.locator("#booking-name-error")).toBeVisible();
     await expect(page.locator("#booking-date-error")).toBeVisible();
