@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Script from "next/script";
 import { notFound } from "next/navigation";
-import { Header } from "@/components/landing/Header";
-import { StickyMobileCTA } from "@/components/landing/StickyMobileCTA";
+import { Header } from "@/features/landing";
+import { StickyMobileCTA } from "@/features/landing";
 import { Footer } from "@/components/layout/Footer";
 import { businessInfo } from "@/config/business";
 import { getDeploymentUrl } from "@/lib/site-url";

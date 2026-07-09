@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BackToTopButton } from "@/components/layout/BackToTopButton";
-import { MenuCatalog } from "@/components/menu/MenuCatalog";
 import { businessInfo, siteConfig } from "@/config/business";
+import { MenuCatalog } from "@/features/menu";
 import { getLocalizedPaths } from "@/lib/locale-routing";
 import { isLocale, type Locale } from "@/types/common";
 
