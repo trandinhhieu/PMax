@@ -1,7 +1,6 @@
-import { businessInfo } from "@/config/business";
+﻿import { businessInfo } from "@/config/business";
 import { formatIsoDateForDisplay } from "@/lib/date";
 import type { BookingRequestValues } from "@/lib/validation/booking";
-import { EmailConfigurationError, sendEmail } from "@/server/email/resend";
 
 const contactChannelLabels: Record<BookingRequestValues["contactChannel"], string> = {
   phone: "Phone",
@@ -10,28 +9,12 @@ const contactChannelLabels: Record<BookingRequestValues["contactChannel"], strin
   messenger: "Facebook Messenger",
 };
 
-function readEmailEnv(name: "BOOKING_FROM_EMAIL" | "BOOKING_NOTIFY_EMAIL") {
-  const value = process.env[name]?.trim();
-
-  if (!value) return "";
-
-  return value.replace(/^["'](.*)["']$/, "$1").trim();
-}
-
-function isEmailLike(value: string) {
-  return /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(value);
-}
-
-function getAddressFromSender(value: string) {
-  return value.match(/<([^<>]+)>/)?.[1]?.trim() ?? value.trim();
-}
-
 function escapeHtml(value: string) {
   return value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
+    .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
 
@@ -59,10 +42,14 @@ function buildBookingLines(booking: BookingRequestValues, submittedAt: Date) {
     `Number of guests: ${booking.guests}`,
     `Note/message: ${note || "Not provided"}`,
     `Submission timestamp: ${formatTimestamp(submittedAt)}`,
-  ].filter(Boolean) as string[];
+  ];
 }
 
-function buildTextEmail(booking: BookingRequestValues, submittedAt: Date) {
+export function buildBookingEmailSubject(booking: BookingRequestValues) {
+  return `New booking request: ${booking.name} - ${formatDate(booking.date)} ${booking.time}`;
+}
+
+export function buildBookingEmailText(booking: BookingRequestValues, submittedAt: Date) {
   return [
     `New booking request for ${businessInfo.displayName}`,
     "",
@@ -72,7 +59,7 @@ function buildTextEmail(booking: BookingRequestValues, submittedAt: Date) {
   ].join("\n");
 }
 
-function buildHtmlEmail(booking: BookingRequestValues, submittedAt: Date) {
+export function buildBookingEmailHtml(booking: BookingRequestValues, submittedAt: Date) {
   const rows = buildBookingLines(booking, submittedAt)
     .map((line) => {
       const [label, ...valueParts] = line.split(": ");
@@ -88,47 +75,4 @@ function buildHtmlEmail(booking: BookingRequestValues, submittedAt: Date) {
       <p style="margin:16px 0 0;color:#666;font-size:13px;">Internal notification only. No customer confirmation email was sent.</p>
     </div>
   `;
-}
-
-export async function sendBookingEmail(booking: BookingRequestValues) {
-  const from = readEmailEnv("BOOKING_FROM_EMAIL");
-  const to = readEmailEnv("BOOKING_NOTIFY_EMAIL");
-
-  if (!from || !to) {
-    throw new EmailConfigurationError("BOOKING_FROM_EMAIL and BOOKING_NOTIFY_EMAIL must be configured.");
-  }
-
-  const senderAddress = getAddressFromSender(from);
-  if (!isEmailLike(senderAddress)) {
-    throw new EmailConfigurationError("BOOKING_FROM_EMAIL must be a valid sender, for example Hermanos <onboarding@resend.dev>.");
-  }
-
-  if (senderAddress.endsWith(".vercel.app")) {
-    throw new EmailConfigurationError("BOOKING_FROM_EMAIL cannot use a vercel.app sender domain.");
-  }
-
-  const recipients = to.split(",").map((email) => email.trim()).filter(Boolean);
-  if (!recipients.length) {
-    throw new EmailConfigurationError("BOOKING_NOTIFY_EMAIL must include at least one recipient.");
-  }
-
-  const invalidRecipient = recipients.find((email) => !isEmailLike(email));
-  if (invalidRecipient) {
-    throw new EmailConfigurationError(`BOOKING_NOTIFY_EMAIL includes an invalid recipient: ${invalidRecipient}.`);
-  }
-
-  const submittedAt = new Date();
-
-  console.info("Sending booking notification email", {
-    from: senderAddress,
-    to: recipients,
-  });
-
-  return sendEmail({
-    from,
-    to: recipients,
-    subject: `New booking request: ${booking.name} - ${formatDate(booking.date)} ${booking.time}`,
-    text: buildTextEmail(booking, submittedAt),
-    html: buildHtmlEmail(booking, submittedAt),
-  });
 }
