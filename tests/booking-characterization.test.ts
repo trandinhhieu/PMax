@@ -1,5 +1,5 @@
 ﻿import { expect, test } from "@playwright/test";
-import { getLocalizedBookingFieldError } from "../src/features/booking/presentation/error-copy";
+import { getLocalizedBookingFieldError } from "../src/features/booking/presentation/error";
 import { isValidBookingOtpPhoneNumber, normalizeBookingPhoneNumber } from "../src/features/booking/domain/phone-policy";
 import { bookingRequestSchema, createBookingSchemas, formatBookingValidationIssues } from "../src/lib/validation/booking";
 import { startBookingOtp } from "../src/server/booking/booking-otp-service";

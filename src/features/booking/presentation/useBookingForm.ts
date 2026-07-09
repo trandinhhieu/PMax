@@ -14,12 +14,12 @@ import {
   type SubmitBookingResult,
 } from "@/features/booking/contracts/api";
 import { submitBookingRequest, startBookingOtp } from "@/features/booking/infrastructure/browser/booking-api-client";
-import { getLocalizedBookingFieldError } from "@/features/booking/presentation/error-copy";
+import { getLocalizedBookingFieldError } from "@/features/booking/presentation/error";
 import { trackEvent } from "@/lib/analytics";
 import { formatDateStringInTimeZone } from "@/lib/date";
 import { bookingSchema, otpCodeSchema, type BookingField, type BookingFormValues } from "@/lib/validation/booking";
 import type { Locale } from "@/types/common";
-import { getBookingFormCopy } from "./booking-form-copy";
+import { getBookingFormCopy } from "./booking-form";
 
 export type FormStatus = "idle" | "submitting" | "error" | "success";
 export type OtpStatus = "idle" | "sending" | "sent" | "error";

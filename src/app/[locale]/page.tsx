@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { BackToTopButton } from "@/components/layout/BackToTopButton";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { businessInfo, siteConfig } from "@/config/business";
-import { BookingForm, FaqSection, GallerySection, HeroSection, MapContactSection, MenuPreview, ReviewsSection, TrustBar, WhySection } from "@/features/landing";
+import { BookingSection, FaqSection, GallerySection, HeroSection, MapContactSection, MenuPreview, ReviewsSection, TrustBar, WhySection } from "@/features/landing";
 import { getLocalizedPaths } from "@/lib/locale-routing";
 import { restaurantJsonLd } from "@/lib/schema";
 import { isLocale, type Locale } from "@/types/common";
@@ -70,7 +70,7 @@ export default async function LandingPage({ params }: PageProps) {
       <WhySection locale={typedLocale} />
       <GallerySection locale={typedLocale} />
       <ReviewsSection locale={typedLocale} />
-      <BookingForm locale={typedLocale} />
+      <BookingSection locale={typedLocale} />
       <MapContactSection locale={typedLocale} />
       <FaqSection locale={typedLocale} />
       <BackToTopButton locale={typedLocale} />
