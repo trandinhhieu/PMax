@@ -407,6 +407,101 @@ function inferKind(category, groupId) {
   return "dish";
 }
 
+const tagOverridesByName = new Map([
+  ["Margherita Pizza", [{ en: "vegetarian", vi: "dochay" }]],
+  ["Caprese Pizza", [{ en: "vegetarian", vi: "dochay" }]],
+  ["Four Cheese Pizza", [{ en: "vegetarian", vi: "dochay" }]],
+  ["Eggplant & Blue Cheese Pizza", [{ en: "vegetarian", vi: "dochay" }]],
+  ["Truffle & Mushroom Pizza", [{ en: "vegetarian", vi: "dochay" }]],
+  ["Truffle Spaghetti", [{ en: "vegetarian", vi: "dochay" }]],
+  ["Greek Salad", [{ en: "vegetarian", vi: "dochay" }]],
+  [
+    "Green Vegan Pizza",
+    [
+      { en: "vegan", vi: "thuanchay" },
+      { en: "nocheese", vi: "khongphomai" },
+    ],
+  ],
+  [
+    "Vegan Pizza",
+    [
+      { en: "vegan", vi: "thuanchay" },
+      { en: "nocheese", vi: "khongphomai" },
+    ],
+  ],
+]);
+
+function inferTags(category, groupId, name, description, recommended) {
+  const text = `${name} ${description ?? ""}`.toLowerCase();
+  const tags = [];
+  const add = (en, vi) => {
+    if (!tags.some((tag) => tag.en === en)) tags.push({ en, vi });
+  };
+
+  if (category === "pizza" && (groupId === "pizza-classic" || groupId === "pizza-specialty")) add("woodfired", "nướngcủi");
+  if (category === "pasta") add("comfortfood", "mónănngon");
+  if (groupId === "salad") {
+    add("healthy", "lànhmạnh");
+    add("freshfood", "tươisạch");
+  }
+  if (groupId === "burger") add("juicy", "đậmvị");
+  if (groupId === "grilled-fried") add(text.includes("fried") ? "crispy" : "grilled", text.includes("fried") ? "giònrụm" : "nướngthơm");
+  if (["nachos", "tacos", "quesadilla", "wrap"].includes(groupId)) {
+    add("mexicanfood", "ẩmthựcmexico");
+    add("freshfood", "tươisạch");
+  }
+  if (groupId.startsWith("pizza-toppings") || groupId === "burger-extra") add("extratopping", "toppingthêm");
+  if (["beer-steerman", "beer-7bridges", "beer-five-elements", "beer-tap"].includes(groupId)) add("craftbeer", "biathủcông");
+  if (groupId === "wine") add("wine", "ruouvang");
+  if (groupId === "soft-drinks") add("refreshing", "giaikhat");
+  if (groupId === "fizz-soda") {
+    add("fizzy", "cogas");
+    add("refreshing", "giaikhat");
+  }
+  if (groupId === "tea") add("teatime", "thanhmat");
+  if (groupId === "fresh-juice") {
+    add("freshjuice", "nuocep");
+    add("vitamin", "vitamin");
+  }
+
+  const ingredientTags = [
+    ["vegetarian", "vegetarian", "chay"],
+    ["mushroom", "mushroom", "namtuoi"],
+    ["truffle", "truffle", "namtruffle"],
+    ["salmon", "salmon", "cahoi"],
+    ["shrimp", "seafood", "haisan"],
+    ["fish", "seafood", "haisan"],
+    ["beef", "beeflover", "thitbo"],
+    ["steak", "beeflover", "thitbo"],
+    ["chicken", "chickenlover", "thitga"],
+    ["pork", "porklover", "thitheo"],
+    ["bacon", "smoky", "xongkhoi"],
+    ["pepperoni", "pepperoni", "pepperoni"],
+    ["cheese", "cheeselover", "phomai"],
+    ["mozzarella", "cheeselover", "phomai"],
+    ["spicy", "spicy", "caynong"],
+    ["chili", "spicy", "caynong"],
+    ["pineapple", "tropical", "nhietdoi"],
+    ["berry", "berry", "traimong"],
+    ["lemon", "citrus", "camchanh"],
+    ["orange", "citrus", "camchanh"],
+    ["ginger", "warming", "amap"],
+    ["green tea", "antioxidant", "chongoxyhoa"],
+  ];
+
+  for (const [keyword, en, vi] of ingredientTags) {
+    if (text.includes(keyword)) add(en, vi);
+  }
+
+  const tagOverrides = tagOverridesByName.get(name) ?? [];
+  for (const tag of tagOverrides) add(tag.en, tag.vi);
+
+  if (recommended) add("musttry", "nenthu");
+  if (!tags.length) add(category === "drinks" ? "refreshing" : "tasty", category === "drinks" ? "giaikhat" : "ngonmieng");
+
+  return tagOverrides.length ? tags : tags.slice(0, 3);
+}
+
 async function buildMenuItems(categories, recommendedNames) {
   const items = [];
   let displayOrder = 1;
@@ -436,7 +531,8 @@ async function buildMenuItems(categories, recommendedNames) {
           ...(description ? { description } : {}),
           ...(descriptionVi ? { descriptionVi } : {}),
           ...priceData,
-          ...(recommendedByList ? { recommended: true, tags: [{ en: "signature", vi: "đặc trưng" }] } : {}),
+          ...(recommendedByList ? { recommended: true } : {}),
+          tags: inferTags(categoryConfig.category, groupId, name, description, recommendedByList),
           kind,
           displayOrder,
         };

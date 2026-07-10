@@ -15,11 +15,13 @@ export function CategoryTabs({ activeCategory, locale, onSelect }: CategoryTabsP
     <>
       {menuCategories.map((category) => (
         <button
+          aria-current={activeCategory === category.id ? "true" : undefined}
+          aria-pressed={activeCategory === category.id}
           className={cn(
-            "inline-flex min-h-10 shrink-0 snap-start items-center rounded-lg border px-3.5 py-2 text-sm font-bold shadow-small transition sm:min-h-11 sm:px-4",
+            "relative inline-flex min-h-10 shrink-0 snap-start items-center border-b-2 px-1.5 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-canvas sm:px-2",
             activeCategory === category.id
-              ? "border-tomato bg-tomato text-white"
-              : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato hover:text-tomato",
+              ? "border-tomato text-tomato"
+              : "border-transparent text-muted hover:border-borderWarm hover:text-charcoal",
           )}
           key={category.id}
           onClick={() => onSelect(category.id)}

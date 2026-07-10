@@ -20,14 +20,17 @@ export function MenuPreview({ locale }: { locale: Locale }) {
     <section className="bg-porcelain px-4 py-16 sm:px-6 lg:px-8" id="menu">
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl space-y-3">
             <p className="text-sm font-bold uppercase tracking-wide text-tomato">Menu</p>
-            <h2 className="mt-3 font-display text-4xl font-bold text-charcoal sm:text-5xl">{t.sections.menuTitle}</h2>
-            <p className="mt-3 text-base leading-7 text-muted sm:text-lg">{t.sections.menuBody}</p>
+            <h2 className="font-display text-4xl font-bold text-charcoal sm:text-5xl">{t.sections.menuTitle}</h2>
+            <p className="text-base leading-7 text-muted sm:text-lg">{t.sections.menuBody}</p>
+            <p className="max-w-xl text-sm leading-6 text-muted">
+              Tap a category to preview a few representative dishes, then open the full menu for the complete list.
+            </p>
           </div>
-          <div className="hidden xl:flex">
+          <div className="hidden xl:flex xl:justify-end">
             <TrackedLink
-              className="inline-flex min-h-12 items-center justify-center rounded-lg bg-charcoal px-5 py-3 font-bold text-white transition hover:bg-charcoal/90"
+              className="inline-flex min-h-12 items-center justify-center rounded-full bg-charcoal px-5 py-3 font-bold text-white transition hover:bg-charcoal/90"
               event={trackingEvents.viewMenu}
               href={`/${locale}/menu`}
               locale={locale}
@@ -40,7 +43,8 @@ export function MenuPreview({ locale }: { locale: Locale }) {
         <div className="mt-8 flex gap-2 overflow-x-auto pb-2">
           {menuCategories.map((category) => (
             <button
-              className={`min-h-11 shrink-0 rounded-lg border px-4 py-2 text-sm font-bold shadow-small transition ${
+              aria-pressed={active === category.id}
+              className={`min-h-11 shrink-0 rounded-full border px-4 py-2 text-sm font-bold shadow-small transition ${
                 active === category.id
                   ? "border-tomato bg-tomato text-white"
                   : "border-borderWarm bg-white text-charcoal hover:border-tomato hover:bg-porcelain"
@@ -67,7 +71,7 @@ export function MenuPreview({ locale }: { locale: Locale }) {
 
               return (
                 <button
-                  className="group flex h-full flex-col overflow-hidden rounded-lg border border-borderWarm bg-cream text-left shadow-small transition hover:-translate-y-1 hover:shadow-hover"
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-borderWarm bg-cream text-left shadow-small transition hover:-translate-y-1 hover:shadow-hover"
                   key={item.id}
                   onClick={() =>
                     trackEvent(trackingEvents.menuItemClick, {
@@ -82,8 +86,11 @@ export function MenuPreview({ locale }: { locale: Locale }) {
                     <Image
                       alt={image.alt[locale]}
                       className={`${image.isPlaceholder ? "object-contain p-8" : "object-contain p-2 sm:p-3"} transition duration-200 group-hover:scale-[1.03]`}
+                      decoding="async"
                       fill
-                      sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                      loading="lazy"
+                      quality={68}
+                      sizes="(min-width: 1280px) 288px, (min-width: 1024px) 23vw, (min-width: 768px) 46vw, 92vw"
                       src={image.src}
                     />
                   </div>

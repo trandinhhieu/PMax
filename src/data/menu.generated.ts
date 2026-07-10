@@ -244,6 +244,20 @@ export const menuItems = [
       "small": 85,
       "medium": 135
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "dochay"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 1
   },
@@ -259,6 +273,20 @@ export const menuItems = [
       "small": 95,
       "medium": 155
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "dochay"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 2
   },
@@ -277,8 +305,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "porklover",
+        "vi": "thitheo"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
       }
     ],
     "kind": "dish",
@@ -299,8 +335,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "pepperoni",
+        "vi": "pepperoni"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
       }
     ],
     "kind": "dish",
@@ -318,6 +362,20 @@ export const menuItems = [
       "small": 105,
       "medium": 175
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "porklover",
+        "vi": "thitheo"
+      },
+      {
+        "en": "smoky",
+        "vi": "xongkhoi"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 5
   },
@@ -333,6 +391,16 @@ export const menuItems = [
       "small": 105,
       "medium": 180
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 6
   },
@@ -351,8 +419,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      },
+      {
+        "en": "musttry",
+        "vi": "nenthu"
       }
     ],
     "kind": "dish",
@@ -370,6 +446,20 @@ export const menuItems = [
       "small": 110,
       "medium": 180
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      },
+      {
+        "en": "tropical",
+        "vi": "nhietdoi"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 8
   },
@@ -388,8 +478,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      },
+      {
+        "en": "smoky",
+        "vi": "xongkhoi"
       }
     ],
     "kind": "dish",
@@ -410,8 +508,20 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "dochay"
+      },
+      {
+        "en": "musttry",
+        "vi": "nenthu"
       }
     ],
     "kind": "dish",
@@ -432,8 +542,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
       }
     ],
     "kind": "dish",
@@ -448,6 +566,20 @@ export const menuItems = [
     "description": "Cooking cream, mozzarella cheese, parmesan cheese, purple onion, tomato, capers, black olive, smoked salmon, olive oil.",
     "descriptionVi": "Sốt kem, phô mai mozzarella, phô mai parmesan, hành tím, cà chua, nụ bạch hoa, ô liu đen, cá hồi xông khói, dầu ô liu.",
     "price": 225,
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "salmon",
+        "vi": "cahoi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 12
   },
@@ -460,6 +592,20 @@ export const menuItems = [
     "description": "Tomato sauce, mozzarella cheese, parmesan cheese, beef steak, arugula, purple onion, olive oil.",
     "descriptionVi": "Sốt cà chua, phô mai mozzarella, phô mai parmesan, bít tết, rau arugula/rocket, hành tím, dầu ô liu.",
     "price": 245,
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "beeflover",
+        "vi": "thitbo"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 13
   },
@@ -478,8 +624,28 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "mushroom",
+        "vi": "namtuoi"
+      },
+      {
+        "en": "truffle",
+        "vi": "namtruffle"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "dochay"
+      },
+      {
+        "en": "musttry",
+        "vi": "nenthu"
       }
     ],
     "kind": "dish",
@@ -497,6 +663,20 @@ export const menuItems = [
       "small": 105,
       "medium": 175
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "dochay"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 15
   },
@@ -512,6 +692,20 @@ export const menuItems = [
       "small": 105,
       "medium": 165
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "chay"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 16
   },
@@ -527,6 +721,20 @@ export const menuItems = [
       "small": 95,
       "medium": 150
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "vegan",
+        "vi": "thuanchay"
+      },
+      {
+        "en": "nocheese",
+        "vi": "khongphomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 17
   },
@@ -542,6 +750,20 @@ export const menuItems = [
       "small": 105,
       "medium": 165
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "chay"
+      },
+      {
+        "en": "mushroom",
+        "vi": "namtuoi"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 18
   },
@@ -557,6 +779,24 @@ export const menuItems = [
       "small": 105,
       "medium": 150
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "mushroom",
+        "vi": "namtuoi"
+      },
+      {
+        "en": "vegan",
+        "vi": "thuanchay"
+      },
+      {
+        "en": "nocheese",
+        "vi": "khongphomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 19
   },
@@ -572,6 +812,16 @@ export const menuItems = [
       "small": 115,
       "medium": 185
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 20
   },
@@ -587,6 +837,20 @@ export const menuItems = [
       "small": 110,
       "medium": 180
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 21
   },
@@ -602,6 +866,20 @@ export const menuItems = [
       "small": 110,
       "medium": 180
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "mushroom",
+        "vi": "namtuoi"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 22
   },
@@ -617,6 +895,20 @@ export const menuItems = [
       "small": 110,
       "medium": 180
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 23
   },
@@ -632,6 +924,20 @@ export const menuItems = [
       "small": 115,
       "medium": 185
     },
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "seafood",
+        "vi": "haisan"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 24
   },
@@ -644,6 +950,16 @@ export const menuItems = [
     "description": "Ham, salami, mozzarella, parmesan, arugula, sliced tomato, balsamic, olive oil.",
     "descriptionVi": "Đùi heo muối, salami, phô mai mozzarella, phô mai parmesan, rau rocket, cà chua lát, giấm balsamic, dầu ô liu.",
     "price": 195,
+    "tags": [
+      {
+        "en": "woodfired",
+        "vi": "nướngcủi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 25
   },
@@ -659,6 +975,12 @@ export const menuItems = [
       "small": 15,
       "medium": 30
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 26
   },
@@ -674,6 +996,12 @@ export const menuItems = [
       "small": 15,
       "medium": 25
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 27
   },
@@ -689,6 +1017,12 @@ export const menuItems = [
       "small": 15,
       "medium": 25
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 28
   },
@@ -704,6 +1038,12 @@ export const menuItems = [
       "small": 15,
       "medium": 25
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 29
   },
@@ -719,6 +1059,12 @@ export const menuItems = [
       "small": 15,
       "medium": 25
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 30
   },
@@ -734,6 +1080,12 @@ export const menuItems = [
       "small": 15,
       "medium": 30
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 31
   },
@@ -749,6 +1101,16 @@ export const menuItems = [
       "small": 15,
       "medium": 30
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "mushroom",
+        "vi": "namtuoi"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 32
   },
@@ -764,6 +1126,12 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 33
   },
@@ -779,6 +1147,16 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "pepperoni",
+        "vi": "pepperoni"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 34
   },
@@ -794,6 +1172,12 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 35
   },
@@ -809,6 +1193,16 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "smoky",
+        "vi": "xongkhoi"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 36
   },
@@ -824,6 +1218,20 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "porklover",
+        "vi": "thitheo"
+      },
+      {
+        "en": "spicy",
+        "vi": "caynong"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 37
   },
@@ -839,6 +1247,16 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 38
   },
@@ -854,6 +1272,12 @@ export const menuItems = [
       "small": 20,
       "medium": 35
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 39
   },
@@ -869,6 +1293,12 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 40
   },
@@ -884,6 +1314,16 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 41
   },
@@ -899,6 +1339,16 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 42
   },
@@ -914,6 +1364,16 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 43
   },
@@ -929,6 +1389,16 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 44
   },
@@ -944,6 +1414,16 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 45
   },
@@ -959,6 +1439,16 @@ export const menuItems = [
       "small": 20,
       "medium": 40
     },
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 46
   },
@@ -973,8 +1463,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "comfortfood",
+        "vi": "mónănngon"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
       }
     ],
     "kind": "dish",
@@ -988,6 +1486,16 @@ export const menuItems = [
     "description": "Garlic, Bolognese sauce, parmesan cheese, basil, olive oil.",
     "descriptionVi": "Tỏi, sốt bò bằm, phô mai parmesan, húng quế tây, dầu ô liu.",
     "price": 125,
+    "tags": [
+      {
+        "en": "comfortfood",
+        "vi": "mónănngon"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 48
   },
@@ -1002,8 +1510,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "comfortfood",
+        "vi": "mónănngon"
+      },
+      {
+        "en": "smoky",
+        "vi": "xongkhoi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
       }
     ],
     "kind": "dish",
@@ -1017,6 +1533,20 @@ export const menuItems = [
     "description": "Garlic, homemade pesto sauce, shrimp, squid, clam, parmesan cheese, olive oil.",
     "descriptionVi": "Tỏi, sốt pesto nhà làm, tôm, mực, nghêu, phô mai parmesan, dầu ô liu.",
     "price": 135,
+    "tags": [
+      {
+        "en": "comfortfood",
+        "vi": "mónănngon"
+      },
+      {
+        "en": "seafood",
+        "vi": "haisan"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 50
   },
@@ -1028,6 +1558,20 @@ export const menuItems = [
     "description": "Garlic, tomato sauce, shrimp, squid, clam, parmesan cheese, olive oil.",
     "descriptionVi": "Tỏi, sốt cà chua, tôm, mực, nghêu, phô mai parmesan, dầu ô liu.",
     "price": 135,
+    "tags": [
+      {
+        "en": "comfortfood",
+        "vi": "mónănngon"
+      },
+      {
+        "en": "seafood",
+        "vi": "haisan"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 51
   },
@@ -1039,6 +1583,20 @@ export const menuItems = [
     "description": "Garlic, cooking cream, egg yolk, smoked salmon, parmesan cheese, olive oil.",
     "descriptionVi": "Tỏi, kem nấu ăn, lòng đỏ trứng, cá hồi xông khói, phô mai parmesan, dầu ô liu.",
     "price": 155,
+    "tags": [
+      {
+        "en": "comfortfood",
+        "vi": "mónănngon"
+      },
+      {
+        "en": "salmon",
+        "vi": "cahoi"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 52
   },
@@ -1053,8 +1611,28 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "comfortfood",
+        "vi": "mónănngon"
+      },
+      {
+        "en": "mushroom",
+        "vi": "namtuoi"
+      },
+      {
+        "en": "truffle",
+        "vi": "namtruffle"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "dochay"
+      },
+      {
+        "en": "musttry",
+        "vi": "nenthu"
       }
     ],
     "kind": "dish",
@@ -1068,6 +1646,24 @@ export const menuItems = [
     "description": "Cherry tomato, black olive, purple onion, cucumber, feta cheese, balsamic cream, parmesan cheese.",
     "descriptionVi": "Cà chua bi, ô liu đen, hành đỏ, dưa chuột, phô mai feta, giấm balsamic, phô mai parmesan.",
     "price": 95,
+    "tags": [
+      {
+        "en": "healthy",
+        "vi": "lànhmạnh"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "dochay"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 54
   },
@@ -1079,6 +1675,20 @@ export const menuItems = [
     "description": "Homemade pesto sauce, arugula, parmesan cheese, black olive, balsamic cream, almond, rigatoni, cherry tomato.",
     "descriptionVi": "Sốt húng quế tây nhà làm, rau rocket, phô mai parmesan, ô liu đen, giấm balsamic, hạnh nhân, mì rigatoni, cà chua bi.",
     "price": 125,
+    "tags": [
+      {
+        "en": "healthy",
+        "vi": "lànhmạnh"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 55
   },
@@ -1090,6 +1700,20 @@ export const menuItems = [
     "description": "Lettuce, rocket, purple onion, beef belly, almond.",
     "descriptionVi": "Xà lách, rau rocket, hành tây tím, ba chỉ bò, hạnh nhân.",
     "price": 105,
+    "tags": [
+      {
+        "en": "healthy",
+        "vi": "lànhmạnh"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "beeflover",
+        "vi": "thitbo"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 56
   },
@@ -1101,6 +1725,20 @@ export const menuItems = [
     "description": "Burger bun, lettuce, cucumber pickle, onion, tomato, burger sauce, 125g beef patty, cheddar cheese. Served with French fries on the side.",
     "descriptionVi": "Bánh burger, rau xà lách, dưa leo ngâm, hành tây, cà chua, sốt burger, 125g bò, phô mai cheddar. Phục vụ cùng khoai tây chiên.",
     "price": 115,
+    "tags": [
+      {
+        "en": "juicy",
+        "vi": "đậmvị"
+      },
+      {
+        "en": "beeflover",
+        "vi": "thitbo"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 57
   },
@@ -1112,6 +1750,20 @@ export const menuItems = [
     "description": "Burger bun, lettuce, cucumber pickle, tomato, onion, two 125g beef patties, two cheddar cheese slices, burger sauce. Served with French fries on the side.",
     "descriptionVi": "Bánh burger, rau xà lách, dưa leo ngâm, cà chua, hành tây, 2 miếng bò xay 125g, 2 lát phô mai cheddar, sốt burger. Phục vụ cùng khoai tây chiên.",
     "price": 145,
+    "tags": [
+      {
+        "en": "juicy",
+        "vi": "đậmvị"
+      },
+      {
+        "en": "beeflover",
+        "vi": "thitbo"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 58
   },
@@ -1124,6 +1776,12 @@ export const menuItems = [
     "description": "Extra egg topping for burger.",
     "descriptionVi": "Thêm trứng cho burger.",
     "price": 15,
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 59
   },
@@ -1136,6 +1794,16 @@ export const menuItems = [
     "description": "Extra bacon topping for burger.",
     "descriptionVi": "Thêm thịt heo xông khói cho burger.",
     "price": 15,
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "smoky",
+        "vi": "xongkhoi"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 60
   },
@@ -1148,6 +1816,16 @@ export const menuItems = [
     "description": "Extra cheddar cheese for burger.",
     "descriptionVi": "Thêm phô mai cheddar cho burger.",
     "price": 15,
+    "tags": [
+      {
+        "en": "extratopping",
+        "vi": "toppingthêm"
+      },
+      {
+        "en": "cheeselover",
+        "vi": "phomai"
+      }
+    ],
     "kind": "addon",
     "displayOrder": 61
   },
@@ -1159,6 +1837,12 @@ export const menuItems = [
     "description": "Crispy French fries.",
     "descriptionVi": "Khoai tây chiên giòn.",
     "price": 50,
+    "tags": [
+      {
+        "en": "grilled",
+        "vi": "nướngthơm"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 62
   },
@@ -1170,6 +1854,12 @@ export const menuItems = [
     "description": "Fried potato wedges.",
     "descriptionVi": "Khoai tây chiên múi cau.",
     "price": 75,
+    "tags": [
+      {
+        "en": "crispy",
+        "vi": "giònrụm"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 63
   },
@@ -1185,6 +1875,16 @@ export const menuItems = [
       "fivePcs": 160,
       "eightPcs": 220
     },
+    "tags": [
+      {
+        "en": "grilled",
+        "vi": "nướngthơm"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 64
   },
@@ -1196,6 +1896,20 @@ export const menuItems = [
     "description": "Homemade chips, salsa, bean, jalapeño, guacamole, sour cream, grilled beef belly, parmesan cheese.",
     "descriptionVi": "Bánh nhà làm, salsa, đậu, ớt jalapeño, bơ, kem chua, ba chỉ bò nướng, phô mai parmesan.",
     "price": 135,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "beeflover",
+        "vi": "thitbo"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 65
   },
@@ -1207,6 +1921,20 @@ export const menuItems = [
     "description": "Homemade chips, salsa, corn, bean, jalapeño, guacamole, cherry tomato, sour cream, parmesan cheese.",
     "descriptionVi": "Bánh nhà làm, salsa, bắp mỹ, đậu, ớt jalapeño, bơ, cà chua bi, kem chua, phô mai parmesan.",
     "price": 105,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "chay"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 66
   },
@@ -1218,6 +1946,20 @@ export const menuItems = [
     "description": "Homemade chips, salsa, bean, jalapeño, guacamole, sour cream, parmesan cheese, grilled chicken.",
     "descriptionVi": "Bánh nhà làm, salsa, đậu, ớt jalapeño, bơ, kem chua, phô mai parmesan, gà nướng.",
     "price": 125,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 67
   },
@@ -1233,8 +1975,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
       }
     ],
     "kind": "dish",
@@ -1249,6 +1999,20 @@ export const menuItems = [
     "description": "Tortilla, lettuce, jalapeño salsa, slow cooked chicken, guacamole, sour cream.",
     "descriptionVi": "Tortilla, xà lách, salsa ớt jalapeño, gà hầm/nấu chậm, bơ, kem chua.",
     "price": 125,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 69
   },
@@ -1264,8 +2028,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "porklover",
+        "vi": "thitheo"
       }
     ],
     "kind": "dish",
@@ -1283,8 +2055,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "beeflover",
+        "vi": "thitbo"
       }
     ],
     "kind": "dish",
@@ -1299,6 +2079,20 @@ export const menuItems = [
     "description": "Tortilla, lettuce, jalapeño salsa, smoked salmon, guacamole, sour cream.",
     "descriptionVi": "Tortilla, xà lách, salsa ớt jalapeño, cá hồi xông khói, bơ, kem chua.",
     "price": 155,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "salmon",
+        "vi": "cahoi"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 72
   },
@@ -1311,6 +2105,20 @@ export const menuItems = [
     "description": "Tortilla, lettuce, salsa, corn, mushroom, cherry tomato, jalapeño, guacamole, sour cream.",
     "descriptionVi": "Tortilla, xà lách, salsa, bắp mỹ, nấm, cà chua bi, ớt jalapeño, bơ, kem chua.",
     "price": 105,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "chay"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 73
   },
@@ -1326,8 +2134,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "seafood",
+        "vi": "haisan"
       }
     ],
     "kind": "dish",
@@ -1342,6 +2158,20 @@ export const menuItems = [
     "description": "Tortilla, lettuce, jalapeño salsa, fried fish, guacamole, sour cream.",
     "descriptionVi": "Tortilla, xà lách, salsa ớt jalapeño, cá chiên, bơ, kem chua.",
     "price": 125,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "seafood",
+        "vi": "haisan"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 75
   },
@@ -1356,8 +2186,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "beeflover",
+        "vi": "thitbo"
       }
     ],
     "kind": "dish",
@@ -1371,6 +2209,20 @@ export const menuItems = [
     "description": "Homemade tortilla, mozzarella cheese, bean sauce, salsa, jalapeño, tender roasted chicken, quesadilla sauce.",
     "descriptionVi": "Tortilla nhà làm, phô mai mozzarella, sốt đậu, salsa, ớt jalapeño, gà nướng mềm, sốt quesadilla.",
     "price": 135,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 77
   },
@@ -1382,6 +2234,20 @@ export const menuItems = [
     "description": "Homemade tortilla, mozzarella cheese, bean sauce, salsa, jalapeño, grilled chicken, quesadilla sauce.",
     "descriptionVi": "Tortilla nhà làm, phô mai mozzarella, sốt đậu, salsa, ớt jalapeño, gà nướng, sốt quesadilla.",
     "price": 130,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 78
   },
@@ -1393,6 +2259,20 @@ export const menuItems = [
     "description": "Homemade tortilla, mozzarella cheese, bean sauce, salsa, jalapeño, stewed pork, quesadilla sauce.",
     "descriptionVi": "Tortilla nhà làm, phô mai mozzarella, sốt đậu, salsa, ớt jalapeño, heo hầm, sốt quesadilla.",
     "price": 125,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "porklover",
+        "vi": "thitheo"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 79
   },
@@ -1404,6 +2284,20 @@ export const menuItems = [
     "description": "Homemade tortilla, mozzarella cheese, bean sauce, salsa, jalapeño, mushroom, quesadilla sauce.",
     "descriptionVi": "Tortilla nhà làm, phô mai mozzarella, sốt đậu, salsa, ớt jalapeño, nấm, sốt quesadilla.",
     "price": 125,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "chay"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 80
   },
@@ -1418,8 +2312,16 @@ export const menuItems = [
     "recommended": true,
     "tags": [
       {
-        "en": "signature",
-        "vi": "đặc trưng"
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "beeflover",
+        "vi": "thitbo"
       }
     ],
     "kind": "dish",
@@ -1433,6 +2335,20 @@ export const menuItems = [
     "description": "Homemade tortilla, tender roasted chicken, mozzarella cheese, lettuce, salsa, corn, jalapeño, sour cream, wrap sauce.",
     "descriptionVi": "Tortilla nhà làm, gà nướng mềm, phô mai mozzarella, xà lách, salsa, bắp mỹ, ớt jalapeño, kem chua, sốt wrap.",
     "price": 125,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 82
   },
@@ -1444,6 +2360,20 @@ export const menuItems = [
     "description": "Homemade tortilla, grilled chicken, mozzarella cheese, lettuce, salsa, corn, jalapeño, sour cream, wrap sauce.",
     "descriptionVi": "Tortilla nhà làm, gà nướng, phô mai mozzarella, xà lách, salsa, bắp mỹ, ớt jalapeño, kem chua, sốt wrap.",
     "price": 120,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "chickenlover",
+        "vi": "thitga"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 83
   },
@@ -1455,6 +2385,20 @@ export const menuItems = [
     "description": "Homemade tortilla, stewed pork, mozzarella cheese, lettuce, salsa, corn, jalapeño, sour cream, wrap sauce.",
     "descriptionVi": "Tortilla nhà làm, heo hầm, phô mai mozzarella, xà lách, salsa, bắp mỹ, ớt jalapeño, kem chua, sốt wrap.",
     "price": 115,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "porklover",
+        "vi": "thitheo"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 84
   },
@@ -1466,6 +2410,20 @@ export const menuItems = [
     "description": "Homemade tortilla, mushroom, mozzarella cheese, salad, salsa, corn, jalapeño, sour cream, wrap sauce.",
     "descriptionVi": "Tortilla nhà làm, nấm, phô mai mozzarella, salad, salsa, bắp mỹ, ớt jalapeño, kem chua, sốt wrap.",
     "price": 105,
+    "tags": [
+      {
+        "en": "mexicanfood",
+        "vi": "ẩmthựcmexico"
+      },
+      {
+        "en": "freshfood",
+        "vi": "tươisạch"
+      },
+      {
+        "en": "vegetarian",
+        "vi": "chay"
+      }
+    ],
     "kind": "dish",
     "displayOrder": 85
   },
@@ -1478,6 +2436,12 @@ export const menuItems = [
     "description": "Steerman bottled beer, 4.9% ABV, IBU 13.",
     "descriptionVi": "Bia chai Steerman, độ cồn 4.9%, IBU 13.",
     "price": 75,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 86
   },
@@ -1490,6 +2454,12 @@ export const menuItems = [
     "description": "Steerman mango hard soda, 5% ABV.",
     "descriptionVi": "Hard soda Steerman vị xoài, độ cồn 5%.",
     "price": 70,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 87
   },
@@ -1502,6 +2472,12 @@ export const menuItems = [
     "description": "Steerman pink guava hard soda, 4.9% ABV, IBU 13.",
     "descriptionVi": "Hard soda Steerman vị ổi hồng, độ cồn 4.9%, IBU 13.",
     "price": 65,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 88
   },
@@ -1514,6 +2490,12 @@ export const menuItems = [
     "description": "7Bridges canned beer, 4.8% ABV, IBU 32.",
     "descriptionVi": "Bia lon 7Bridges, độ cồn 4.8%, IBU 32.",
     "price": 85,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 89
   },
@@ -1526,6 +2508,12 @@ export const menuItems = [
     "description": "7Bridges canned wheat beer, 4.2% ABV, IBU 16.",
     "descriptionVi": "Bia lúa mì lon 7Bridges, độ cồn 4.2%, IBU 16.",
     "price": 85,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 90
   },
@@ -1538,6 +2526,12 @@ export const menuItems = [
     "description": "Five Elements bottled Weizen beer, 4.6% ABV, IBU 16.",
     "descriptionVi": "Bia Weizen chai Five Elements, độ cồn 4.6%, IBU 16.",
     "price": 70,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 91
   },
@@ -1550,6 +2544,12 @@ export const menuItems = [
     "description": "Five Elements bottled blonde beer, 4.6% ABV, IBU 20.",
     "descriptionVi": "Bia blonde chai Five Elements, độ cồn 4.6%, IBU 20.",
     "price": 75,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 92
   },
@@ -1562,6 +2562,12 @@ export const menuItems = [
     "description": "Five Elements bottled ale, 4.9% ABV, IBU 16.",
     "descriptionVi": "Bia ale chai Five Elements, độ cồn 4.9%, IBU 16.",
     "price": 70,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 93
   },
@@ -1574,6 +2580,12 @@ export const menuItems = [
     "description": "Five Elements bottled pale ale, 5.2% ABV, IBU 25.",
     "descriptionVi": "Bia pale ale chai Five Elements, độ cồn 5.2%, IBU 25.",
     "price": 70,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 94
   },
@@ -1586,6 +2598,12 @@ export const menuItems = [
     "description": "Five Elements bottled red ale, 6.8% ABV, IBU 23.",
     "descriptionVi": "Bia red ale chai Five Elements, độ cồn 6.8%, IBU 23.",
     "price": 85,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 95
   },
@@ -1598,6 +2616,12 @@ export const menuItems = [
     "description": "Five Elements beer bucket with 5 bottles.",
     "descriptionVi": "Bucket bia Five Elements gồm 5 chai.",
     "price": 330,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 96
   },
@@ -1610,6 +2634,12 @@ export const menuItems = [
     "description": "East West bottled pale ale, 6% ABV, IBU 32.",
     "descriptionVi": "Bia pale ale chai East West, độ cồn 6%, IBU 32.",
     "price": 80,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 97
   },
@@ -1622,6 +2652,12 @@ export const menuItems = [
     "description": "East West bottled IPA, 6.7% ABV, IBU 54.",
     "descriptionVi": "Bia IPA chai East West, độ cồn 6.7%, IBU 54.",
     "price": 90,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 98
   },
@@ -1634,6 +2670,12 @@ export const menuItems = [
     "description": "East West bottled pineapple cider, 4.6% ABV.",
     "descriptionVi": "Cider chai East West vị dứa/thơm, độ cồn 4.6%.",
     "price": 65,
+    "tags": [
+      {
+        "en": "tropical",
+        "vi": "nhietdoi"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 99
   },
@@ -1646,6 +2688,12 @@ export const menuItems = [
     "description": "East West bottled berries cider, 4.6% ABV.",
     "descriptionVi": "Cider chai East West vị berry, độ cồn 4.6%.",
     "price": 65,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 100
   },
@@ -1658,6 +2706,12 @@ export const menuItems = [
     "description": "East West bottled apple cider, 4.6% ABV.",
     "descriptionVi": "Cider chai East West vị táo, độ cồn 4.6%.",
     "price": 70,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 101
   },
@@ -1670,6 +2724,12 @@ export const menuItems = [
     "description": "Blonde ale on tap, 5% ABV, IBU 18.",
     "descriptionVi": "Bia tươi blonde ale, ly 330ml, độ cồn 5%, IBU 18.",
     "price": 75,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 102
   },
@@ -1682,6 +2742,12 @@ export const menuItems = [
     "description": "Laurel pale ale on tap, 6% ABV, IBU 18.",
     "descriptionVi": "Bia tươi laurel pale ale, ly 330ml, độ cồn 6%, IBU 18.",
     "price": 85,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 103
   },
@@ -1694,6 +2760,12 @@ export const menuItems = [
     "description": "Beer tasting set with 2 glasses, 160ml each.",
     "descriptionVi": "Bộ thử bia gồm 2 ly, mỗi ly 160ml.",
     "price": 85,
+    "tags": [
+      {
+        "en": "craftbeer",
+        "vi": "biathủcông"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 104
   },
@@ -1706,6 +2778,12 @@ export const menuItems = [
     "description": "Bottled Huda beer, 4.7% ABV.",
     "descriptionVi": "Bia Huda chai, độ cồn 4.7%.",
     "price": 35,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 105
   },
@@ -1718,6 +2796,12 @@ export const menuItems = [
     "description": "TINI Pinot Grigio white wine.",
     "descriptionVi": "Rượu vang trắng TINI Pinot Grigio.",
     "price": 205,
+    "tags": [
+      {
+        "en": "wine",
+        "vi": "ruouvang"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 106
   },
@@ -1730,6 +2814,12 @@ export const menuItems = [
     "description": "TINI Sangiovese red wine.",
     "descriptionVi": "Rượu vang đỏ TINI Sangiovese.",
     "price": 205,
+    "tags": [
+      {
+        "en": "wine",
+        "vi": "ruouvang"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 107
   },
@@ -1741,6 +2831,16 @@ export const menuItems = [
     "description": "Ginger ale soft drink.",
     "descriptionVi": "Nước ngọt ginger ale.",
     "price": 25,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      },
+      {
+        "en": "warming",
+        "vi": "amap"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 108
   },
@@ -1752,6 +2852,12 @@ export const menuItems = [
     "description": "Bottled drinking water.",
     "descriptionVi": "Nước uống đóng chai.",
     "price": 25,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 109
   },
@@ -1763,6 +2869,12 @@ export const menuItems = [
     "description": "Coca-Cola soft drink.",
     "descriptionVi": "Nước ngọt Coca-Cola.",
     "price": 25,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 110
   },
@@ -1774,6 +2886,12 @@ export const menuItems = [
     "description": "Coca-Cola Light soft drink.",
     "descriptionVi": "Nước ngọt Coca-Cola Light.",
     "price": 25,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 111
   },
@@ -1785,6 +2903,12 @@ export const menuItems = [
     "description": "Coca-Cola Zero soft drink.",
     "descriptionVi": "Nước ngọt Coca-Cola Zero.",
     "price": 25,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 112
   },
@@ -1796,6 +2920,16 @@ export const menuItems = [
     "description": "Sprite lemon-lime soft drink.",
     "descriptionVi": "Nước ngọt Sprite vị chanh.",
     "price": 25,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      },
+      {
+        "en": "citrus",
+        "vi": "camchanh"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 113
   },
@@ -1807,6 +2941,12 @@ export const menuItems = [
     "description": "Fanta soft drink.",
     "descriptionVi": "Nước ngọt Fanta.",
     "price": 25,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 114
   },
@@ -1818,6 +2958,12 @@ export const menuItems = [
     "description": "Sparkling soda water.",
     "descriptionVi": "Soda water có ga.",
     "price": 25,
+    "tags": [
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 115
   },
@@ -1829,6 +2975,20 @@ export const menuItems = [
     "description": "Fizz soda with lemongrass and lemonade.",
     "descriptionVi": "Soda có ga vị sả và chanh.",
     "price": 45,
+    "tags": [
+      {
+        "en": "fizzy",
+        "vi": "cogas"
+      },
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      },
+      {
+        "en": "citrus",
+        "vi": "camchanh"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 116
   },
@@ -1840,6 +3000,20 @@ export const menuItems = [
     "description": "Fizz soda with passion fruit and orange.",
     "descriptionVi": "Soda có ga vị chanh dây và cam.",
     "price": 45,
+    "tags": [
+      {
+        "en": "fizzy",
+        "vi": "cogas"
+      },
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      },
+      {
+        "en": "citrus",
+        "vi": "camchanh"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 117
   },
@@ -1851,6 +3025,16 @@ export const menuItems = [
     "description": "Fizz soda with tamarind and vanilla.",
     "descriptionVi": "Soda có ga vị me và vanilla.",
     "price": 45,
+    "tags": [
+      {
+        "en": "fizzy",
+        "vi": "cogas"
+      },
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 118
   },
@@ -1862,6 +3046,20 @@ export const menuItems = [
     "description": "Fizz soda with mixed berry flavor.",
     "descriptionVi": "Soda có ga vị berry.",
     "price": 45,
+    "tags": [
+      {
+        "en": "fizzy",
+        "vi": "cogas"
+      },
+      {
+        "en": "refreshing",
+        "vi": "giaikhat"
+      },
+      {
+        "en": "berry",
+        "vi": "traimong"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 119
   },
@@ -1877,6 +3075,16 @@ export const menuItems = [
       "glass": 20,
       "pot": 35
     },
+    "tags": [
+      {
+        "en": "teatime",
+        "vi": "thanhmat"
+      },
+      {
+        "en": "warming",
+        "vi": "amap"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 120
   },
@@ -1892,6 +3100,12 @@ export const menuItems = [
       "glass": 20,
       "pot": 35
     },
+    "tags": [
+      {
+        "en": "teatime",
+        "vi": "thanhmat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 121
   },
@@ -1907,6 +3121,16 @@ export const menuItems = [
       "glass": 20,
       "pot": 35
     },
+    "tags": [
+      {
+        "en": "teatime",
+        "vi": "thanhmat"
+      },
+      {
+        "en": "antioxidant",
+        "vi": "chongoxyhoa"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 122
   },
@@ -1922,6 +3146,12 @@ export const menuItems = [
       "glass": 20,
       "pot": 35
     },
+    "tags": [
+      {
+        "en": "teatime",
+        "vi": "thanhmat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 123
   },
@@ -1937,6 +3167,12 @@ export const menuItems = [
       "glass": 20,
       "pot": 35
     },
+    "tags": [
+      {
+        "en": "teatime",
+        "vi": "thanhmat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 124
   },
@@ -1952,6 +3188,12 @@ export const menuItems = [
       "glass": 20,
       "pot": 35
     },
+    "tags": [
+      {
+        "en": "teatime",
+        "vi": "thanhmat"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 125
   },
@@ -1963,6 +3205,16 @@ export const menuItems = [
     "description": "Fresh watermelon juice.",
     "descriptionVi": "Nước ép dưa hấu tươi.",
     "price": 40,
+    "tags": [
+      {
+        "en": "freshjuice",
+        "vi": "nuocep"
+      },
+      {
+        "en": "vitamin",
+        "vi": "vitamin"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 126
   },
@@ -1974,6 +3226,20 @@ export const menuItems = [
     "description": "Fresh pineapple juice.",
     "descriptionVi": "Nước ép dứa/thơm tươi.",
     "price": 45,
+    "tags": [
+      {
+        "en": "freshjuice",
+        "vi": "nuocep"
+      },
+      {
+        "en": "vitamin",
+        "vi": "vitamin"
+      },
+      {
+        "en": "tropical",
+        "vi": "nhietdoi"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 127
   },
@@ -1985,6 +3251,16 @@ export const menuItems = [
     "description": "Fresh apple juice.",
     "descriptionVi": "Nước ép táo tươi.",
     "price": 45,
+    "tags": [
+      {
+        "en": "freshjuice",
+        "vi": "nuocep"
+      },
+      {
+        "en": "vitamin",
+        "vi": "vitamin"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 128
   },
@@ -1996,6 +3272,16 @@ export const menuItems = [
     "description": "Fresh lime juice.",
     "descriptionVi": "Nước ép chanh tươi.",
     "price": 30,
+    "tags": [
+      {
+        "en": "freshjuice",
+        "vi": "nuocep"
+      },
+      {
+        "en": "vitamin",
+        "vi": "vitamin"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 129
   },
@@ -2007,6 +3293,20 @@ export const menuItems = [
     "description": "Fresh orange juice.",
     "descriptionVi": "Nước ép cam tươi.",
     "price": 40,
+    "tags": [
+      {
+        "en": "freshjuice",
+        "vi": "nuocep"
+      },
+      {
+        "en": "vitamin",
+        "vi": "vitamin"
+      },
+      {
+        "en": "citrus",
+        "vi": "camchanh"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 130
   },
@@ -2018,6 +3318,16 @@ export const menuItems = [
     "description": "Mixed fresh fruit juice.",
     "descriptionVi": "Nước ép trái cây hỗn hợp.",
     "price": 45,
+    "tags": [
+      {
+        "en": "freshjuice",
+        "vi": "nuocep"
+      },
+      {
+        "en": "vitamin",
+        "vi": "vitamin"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 131
   },
@@ -2029,6 +3339,16 @@ export const menuItems = [
     "description": "Fresh coconut drink.",
     "descriptionVi": "Nước dừa tươi.",
     "price": 45,
+    "tags": [
+      {
+        "en": "freshjuice",
+        "vi": "nuocep"
+      },
+      {
+        "en": "vitamin",
+        "vi": "vitamin"
+      }
+    ],
     "kind": "drink",
     "displayOrder": 132
   }

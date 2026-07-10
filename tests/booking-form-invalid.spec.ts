@@ -142,6 +142,7 @@ test.describe("booking form invalid states", () => {
 
     await page.locator("#booking button[type=\"submit\"]").click();
 
-    await expect(page.locator("#booking [role='alert']")).toBeVisible();
+    await expect(page.getByText("Vui lòng kiểm tra các trường đang bị lỗi trước khi gửi.")).toBeVisible();
+    await expect(page.getByText("Vui lòng chọn giờ hợp lệ trong giờ mở cửa.")).toBeVisible();
   });
 });

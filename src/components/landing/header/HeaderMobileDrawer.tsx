@@ -8,6 +8,7 @@ import { businessInfo } from "@/config/business";
 import { trackingEvents } from "@/config/tracking";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/types/common";
+import { Button, Stack } from "@/components/ui";
 import { TrackedLink } from "../TrackedLink";
 
 type HeaderMobileDrawerProps = {
@@ -73,43 +74,39 @@ export function HeaderMobileDrawer({
           <span className="sr-only" id="mobile-navigation-title">
             Hermanos navigation
           </span>
-          <button
-            ref={closeButtonRef}
-            aria-label="Close menu"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-borderWarm bg-porcelain text-charcoal transition hover:border-tomato hover:text-tomato"
-            onClick={closeMenu}
-            type="button"
-          >
+          <Button ref={closeButtonRef} aria-label="Close menu" className="h-11 w-11 border-borderWarm bg-porcelain text-charcoal hover:border-tomato hover:text-tomato" onClick={closeMenu} size="md" variant="secondary">
             <X aria-hidden className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
 
-        <nav className="mt-8 grid gap-2 text-base font-bold">
-          {links.map((link) => (
-            <a
-              aria-current={activeHref === link.href ? "page" : undefined}
-              className={cn(
-                "rounded-lg border px-4 py-4 transition",
-                activeHref === link.href
-                  ? "border-tomato bg-tomato text-white shadow-hover"
-                  : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato hover:text-tomato hover:shadow-small",
-              )}
-              href={link.href}
-              key={link.href}
-              onClick={() => {
-                setActiveHref(link.href);
-                closeMenu();
-              }}
-            >
-              {link.label}
-            </a>
-          ))}
-          <Link className="hidden" href={nextLocalePath} onClick={() => onLanguageSwitch("mobile_drawer")}>
-            {nextLocale === "vi" ? "Tiếng Việt" : "English"}
-          </Link>
-        </nav>
+        <Stack className="mt-8" gap="sm">
+          <nav className="grid gap-2 text-base font-bold">
+            {links.map((link) => (
+              <a
+                aria-current={activeHref === link.href ? "page" : undefined}
+                className={cn(
+                  "rounded-lg border px-4 py-4 transition",
+                  activeHref === link.href
+                    ? "border-tomato bg-tomato text-white shadow-hover"
+                    : "border-borderWarm bg-porcelain text-charcoal hover:border-tomato hover:text-tomato hover:shadow-small",
+                )}
+                href={link.href}
+                key={link.href}
+                onClick={() => {
+                  setActiveHref(link.href);
+                  closeMenu();
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
+            <Link className="hidden" href={nextLocalePath} onClick={() => onLanguageSwitch("mobile_drawer")} scroll={false}>
+              {nextLocale === "vi" ? "Tiếng Việt" : "English"}
+            </Link>
+          </nav>
+        </Stack>
 
-        <div className="mt-auto grid gap-3 pb-2">
+        <Stack className="mt-auto pb-2" gap="sm">
           <a
             className="inline-flex min-h-12 items-center justify-center rounded-lg bg-tomato px-5 py-3 font-bold text-white shadow-hover transition hover:bg-tomato-hover"
             href={`${homePath}#booking`}
@@ -132,7 +129,7 @@ export function HeaderMobileDrawer({
             <MapPin aria-hidden className="mr-2 h-5 w-5" />
             {t.nav.directions}
           </TrackedLink>
-        </div>
+        </Stack>
       </div>
     </div>
   );

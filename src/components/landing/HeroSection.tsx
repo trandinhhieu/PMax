@@ -16,7 +16,9 @@ export function HeroSection({ locale }: { locale: Locale }) {
           priority
           alt="Wood-fired pizza served at Hermanos Da Nang"
           className="object-cover"
+          fetchPriority="high"
           fill
+          quality={72}
           sizes="100vw"
           src={businessInfo.assets.hero}
         />

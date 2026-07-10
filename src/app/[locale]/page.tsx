@@ -1,6 +1,6 @@
 ﻿import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BackToTopButton } from "@/components/layout/BackToTopButton";
+import { FloatingActionGroup } from "@/components/layout/FloatingActionGroup";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { businessInfo, siteConfig } from "@/config/business";
 import { BookingSection, FaqSection, GallerySection, HeroSection, MapContactSection, MenuPreview, ReviewsSection, TrustBar, WhySection } from "@/features/landing";
@@ -67,13 +67,13 @@ export default async function LandingPage({ params }: PageProps) {
       <HeroSection locale={typedLocale} />
       <TrustBar locale={typedLocale} />
       <MenuPreview locale={typedLocale} />
-      <WhySection locale={typedLocale} />
-      <GallerySection locale={typedLocale} />
-      <ReviewsSection locale={typedLocale} />
       <BookingSection locale={typedLocale} />
+      <WhySection locale={typedLocale} />
+      <ReviewsSection locale={typedLocale} />
+      <GallerySection locale={typedLocale} />
       <MapContactSection locale={typedLocale} />
       <FaqSection locale={typedLocale} />
-      <BackToTopButton locale={typedLocale} />
+      <FloatingActionGroup locale={typedLocale} />
     </main>
   );
 }

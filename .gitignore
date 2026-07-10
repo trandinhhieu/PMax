@@ -43,5 +43,8 @@ pnpm-debug.log*
 /assets/
 
 # Draft content/reference docs not read by the production app
-/docs/
+/docs/*
+!/docs/refactor-C/
+/docs/refactor-C/*
+!/docs/refactor-C/design-system.md
 /scripts/

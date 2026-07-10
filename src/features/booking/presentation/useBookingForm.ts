@@ -85,8 +85,8 @@ export function useBookingForm(locale: Locale) {
 
   const clearSubmitFeedback = useCallback(() => {
     if (status === "success") setStatus("idle");
-    if (status === "error") setSubmitMessage(t.form.defaultError);
-  }, [status]);
+    if (status === "error") setSubmitMessage(formCopy.defaultError);
+  }, [formCopy.defaultError, status]);
 
   const trackStartOnce = useCallback(() => {
     if (hasStarted) return;
@@ -150,7 +150,7 @@ export function useBookingForm(locale: Locale) {
 
     setOtpStatus("sending");
     setOtpMessage("");
-    setSubmitMessage(t.form.defaultError);
+    setSubmitMessage(formCopy.defaultError);
     clearErrors(["contact", "contactChannel", "otpCode"]);
 
     if (!contact) {
@@ -201,7 +201,7 @@ export function useBookingForm(locale: Locale) {
 
   const onSubmit = handleSubmit(async (data) => {
     setStatus("submitting");
-    setSubmitMessage(t.form.defaultError);
+    setSubmitMessage(formCopy.defaultError);
 
     trackEvent(trackingEvents.bookingSubmit, {
       location: "booking_section",
@@ -279,7 +279,7 @@ export function useBookingForm(locale: Locale) {
     }
 
     setStatus("success");
-    setSubmitMessage(t.form.defaultError);
+    setSubmitMessage(formCopy.defaultError);
     setOtpStatus("idle");
     setOtpMessage("");
     setOtpContact("");
@@ -296,7 +296,7 @@ export function useBookingForm(locale: Locale) {
     }
   }, () => {
     setStatus("error");
-    setSubmitMessage(t.form.defaultError);
+    setSubmitMessage(formCopy.defaultError);
   });
 
   const registerWithFeedback = useCallback((field: keyof BookingFormInput, options: { valueAsNumber?: boolean } = {}) => {

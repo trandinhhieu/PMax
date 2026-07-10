@@ -10,6 +10,7 @@ import { trackingEvents } from "@/config/tracking";
 import { copy } from "@/data/content";
 import { trackEvent } from "@/lib/analytics";
 import type { Locale } from "@/types/common";
+import { Button, Container } from "@/components/ui";
 import { HeaderDesktopNav } from "./header/HeaderDesktopNav";
 import { HeaderMobileDrawer } from "./header/HeaderMobileDrawer";
 import { useHeaderLocation } from "./header/useHeaderLocation";
@@ -23,6 +24,8 @@ export function Header({ locale }: { locale: Locale }) {
   const nextLocale = locale === "en" ? "vi" : "en";
   const homePath = `/${locale}`;
   const isScrolled = useHeaderScrollState();
+  const usesOverlayTheme = pathname === homePath || pathname === `${homePath}/`;
+  const usesSolidTheme = isScrolled || !usesOverlayTheme;
   const { activeHref, nextLocalePath, setActiveHref } = useHeaderLocation({ homePath, nextLocale, pathname });
   const { closeButtonRef, closeMenu, drawerRef, isDrawerVisible, isMounted, isOpen, menuButtonRef, openMenu } = useMobileNavDrawer();
 
@@ -35,10 +38,7 @@ export function Header({ locale }: { locale: Locale }) {
   const navLinks = [{ href: `${homePath}/menu`, label: t.nav.menu }, ...homeSectionLinks.map((link) => ({ ...link, href: `${homePath}${link.href}` }))];
 
   const handleBookingClick = (location: string) => {
-    trackEvent(trackingEvents.bookingStart, {
-      location,
-      page_language: locale,
-    });
+    trackEvent(trackingEvents.bookingStart, { location, page_language: locale });
   };
 
   const handleLanguageSwitch = (location: string) => {
@@ -51,29 +51,18 @@ export function Header({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <header
-        className={`fixed inset-x-0 top-0 z-50 h-16 transition duration-200 md:h-[72px] ${
-          isScrolled ? "border-b border-borderWarm bg-cream/95 shadow-small backdrop-blur" : "bg-charcoal/55 backdrop-blur-md"
-        }`}
-      >
-        <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-10 xl:px-16">
-          <Link
-            className={`flex min-h-11 items-center gap-3 font-display text-xl font-bold ${isScrolled ? "text-charcoal" : "text-white"}`}
-            href={`/${locale}`}
-          >
-            <span className="relative h-10 w-10 overflow-hidden rounded-lg bg-porcelain">
-              <Image alt="Hermanos logo" className="object-cover" fill sizes="40px" src={businessInfo.assets.logo} />
+      <header className={`fixed inset-x-0 top-0 z-50 h-16 transition duration-200 md:h-20 ${usesSolidTheme ? "bg-cream/95 shadow-medium backdrop-blur" : "bg-transparent"}`}>
+        <Container className="flex h-full items-center justify-between gap-4">
+          <Link className={`flex items-center gap-3 font-display text-lg font-bold md:text-xl ${usesSolidTheme ? "text-charcoal" : "text-white"}`} href={`/${locale}`}>
+            <span className="relative h-12 w-12 overflow-hidden rounded-lg bg-white/90 shadow-small md:h-12 md:w-12">
+              <Image alt="Hermanos logo" className="object-cover" fill quality={70} sizes="48px" src={businessInfo.assets.logo} />
             </span>
-            <span>Hermanos</span>
           </Link>
 
-          <HeaderDesktopNav isScrolled={isScrolled} links={navLinks} />
-
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 md:gap-4">
+            <HeaderDesktopNav isScrolled={usesSolidTheme} links={navLinks} />
             <TrackedLink
-              className={`hidden min-h-11 items-center rounded-lg border px-4 py-2 text-sm font-bold transition sm:inline-flex ${
-                isScrolled ? "border-borderWarm bg-porcelain text-charcoal hover:border-tomato" : "border-white/50 text-white hover:bg-white/10"
-              }`}
+              className={`hidden min-h-11 items-center rounded-lg border px-3 py-2 text-sm font-bold transition lg:inline-flex ${usesSolidTheme ? "border-borderWarm text-charcoal hover:border-tomato" : "border-white/50 text-white hover:bg-white/10"}`}
               event={trackingEvents.clickGetDirections}
               href={businessInfo.googleMapsUrl}
               locale={locale}
@@ -83,7 +72,7 @@ export function Header({ locale }: { locale: Locale }) {
               {t.nav.directions}
             </TrackedLink>
             <a
-              className="hidden min-h-11 items-center rounded-lg bg-tomato px-4 py-2 text-sm font-bold text-white transition hover:bg-tomato-hover lg:inline-flex"
+              className={`hidden min-h-11 items-center rounded-lg px-4 py-2 text-sm font-bold transition lg:inline-flex ${usesSolidTheme ? "bg-tomato text-white hover:bg-tomato-hover" : "bg-white/15 text-white hover:bg-white/25"}`}
               href={`${homePath}#booking`}
               onClick={() => handleBookingClick("header")}
             >
@@ -92,28 +81,25 @@ export function Header({ locale }: { locale: Locale }) {
             </a>
             <Link
               aria-label={locale === "en" ? "Switch language to Vietnamese" : "Chuyển ngôn ngữ sang tiếng Anh"}
-              className={`inline-flex min-h-11 items-center rounded-lg border px-3 py-2 text-sm font-bold transition ${
-                isScrolled ? "border-borderWarm text-charcoal hover:border-tomato" : "border-white/50 text-white hover:bg-white/10"
-              }`}
+              className={`inline-flex min-h-11 items-center rounded-lg border px-2.5 py-2 text-xs font-bold transition ${usesSolidTheme ? "border-borderWarm text-charcoal hover:border-tomato" : "border-white/50 text-white hover:bg-white/10"}`}
               href={nextLocalePath}
               onClick={() => handleLanguageSwitch("header")}
+              scroll={false}
             >
               {nextLocale.toUpperCase()}
             </Link>
-            <button
+            <Button
               ref={menuButtonRef}
               aria-expanded={isOpen}
-              aria-label="Open menu"
-              className={`inline-flex h-11 w-11 items-center justify-center rounded-lg border transition lg:hidden ${
-                isScrolled ? "border-borderWarm bg-white text-charcoal" : "border-white/50 bg-charcoal/20 text-white"
-              }`}
+              className={`min-h-10 gap-2 px-4 font-bold lg:hidden ${usesSolidTheme ? "bg-tomato text-white hover:bg-tomato-hover" : "border-white/70 bg-white text-charcoal hover:bg-cream"}`}
               onClick={openMenu}
-              type="button"
+              size="md"
+              variant="primary"
             >
               <MenuIcon aria-hidden className="h-5 w-5" />
-            </button>
+            </Button>
           </div>
-        </div>
+        </Container>
       </header>
       {isMounted && isOpen
         ? createPortal(

@@ -4,6 +4,32 @@
 
 :root {
   color-scheme: light;
+  /* Refactor C semantic foundation. Values mirror tailwind.config.ts. */
+  --color-canvas: #f7f1e7;
+  --color-surface: #fffdf8;
+  --color-elevated: #ffffff;
+  --color-inverse: #211c18;
+  --color-text-primary: #1f1a17;
+  --color-text-secondary: #6f6258;
+  --color-text-inverse: #fffdf8;
+  --color-action-primary: #b83226;
+  --color-action-primary-hover: #98291f;
+  --color-action-secondary: #4f6f3e;
+  --color-border: #d8c8b4;
+  --color-focus: #4f6f3e;
+  --color-status-success: #2f7d50;
+  --color-status-warning: #b7791f;
+  --color-status-error: #b42318;
+  --color-status-disabled: #b8aea4;
+  --shadow-small: 0 1px 2px rgb(33 28 24 / 8%);
+  --shadow-medium: 0 8px 24px rgb(33 28 24 / 10%);
+  --shadow-large: 0 18px 48px rgb(33 28 24 / 14%);
+  --motion-instant: 100ms;
+  --motion-fast: 150ms;
+  --motion-normal: 200ms;
+  --motion-slow: 300ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 html {
@@ -19,8 +45,8 @@ html {
 }
 
 body {
-  background: #f7f1e7;
-  color: #1f1a17;
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
   padding-bottom: calc(76px + env(safe-area-inset-bottom));
 }
 
@@ -68,12 +94,12 @@ textarea {
 }
 
 ::selection {
-  background: #b83226;
-  color: #fffdf8;
+  background: var(--color-action-primary);
+  color: var(--color-text-inverse);
 }
 
 :focus-visible {
-  outline: 2px solid #4f6f3e;
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
 }
 

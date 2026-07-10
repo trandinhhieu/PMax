@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Container, Stack } from "@/components/ui";
 import { siteConfig } from "@/config/business";
 import { getLocalizedPaths } from "@/lib/locale-routing";
-import { isLocale } from "@/types/common";
+import { isLocale, type Locale } from "@/types/common";
+import { privacyPolicyCopy } from "./privacy-policy.copy";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -12,10 +14,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
+  const copy = privacyPolicyCopy[locale];
   const localizedPaths = getLocalizedPaths("/privacy-policy");
 
   return {
-    title: locale === "en" ? "Privacy Policy" : "Chính sách riêng tư",
+    title: copy.title,
     alternates: {
       canonical: siteConfig.domain ? `${siteConfig.domain}/${locale}/privacy-policy` : undefined,
       languages: siteConfig.domain
@@ -32,16 +35,29 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
+  const copy = privacyPolicyCopy[locale as Locale];
+
   return (
-    <main className="flex min-h-[calc(100vh-312px)] bg-cream px-4 pb-16 pt-28 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl">
-        <h1 className="font-display text-5xl font-bold text-charcoal">{locale === "en" ? "Privacy policy" : "Chính sách riêng tư"}</h1>
-        <p className="mt-6 leading-8 text-muted">
-          {locale === "en"
-            ? "Hermanos uses booking contact information to respond to reservation requests. Analytics and advertising tools may collect standard usage data to improve the website and campaign performance."
-            : "Hermanos dùng thông tin liên hệ khi đặt bàn để phản hồi yêu cầu đặt chỗ. Công cụ đo lường và quảng cáo có thể thu thập dữ liệu sử dụng tiêu chuẩn để cải thiện website và hiệu quả chiến dịch."}
-        </p>
-      </div>
+    <main className="min-h-[calc(100vh-312px)] bg-cream pb-16 pt-28">
+      <Container>
+        <div className="mx-auto max-w-3xl rounded-[2rem] border border-borderWarm bg-porcelain/85 p-6 shadow-small sm:p-8 lg:p-10">
+          <Stack gap="xl">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.24em] text-tomato">{copy.eyebrow}</p>
+              <h1 className="mt-3 font-display text-4xl font-bold leading-tight text-charcoal sm:text-5xl">{copy.title}</h1>
+            </div>
+
+            <div className="grid gap-4">
+              {copy.sections.map((section) => (
+                <section className="rounded-[1.5rem] border border-borderWarm bg-cream/80 p-5" key={section.title}>
+                  <h2 className="font-display text-2xl font-bold text-charcoal">{section.title}</h2>
+                  <p className="mt-3 text-sm leading-7 text-muted sm:text-base">{section.body}</p>
+                </section>
+              ))}
+            </div>
+          </Stack>
+        </div>
+      </Container>
     </main>
   );
 }

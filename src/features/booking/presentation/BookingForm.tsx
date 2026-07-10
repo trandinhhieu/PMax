@@ -104,11 +104,11 @@ export function PremiumBookingForm({ locale }: { locale: Locale }) {
 
   return (
     <form
-      className="rounded-xl border border-borderWarm bg-porcelain p-6 shadow-large"
+      className="rounded-2xl border border-borderWarm bg-porcelain p-6 shadow-large"
       noValidate
       onSubmit={bookingForm.onSubmit}
     >
-      <div className="mb-6 flex items-center gap-2 text-sm font-semibold">
+      <div className="mb-6 flex flex-wrap items-center gap-2 text-sm font-semibold">
         <span
           className={`flex h-7 w-7 items-center justify-center rounded-full text-xs ${
             hasCoreDetails ? "bg-olive text-white" : "bg-charcoal text-white"
@@ -258,7 +258,7 @@ export function PremiumBookingForm({ locale }: { locale: Locale }) {
         </div>
 
         {!hasCoreDetails ? (
-          <p className="text-sm italic text-muted">{premiumCopy.contactUnlockHint}</p>
+          <p className="rounded-lg border border-borderWarm bg-white px-4 py-3 text-sm text-muted">{premiumCopy.contactUnlockHint}</p>
         ) : (
           <>
             <label
@@ -349,7 +349,7 @@ export function PremiumBookingForm({ locale }: { locale: Locale }) {
       <p className="mt-6 text-sm text-muted">{t.form.privacy}</p>
 
       {bookingForm.status === "success" ? (
-        <div className="mt-6 rounded-xl border border-success/20 bg-success/5 p-6 text-center">
+        <div className="mt-6 rounded-xl border border-success/20 bg-success/5 p-6 text-center" role="status">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success/20">
             <Check className="h-6 w-6 text-success" />
           </div>

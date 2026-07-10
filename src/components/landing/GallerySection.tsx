@@ -31,7 +31,16 @@ export function GallerySection({ locale }: { locale: Locale }) {
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {gallery.map((image, index) => (
               <div className={`relative overflow-hidden rounded-lg ${index === 0 ? "aspect-[4/5] md:col-span-2 md:row-span-2" : "aspect-square"}`} key={image.src}>
-                <Image alt={image.alt[locale]} className="object-cover transition duration-200 hover:scale-[1.03]" fill sizes="(min-width: 1024px) 320px, 50vw" src={image.src} />
+                <Image
+                  alt={image.alt[locale]}
+                  className="object-cover transition duration-200 hover:scale-[1.03]"
+                  decoding="async"
+                  fill
+                  loading="lazy"
+                  quality={68}
+                  sizes={index === 0 ? "(min-width: 1280px) 380px, (min-width: 1024px) 30vw, 50vw" : "(min-width: 1280px) 185px, (min-width: 1024px) 15vw, (min-width: 768px) 25vw, 50vw"}
+                  src={image.src}
+                />
               </div>
             ))}
           </div>

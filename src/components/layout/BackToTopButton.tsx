@@ -2,7 +2,7 @@
 
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui";
 import type { Locale } from "@/types/common";
 
 type BackToTopButtonProps = {
@@ -33,16 +33,14 @@ export function BackToTopButton({ locale }: BackToTopButtonProps) {
   };
 
   return (
-    <button
+    <Button
       aria-label={locale === "en" ? "Back to top" : "Lên đầu trang"}
-      className={cn(
-        "fixed bottom-24 right-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/70 bg-charcoal text-white shadow-large transition duration-200 hover:bg-tomato focus-visible:outline-white sm:right-6 md:bottom-6 md:h-14 md:w-14",
-        isVisible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0",
-      )}
+      className={isVisible ? "fixed bottom-24 right-4 z-40 h-12 w-12 rounded-full border-white/70 bg-charcoal text-white shadow-large transition duration-200 hover:bg-tomato sm:right-6 md:bottom-6 md:h-14 md:w-14" : "pointer-events-none fixed bottom-24 right-4 z-40 h-12 w-12 rounded-full border-white/70 bg-charcoal text-white opacity-0 shadow-large transition duration-200 hover:bg-tomato sm:right-6 md:bottom-6 md:h-14 md:w-14 md:translate-y-3"}
       onClick={scrollToTop}
-      type="button"
+      size="md"
+      variant="ghost"
     >
       <ArrowUp aria-hidden className="h-5 w-5" strokeWidth={2.5} />
-    </button>
+    </Button>
   );
 }

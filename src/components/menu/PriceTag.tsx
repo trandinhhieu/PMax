@@ -25,8 +25,8 @@ export function PriceTag({ price, prices, showPlus = false, compact = false, cla
     return (
       <span
         className={cn(
-          "inline-flex shrink-0 items-center rounded-lg bg-charcoal px-3 py-1.5 text-sm font-bold text-white",
-          compact && "px-2.5 py-1 text-xs",
+          "inline-flex shrink-0 items-baseline text-lg font-extrabold leading-none text-charcoal",
+          compact && "text-sm",
           className,
         )}
       >
@@ -42,16 +42,16 @@ export function PriceTag({ price, prices, showPlus = false, compact = false, cla
   if (!entries.length) return null;
 
   return (
-    <div className={cn("flex shrink-0 flex-wrap justify-end gap-2", className)}>
+    <div className={cn("flex shrink-0 flex-wrap justify-end gap-x-4 gap-y-1", className)}>
       {entries.map((entry) => (
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-lg bg-charcoal px-3 py-1.5 text-sm font-bold text-white",
-            compact && "px-2.5 py-1 text-xs",
+            "inline-flex items-baseline gap-1.5 text-lg font-extrabold leading-none text-charcoal",
+            compact && "text-sm",
           )}
           key={entry.key}
         >
-          <span className="text-white/70">{priceLabels[entry.key]}</span>
+          <span className="text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-muted">{priceLabels[entry.key]}</span>
           {formatMenuPrice(entry.value, showPlus)}
         </span>
       ))}

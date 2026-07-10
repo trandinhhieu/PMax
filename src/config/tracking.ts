@@ -16,6 +16,7 @@ export const trackingEvents = {
   reviewClick: "review_click",
   socialClick: "social_click",
   scroll75: "scroll_75",
+  contactPanelOpen: "contact_panel_open",
 } as const;
 
 export type TrackingEventName = (typeof trackingEvents)[keyof typeof trackingEvents];

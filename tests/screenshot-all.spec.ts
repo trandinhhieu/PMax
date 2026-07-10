@@ -15,11 +15,29 @@ type ScreenshotRecord = {
   file: string;
 };
 
+type ResponsiveAuditRecord = {
+  url: string;
+  check: string;
+  result: "PASS";
+  detail: string;
+};
+
 const viewports: Record<ViewportName, { width: number; height: number }> = {
   desktop: { width: 1440, height: 900 },
   tablet: { width: 768, height: 1024 },
   mobile: { width: 390, height: 844 },
 };
+
+const auditedPaths = [
+  "/en",
+  "/vi",
+  "/en/menu",
+  "/vi/menu",
+  "/en/privacy-policy",
+  "/vi/privacy-policy",
+  "/en/thank-you",
+  "/vi/thank-you",
+];
 
 const preferredBaseUrls = [
   process.env.SCREENSHOT_BASE_URL,
@@ -42,17 +60,29 @@ test("crawl internal pages and capture responsive full-page screenshots", async 
   const page = await context.newPage();
 
   const visited = new Set<string>();
-  const queued = new Set<string>([normalizeUrl(baseUrl)]);
-  const queue = [normalizeUrl(baseUrl)];
+  const seedUrls = [
+    normalizeUrl(baseUrl),
+    new URL("/en/thank-you", origin).toString(),
+    new URL("/vi/thank-you", origin).toString(),
+  ];
+  const queued = new Set<string>(seedUrls);
+  const queue = [...seedUrls];
   const captured: ScreenshotRecord[] = [];
   const brokenLinks = new Set<string>();
   const httpErrors: CrawlFailure[] = [];
   const consoleErrors: CrawlFailure[] = [];
+  const hotUpdate404Pages = new Set<string>();
   const loginRequired = new Set<string>();
   const crawlFailures: CrawlFailure[] = [];
 
   page.on("console", (message) => {
     if (message.type() === "error") {
+      if (
+        hotUpdate404Pages.has(page.url()) &&
+        message.text().includes("Failed to load resource: the server responded with a status of 404")
+      ) {
+        return;
+      }
       consoleErrors.push({ url: page.url(), error: message.text() });
     }
   });
@@ -61,6 +91,10 @@ test("crawl internal pages and capture responsive full-page screenshots", async 
     const status = response.status();
     const url = response.url();
     if (status >= 400 && sameOrigin(url, origin)) {
+      if (isHotUpdateAsset(url)) {
+        hotUpdate404Pages.add(page.url());
+        return;
+      }
       httpErrors.push({ url, error: String(status) });
     }
   });
@@ -144,6 +178,28 @@ test("crawl internal pages and capture responsive full-page screenshots", async 
   expect(captured.length).toBeGreaterThan(0);
 });
 
+test("audit 320px reflow and keyboard baseline", async ({ browser, browserName }) => {
+  test.skip(browserName !== "chromium", "Responsive audit runs once on Chromium to avoid duplicate output.");
+  test.setTimeout(10 * 60 * 1000);
+
+  const baseUrl = await resolveBaseUrl();
+  const origin = new URL(baseUrl).origin;
+  const records: ResponsiveAuditRecord[] = [];
+
+  for (const route of auditedPaths) {
+    const url = new URL(route, origin).toString();
+
+    records.push(await auditNoPageOverflow(browser, url, "320px viewport", { width: 320, height: 844, deviceScaleFactor: 1 }));
+    records.push(await auditNoPageOverflow(browser, url, "200% reflow equivalent", { width: 320, height: 844, deviceScaleFactor: 2 }));
+    records.push(await auditKeyboardFocus(browser, url));
+  }
+
+  await fs.mkdir(screenshotsDir, { recursive: true });
+  await fs.writeFile(path.join(screenshotsDir, "responsive-audit.md"), buildResponsiveAuditReport(records), "utf8");
+
+  expect(records.length).toBe(auditedPaths.length * 3);
+});
+
 async function resolveBaseUrl(): Promise<string> {
   for (const candidate of preferredBaseUrls) {
     try {
@@ -198,6 +254,97 @@ async function captureUrl(
       file: path.relative(process.cwd(), screenshotPath).replaceAll("\\", "/"),
     };
   });
+}
+
+async function auditNoPageOverflow(
+  browser: Browser,
+  url: string,
+  check: string,
+  viewport: { width: number; height: number; deviceScaleFactor: number },
+): Promise<ResponsiveAuditRecord> {
+  const context = await browser.newContext({ viewport, deviceScaleFactor: viewport.deviceScaleFactor });
+  const page = await context.newPage();
+
+  const response = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30_000 });
+  expect(response?.status() ?? 200).toBeLessThan(400);
+  await page.waitForLoadState("networkidle", { timeout: 8_000 }).catch(() => undefined);
+  await preparePage(page);
+
+  const metrics = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+    bodyScrollWidth: document.body.scrollWidth,
+  }));
+  await context.close();
+
+  const maxScrollWidth = Math.max(metrics.scrollWidth, metrics.bodyScrollWidth);
+  expect(maxScrollWidth, `${check} page overflow for ${url}`).toBeLessThanOrEqual(metrics.clientWidth + 1);
+
+  return {
+    url,
+    check,
+    result: "PASS",
+    detail: `clientWidth=${metrics.clientWidth}; maxScrollWidth=${maxScrollWidth}`,
+  };
+}
+
+async function auditKeyboardFocus(browser: Browser, url: string): Promise<ResponsiveAuditRecord> {
+  const context = await browser.newContext({ viewport: { width: 320, height: 844 } });
+  const page = await context.newPage();
+
+  const response = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30_000 });
+  expect(response?.status() ?? 200).toBeLessThan(400);
+  await page.waitForLoadState("networkidle", { timeout: 8_000 }).catch(() => undefined);
+  await preparePage(page);
+
+  const focused: string[] = [];
+  for (let index = 0; index < 8; index += 1) {
+    await page.keyboard.press("Tab");
+    await page.waitForTimeout(80);
+    const state = await page.evaluate(() => {
+      const element = document.activeElement as HTMLElement | null;
+      if (!element || element === document.body) {
+        return { label: "body", visible: false };
+      }
+
+      const rect = element.getBoundingClientRect();
+      const label = [
+        element.tagName.toLowerCase(),
+        element.getAttribute("aria-label"),
+        element.textContent?.trim().replace(/\s+/g, " ").slice(0, 40),
+      ].filter(Boolean).join(":");
+
+      return {
+        label,
+        visible: rect.width > 0 && rect.height > 0 && rect.bottom >= 0 && rect.top <= window.innerHeight,
+      };
+    });
+
+    if (state.label !== "body") {
+      expect(state.visible, `Focused element should be visible for ${url}: ${state.label}`).toBe(true);
+      focused.push(state.label);
+    }
+  }
+
+  const openMenuButton = page.getByRole("button", { name: /open menu/i }).first();
+  if (await openMenuButton.isVisible().catch(() => false)) {
+    await openMenuButton.focus();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    focused.push("mobile drawer opened and closed by keyboard");
+  }
+
+  await context.close();
+  expect(new Set(focused).size, `Keyboard focus progression for ${url}`).toBeGreaterThanOrEqual(3);
+
+  return {
+    url,
+    check: "keyboard focus",
+    result: "PASS",
+    detail: `${new Set(focused).size} visible focus stops; drawer keyboard check included when available`,
+  };
 }
 
 async function preparePage(page: Page): Promise<void> {
@@ -327,6 +474,10 @@ function sameOrigin(raw: string, origin: string): boolean {
   }
 }
 
+function isHotUpdateAsset(url: string): boolean {
+  return /\/_next\/static\/webpack\/.+\.hot-update\.json$/i.test(url);
+}
+
 function urlToFileName(url: string): string {
   const parsed = new URL(url);
   const name = parsed.pathname === "/" ? "home" : parsed.pathname.replace(/^\/+|\/+$/g, "").replace(/[^a-z0-9]+/gi, "-");
@@ -418,5 +569,18 @@ ${login}
 
 ## Crawl Failures
 ${failures}
+`;
+}
+
+function buildResponsiveAuditReport(records: ResponsiveAuditRecord[]): string {
+  const rows = records.map((record) => `| ${record.url} | ${record.check} | ${record.result} | ${record.detail} |`).join("\n");
+
+  return `# Responsive and Keyboard Audit
+
+Generated by \`tests/screenshot-all.spec.ts\`.
+
+| URL | Check | Result | Detail |
+|---|---|---|---|
+${rows}
 `;
 }
