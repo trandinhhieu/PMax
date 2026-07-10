@@ -44,3 +44,4 @@ pnpm-debug.log*
 
 # Draft content/reference docs not read by the production app
 /docs/
+/scripts/
