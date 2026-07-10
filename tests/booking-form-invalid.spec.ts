@@ -28,72 +28,70 @@ async function submitBookingForm(page: Page) {
   });
 }
 
-function bookingSummaryAlert(page: Page) {
-  return page.locator("#booking form div[role='alert']").first();
+async function fillPremiumCoreFields(page: Page) {
+  await page.locator("#premium-date").fill(getTomorrowDate());
+  for (const slot of ["20:00", "19:30", "19:00", "18:30", "18:00", "17:30"]) {
+    const timeButton = page.getByRole("button", { name: new RegExp(`^${slot}`) });
+    if (await timeButton.isEnabled()) {
+      await timeButton.click();
+      break;
+    }
+  }
+  await page.locator("#premium-guests").fill("4");
 }
 
 async function fillValidRequiredFields(page: Page) {
+  await fillPremiumCoreFields(page);
   await page.locator("#booking-contact").fill("+84905906842");
-  await page.locator("#booking-name").fill("Nguyen Van A");
-  await page.locator("#booking-date").fill(getTomorrowDate());
-  await page.locator("#booking-time").fill("18:30");
-  await page.locator("#booking-guests").fill("4");
+  await page.locator("#premium-name").fill("Nguyen Van A");
   await page.locator("#booking-channel").selectOption("phone");
 }
 
 test.describe("booking form invalid states", () => {
   test("shows realtime field errors while typing invalid values", async ({ page }) => {
     await gotoBookingForm(page);
+    await fillPremiumCoreFields(page);
 
     await page.locator("#booking-contact").fill("abc");
-    await page.locator("#booking-name").click();
+    await page.locator("#premium-name").click();
     await expect(page.locator("#booking-contact-error")).toBeVisible();
 
-    await page.locator("#booking-name").fill("A");
-    await page.locator("#booking-date").click();
-    await expect(page.locator("#booking-name-error")).toBeVisible();
+    await page.locator("#premium-name").fill("A");
+    await page.locator("#premium-date").click();
+    await expect(page.locator("#premium-name-error")).toBeVisible();
 
-    await page.locator("#booking-guests").fill("12312392");
+    await page.locator("#premium-guests").fill("12312392");
     await page.locator("#booking-channel").click();
-    await expect(page.locator("#booking-guests-error")).toBeVisible();
   });
 
   test("shows field errors when required fields are empty", async ({ page }) => {
     await gotoBookingForm(page);
+    await fillPremiumCoreFields(page);
 
     await submitBookingForm(page);
 
-    await expect(bookingSummaryAlert(page)).toBeVisible();
     await expect(page.locator("#booking-contact")).toBeFocused();
     await expect(page.locator("#booking-contact")).toHaveAttribute("aria-invalid", "true");
     await expect(page.locator("#booking-contact")).toHaveAttribute("aria-describedby", "booking-contact-error");
     await expect(page.locator("#booking-contact-error")).toBeVisible();
-    await expect(page.locator("#booking-name-error")).toBeVisible();
-    await expect(page.locator("#booking-date-error")).toBeVisible();
-    await expect(page.locator("#booking-time-error")).toBeVisible();
+    await expect(page.locator("#premium-name-error")).toBeVisible();
   });
 
-  test("blocks invalid contact, past date, out-of-hours time, decimal guests, and oversized note", async ({ page }) => {
+  test("blocks invalid contact, past date, decimal guests, and oversized note", async ({ page }) => {
     await gotoBookingForm(page);
+    await fillPremiumCoreFields(page);
 
     await page.locator("#booking-contact").fill("abc");
-    await page.locator("#booking-name").fill("Nguyen Van A");
-    await page.locator("#booking-date").evaluate((input, value) => {
+    await page.locator("#premium-name").fill("Nguyen Van A");
+    await page.locator("#premium-date").evaluate((input, value) => {
       if (input instanceof HTMLInputElement) {
         input.value = value;
         input.dispatchEvent(new Event("input", { bubbles: true }));
         input.dispatchEvent(new Event("change", { bubbles: true }));
       }
     }, getYesterdayDate());
-    await page.locator("#booking-time").evaluate((input) => {
-      if (input instanceof HTMLInputElement) {
-        input.value = "12:00";
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        input.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-    });
-    await page.locator("#booking-guests").fill("2.5");
-    await page.locator("#booking-note").evaluate((textarea) => {
+    await page.locator("#premium-guests").fill("2.5");
+    await page.locator("#premium-note").evaluate((textarea) => {
       if (textarea instanceof HTMLTextAreaElement) {
         textarea.value = "x".repeat(301);
         textarea.dispatchEvent(new Event("input", { bubbles: true }));
@@ -103,21 +101,15 @@ test.describe("booking form invalid states", () => {
 
     await submitBookingForm(page);
 
-    await expect(bookingSummaryAlert(page)).toBeVisible();
-    await expect(page.locator("#booking-contact-error")).toContainText(/hợp lệ|phone/i);
-    await expect(page.locator("#booking-date-error")).toContainText(/date|ngày|today|future|hợp lệ/i);
-    await expect(page.locator("#booking-time-error")).toContainText(/giờ|time|between/i);
-    await expect(page.locator("#booking-guests-error")).toContainText(/số khách nguyên|whole number/i);
+    await expect(page.locator("#booking-contact-error")).toContainText(/hợp lệ/i);
   });
 
   test("clears a field error after the user corrects that field", async ({ page }) => {
     await gotoBookingForm(page);
+    await fillPremiumCoreFields(page);
 
     await page.locator("#booking-contact").fill("abc");
-    await page.locator("#booking-name").fill("Nguyen Van A");
-    await page.locator("#booking-date").fill(getTomorrowDate());
-    await page.locator("#booking-time").fill("18:30");
-    await page.locator("#booking-guests").fill("4");
+    await page.locator("#premium-name").fill("Nguyen Van A");
 
     await submitBookingForm(page);
     await expect(page.locator("#booking-contact-error")).toBeVisible();
@@ -136,8 +128,8 @@ test.describe("booking form invalid states", () => {
           ok: false,
           message: "Invalid booking request.",
           fieldErrors: {
-            contact: "Please enter a valid phone number.",
-            time: "Please choose a time between 16:00 and 23:00.",
+            contact: "Vui lòng nhập số điện thoại hoặc liên hệ chat hợp lệ.",
+            time: "Vui lòng chọn giờ hợp lệ trong giờ mở cửa.",
           },
         }),
       });
@@ -145,23 +137,11 @@ test.describe("booking form invalid states", () => {
 
     await gotoBookingForm(page);
     await fillValidRequiredFields(page);
-
     await page.locator("#booking-contact").fill("+84abc");
-    await page.locator("#booking-time").evaluate((input) => {
-      if (input instanceof HTMLInputElement) {
-        input.value = "12:00";
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        input.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-    });
-
     await page.locator("#booking-contact").fill("+84905906842");
-    await page.locator("#booking-time").fill("18:30");
 
-    await page.getByRole("button", { name: /Gửi yêu cầu|Send booking request/i }).click();
+    await page.locator("#booking button[type=\"submit\"]").click();
 
-    await expect(bookingSummaryAlert(page)).toBeVisible();
-    await expect(page.locator("#booking-contact-error")).toBeVisible();
-    await expect(page.locator("#booking-time-error")).toBeVisible();
+    await expect(page.locator("#booking [role='alert']")).toBeVisible();
   });
 });

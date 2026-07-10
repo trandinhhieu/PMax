@@ -1,0 +1,35 @@
+﻿*** Begin Patch
+*** Update File: tests/booking-form-invalid.spec.ts
+@@
+   test("renders server fieldErrors on the matching fields", async ({ page }) => {
++    const fieldErrors = {
++      contact: "Please enter a valid phone number.",
++      time: "Please choose a time between 16:00 and 23:00.",
++    };
++
+     await page.route("**/api/booking", async (route) => {
+       await route.fulfill({
+         contentType: "application/json",
+         status: 400,
+         body: JSON.stringify({
+           ok: false,
+           message: "Invalid booking request.",
+-          fieldErrors: {
+-            contact: "Please enter a valid phone number.",
+-            time: "Please choose a time between 16:00 and 23:00.",
+-          },
++          fieldErrors,
+         }),
+       });
+     });
+@@
+ 
+     await page.locator("#booking button[type=\"submit\"]").click();
+ 
+-    await expect(page.locator("#booking-contact-error")).toBeVisible();
+-    await expect(page.locator("#booking-time-error")).toBeVisible();
++    await expect(page.getByText(fieldErrors.contact, { exact: true })).toBeVisible();
++    await expect(page.getByText(fieldErrors.time, { exact: true })).toBeVisible();
+   });
+ });
+*** End Patch

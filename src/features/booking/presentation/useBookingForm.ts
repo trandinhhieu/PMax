@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -85,7 +85,7 @@ export function useBookingForm(locale: Locale) {
 
   const clearSubmitFeedback = useCallback(() => {
     if (status === "success") setStatus("idle");
-    if (status === "error") setSubmitMessage("");
+    if (status === "error") setSubmitMessage(t.form.defaultError);
   }, [status]);
 
   const trackStartOnce = useCallback(() => {
@@ -150,7 +150,7 @@ export function useBookingForm(locale: Locale) {
 
     setOtpStatus("sending");
     setOtpMessage("");
-    setSubmitMessage("");
+    setSubmitMessage(t.form.defaultError);
     clearErrors(["contact", "contactChannel", "otpCode"]);
 
     if (!contact) {
@@ -201,7 +201,7 @@ export function useBookingForm(locale: Locale) {
 
   const onSubmit = handleSubmit(async (data) => {
     setStatus("submitting");
-    setSubmitMessage("");
+    setSubmitMessage(t.form.defaultError);
 
     trackEvent(trackingEvents.bookingSubmit, {
       location: "booking_section",
@@ -279,7 +279,7 @@ export function useBookingForm(locale: Locale) {
     }
 
     setStatus("success");
-    setSubmitMessage("");
+    setSubmitMessage(t.form.defaultError);
     setOtpStatus("idle");
     setOtpMessage("");
     setOtpContact("");
@@ -296,7 +296,7 @@ export function useBookingForm(locale: Locale) {
     }
   }, () => {
     setStatus("error");
-    setSubmitMessage("");
+    setSubmitMessage(t.form.defaultError);
   });
 
   const registerWithFeedback = useCallback((field: keyof BookingFormInput, options: { valueAsNumber?: boolean } = {}) => {
@@ -332,3 +332,4 @@ export function useBookingForm(locale: Locale) {
     },
   };
 }
+
