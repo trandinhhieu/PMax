@@ -36,7 +36,7 @@ export const businessInfo = {
   },
   assets: {
     logo: "/images/brand/hermanos-logo.jpg",
-    hero: "/images/food/hero-pizza-tacos.jpeg",
+    hero: "/images/hero/hero_img.jpg",
     ogImage: "/images/food/hero-pizza-tacos.jpeg",
   },
   socials: {

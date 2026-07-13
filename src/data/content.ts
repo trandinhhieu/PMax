@@ -9,10 +9,11 @@ export const copy = {
       contact: "Contact",
     },
     hero: {
-      eyebrow: "Near My Khe Beach — Open Tonight",
-      title: "Wood-fired Pizza & Tacos / Near My Khe Beach",
-      body: "Fresh dough, blistered crusts, loaded tacos, cold drinks, and easy open-air tables just minutes from the beach.",
-      trustLine: "★ 4.8 guest rating • Open daily 4 PM - 11 PM • Free delivery within 3 km",
+      eyebrow: "Near My Khe Beach",
+      titleLead: "Wood-fired",
+      titleRest: "Pizza",
+      body: "Fresh pizza, loaded tacos and open-air dining, just minutes from My Khe Beach.",
+      trustLine: "★ 4.8 on Google · 500+ reviews",
       directions: "Get Directions",
       menu: "View Menu",
       booking: "Book a Table",
@@ -58,10 +59,11 @@ export const copy = {
       contact: "Liên hệ",
     },
     hero: {
-      eyebrow: "Gần biển Mỹ Khê — Mở cửa tối nay",
-      title: "Pizza nướng củi & Taco / Gần biển Mỹ Khê",
-      body: "Bột bánh tươi, viền bánh cháy xém, taco đầy đặn, đồ uống mát lạnh và bàn ngoài trời thoáng mát, chỉ vài phút từ bãi biển.",
-      trustLine: "★ 4.8 đánh giá khách hàng • Mở cửa 16:00 - 23:00 • Miễn phí giao hàng dưới 3 km",
+      eyebrow: "Gần biển Mỹ Khê",
+      titleLead: "Pizza",
+      titleRest: "nướng củi",
+      body: "Pizza tươi, taco đầy đặn và không gian ngoài trời, chỉ cách biển Mỹ Khê vài phút.",
+      trustLine: "★ 4.8 trên Google · 500+ đánh giá",
       directions: "Chỉ đường",
       menu: "Xem menu",
       booking: "Đặt bàn",
@@ -103,31 +105,59 @@ export const copy = {
 
 export const gallery = [
   {
-    src: "/images/food/hero-pizza-tacos.jpeg",
+    src: "/images/gallary/front_hermanos.jpg",
     alt: {
-      en: "Pizza and tacos served together at Hermanos",
-      vi: "Pizza và taco được phục vụ cùng nhau tại Hermanos",
+      en: "Front entrance of Hermanos restaurant",
+      vi: "Mặt tiền nhà hàng Hermanos",
     },
   },
   {
-    src: "/images/food/pizza-closeup.jpeg",
+    src: "/images/gallary/pizza-2.jpg",
     alt: {
-      en: "Close-up of wood-fired pizza crust and tomato",
-      vi: "Cận cảnh đế pizza nướng củi và cà chua",
+      en: "Wood-fired pizza at Hermanos",
+      vi: "Pizza nướng củi tại Hermanos",
     },
   },
   {
-    src: "/images/food/tacos.jpeg",
+    src: "/images/gallary/pizza-3.jpg",
     alt: {
-      en: "Fresh tacos with herbs and colorful vegetables",
-      vi: "Taco tươi với rau thơm và rau củ nhiều màu",
+      en: "Freshly baked pizza at Hermanos",
+      vi: "Pizza mới nướng tại Hermanos",
     },
   },
   {
-    src: "/images/food/burger.jpeg",
+    src: "/images/gallary/pizza-4.jpg",
     alt: {
-      en: "Burger served on a wooden board",
-      vi: "Burger phục vụ trên thớt gỗ",
+      en: "Hermanos signature pizza",
+      vi: "Pizza đặc trưng của Hermanos",
+    },
+  },
+  {
+    src: "/images/gallary/tacos-1.jpg",
+    alt: {
+      en: "Tacos served at Hermanos",
+      vi: "Taco được phục vụ tại Hermanos",
+    },
+  },
+  {
+    src: "/images/gallary/burger-1.jpg",
+    alt: {
+      en: "Burger served at Hermanos",
+      vi: "Burger được phục vụ tại Hermanos",
+    },
+  },
+  {
+    src: "/images/gallary/chili-oil.jpg",
+    alt: {
+      en: "Hermanos house chili oil",
+      vi: "Dầu ớt nhà làm của Hermanos",
+    },
+  },
+  {
+    src: "/images/gallary/menu-set.jpg",
+    alt: {
+      en: "Selection of dishes from the Hermanos menu",
+      vi: "Các món ăn trong thực đơn Hermanos",
     },
   },
 ] satisfies Array<{ src: string; alt: LocalizedText }>;

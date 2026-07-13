@@ -23,6 +23,29 @@ export function formatDateStringInTimeZone(date: Date, timeZone: string) {
   return `${year}-${month}-${day}`;
 }
 
+export function formatTimeStringInTimeZone(date: Date, timeZone: string) {
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    timeZone,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  });
+  const parts = formatter.formatToParts(date);
+  const hour = parts.find((part) => part.type === "hour")?.value;
+  const minute = parts.find((part) => part.type === "minute")?.value;
+
+  if (!hour || !minute) {
+    throw new Error(`Could not format time parts for timezone "${timeZone}".`);
+  }
+
+  return `${hour}:${minute}`;
+}
+
+export function isFutureTimeForDate(date: string, time: string, now: Date, timeZone: string) {
+  const today = formatDateStringInTimeZone(now, timeZone);
+  return date !== today || time > formatTimeStringInTimeZone(now, timeZone);
+}
+
 export function isIsoDateString(value: string) {
   return /^\d{4}-\d{2}-\d{2}$/.test(value);
 }

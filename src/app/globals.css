@@ -60,23 +60,57 @@ body {
   min-width: 0;
 }
 
-.booking-native-date-control {
+.booking-native-date-time-control {
   -webkit-appearance: none;
   appearance: none;
+  box-sizing: border-box;
   display: block;
+  width: 100%;
   inline-size: 100%;
   max-inline-size: 100%;
+  max-width: 100%;
   min-inline-size: 0;
+  min-width: 0;
   overflow: hidden;
+  line-height: 1.5;
 }
 
-.booking-native-date-control::-webkit-date-and-time-value {
+.booking-native-date-time-control::-webkit-date-and-time-value {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  min-width: 0;
   min-height: 1.5em;
   text-align: left;
 }
 
-.booking-native-date-control::-webkit-calendar-picker-indicator {
+.booking-native-date-time-control::-webkit-datetime-edit {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+}
+
+.booking-native-date-time-control::-webkit-calendar-picker-indicator {
+  flex: 0 0 auto;
   margin: 0;
+  padding: 0;
+}
+
+[data-mobile-fixed-action] {
+  transition:
+    opacity var(--motion-fast) var(--ease-standard),
+    visibility var(--motion-fast) var(--ease-standard);
+}
+
+@media (max-width: 767px) {
+  body:has(input:focus, textarea:focus, select:focus, [contenteditable="true"]:focus)
+    [data-mobile-fixed-action] {
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+  }
 }
 
 button,

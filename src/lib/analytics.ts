@@ -18,7 +18,7 @@ export function trackEvent(event: TrackingEventName, params: EventParams = {}) {
 
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
-    event,
     ...params,
+    event,
   });
 }

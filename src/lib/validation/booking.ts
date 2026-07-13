@@ -11,7 +11,7 @@ import {
   type BookingFieldErrors,
 } from "@/features/booking/contracts/api";
 import { getBookingFieldErrorMessage } from "@/features/booking/domain/validation-errors";
-import { formatDateStringInTimeZone, isIsoDateString } from "@/lib/date";
+import { formatDateStringInTimeZone, isFutureTimeForDate, isIsoDateString } from "@/lib/date";
 
 const bookingTimePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
 const contactValuePattern = /^[\d\s+().-]+$/;
@@ -39,6 +39,20 @@ const messageCode = (code: BookingFieldErrorCode) => code;
 const enumErrorMap = (code: BookingFieldErrorCode) => () => ({ message: messageCode(code) });
 
 export const otpCodeSchema = z.string().trim().regex(/^\d{4,10}$/, messageCode("BOOKING_OTP_INVALID_CODE"));
+
+export function addFutureBookingTimeIssue(
+  booking: { date: string; time: string },
+  context: z.RefinementCtx,
+  now: Date = new Date(),
+) {
+  if (!isFutureTimeForDate(booking.date, booking.time, now, businessInfo.timeZone)) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: messageCode("BOOKING_TIME_PAST"),
+      path: ["time"],
+    });
+  }
+}
 
 function createBookingDateSchema(options: BookingSchemaOptions = {}) {
   return z
@@ -123,6 +137,7 @@ export function createBookingSchemas(options: BookingSchemaOptions = {}) {
   return {
     bookingSchema: bookingBaseSchema,
     bookingRequestSchema: bookingRequestBaseSchema
+      .superRefine((booking, context) => addFutureBookingTimeIssue(booking, context, options.now ?? new Date()))
       .refine((booking) => Boolean(booking.contact || booking.phone || booking.email), {
         message: messageCode("BOOKING_CONTACT_METHOD_REQUIRED"),
         path: ["contact"],

@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { CalendarDays, Clock, Users, Check } from "lucide-react";
 import { useBookingForm } from "./useBookingForm";
 import { BookingContactFields } from "./BookingContactFields";
 import { getPremiumFormCopy } from "./booking-form-premium";
 import { TIME_SLOTS, SPECIAL_REQUEST_CHIPS, MIN_GUESTS, MAX_GUESTS } from "./booking.constants";
 import type { Locale } from "@/types/common";
+import { businessInfo } from "@/config/business";
+import { formatDateStringInTimeZone, formatTimeStringInTimeZone, isFutureTimeForDate } from "@/lib/date";
 
 /**
  * Demo availability logic --- NOT production data.
@@ -37,38 +39,54 @@ export function PremiumBookingForm({ locale }: { locale: Locale }) {
   const t = bookingForm.copy;
   const formCopy = bookingForm.formCopy;
 
-  const [watchedDate, setWatchedDate] = useState("");
-  const [watchedTime, setWatchedTime] = useState("");
-  const setWatchedGuests = useState(MIN_GUESTS)[1];
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  const watchedDate = bookingForm.values.date ?? "";
+  const watchedTime = bookingForm.values.time ?? "";
+  const setBookingValue = bookingForm.setValue;
+  const today = currentTime
+    ? formatDateStringInTimeZone(currentTime, businessInfo.timeZone)
+    : "";
+  const currentTimeValue = currentTime
+    ? formatTimeStringInTimeZone(currentTime, businessInfo.timeZone)
+    : "";
+  const visibleTimeSlots = TIME_SLOTS.filter(
+    (slot) => watchedDate !== today || !currentTimeValue || slot > currentTimeValue,
+  );
 
-  const slotAvailability =
-    watchedDate && watchedTime ? getSlotAvailability(watchedDate, watchedTime) : null;
+  const selectedPresetAvailability =
+    watchedDate && TIME_SLOTS.includes(watchedTime as (typeof TIME_SLOTS)[number])
+      ? getSlotAvailability(watchedDate, watchedTime)
+      : null;
 
   const hasCoreDetails =
-    !!watchedDate && !!watchedTime && slotAvailability !== null && !slotAvailability.isFull;
+    !!watchedDate &&
+    !!watchedTime &&
+    (!currentTime || isFutureTimeForDate(watchedDate, watchedTime, currentTime, businessInfo.timeZone)) &&
+    !selectedPresetAvailability?.isFull;
 
-  const dateRegister = useMemo(
-    () => ({
-      ...bookingForm.registers.date,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-        setWatchedDate(e.target.value);
-        bookingForm.registers.date.onChange(e);
-      },
-    }),
-    [bookingForm.registers.date],
-  );
+  useEffect(() => {
+    const updateCurrentTime = () => setCurrentTime(new Date());
+    updateCurrentTime();
+    const interval = window.setInterval(updateCurrentTime, 30_000);
+    return () => window.clearInterval(interval);
+  }, []);
 
-  const guestsRegister = useMemo(
-    () => ({
-      ...bookingForm.registers.guests,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-        setWatchedGuests(Number(e.target.value));
-        bookingForm.registers.guests.onChange(e);
-      },
-    }),
-    [bookingForm.registers.guests, setWatchedGuests],
-  );
+  useEffect(() => {
+    if (
+      currentTime &&
+      watchedDate &&
+      watchedTime &&
+      TIME_SLOTS.includes(watchedTime as (typeof TIME_SLOTS)[number]) &&
+      !isFutureTimeForDate(watchedDate, watchedTime, currentTime, businessInfo.timeZone)
+    ) {
+      setBookingValue("time", "", {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
+    }
+  }, [currentTime, setBookingValue, watchedDate, watchedTime]);
 
   const handleChipToggle = (key: string) => {
     setSelectedChips((prev) =>
@@ -77,8 +95,11 @@ export function PremiumBookingForm({ locale }: { locale: Locale }) {
   };
 
   const handleTimeSelect = (slot: string) => {
-    setWatchedTime(slot);
-    bookingForm.registers.time.onChange({ target: { value: slot } });
+    setBookingValue("time", slot, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
   };
 
   const handleChipWithNote = (key: string) => {
@@ -154,12 +175,12 @@ export function PremiumBookingForm({ locale }: { locale: Locale }) {
             {premiumCopy.selectDate}
           </label>
           <input
-            className="ios-form-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
+            className="ios-form-control booking-native-date-time-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
             id="premium-date"
             min={bookingForm.minDate}
             required
             type="date"
-            {...dateRegister}
+            {...bookingForm.registers.date}
           />
           {bookingForm.fieldError("date") ? (
             <span className="mt-1 block text-sm text-error" role="alert">
@@ -174,7 +195,7 @@ export function PremiumBookingForm({ locale }: { locale: Locale }) {
             {premiumCopy.selectTime}
           </label>
           <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {TIME_SLOTS.map((slot) => {
+            {visibleTimeSlots.map((slot) => {
               const availability = watchedDate
                 ? getSlotAvailability(watchedDate, slot)
                 : { label: "Available" as const, isFull: false, remaining: 10 };
@@ -215,6 +236,26 @@ export function PremiumBookingForm({ locale }: { locale: Locale }) {
               );
             })}
           </div>
+          {watchedDate === today && visibleTimeSlots.length === 0 ? (
+            <p className="mt-3 rounded-lg border border-borderWarm bg-white px-3 py-2 text-sm text-muted">
+              {premiumCopy.noFutureSlots}
+            </p>
+          ) : null}
+          <div className="mt-4">
+            <label className="text-sm font-semibold text-charcoal" htmlFor="premium-custom-time">
+              {premiumCopy.customTime}
+            </label>
+            <input
+              className="ios-form-control booking-native-date-time-control mt-2 min-h-12 w-full rounded-lg border border-borderWarm bg-white px-3 py-3 text-base outline-none focus:border-olive"
+              id="premium-custom-time"
+              min={businessInfo.openingHoursStructured.opens}
+              max={businessInfo.openingHoursStructured.closes}
+              step={60}
+              type="time"
+              {...bookingForm.registers.time}
+            />
+            <span className="mt-1 block text-xs text-muted">{premiumCopy.customTimeHint}</span>
+          </div>
           {bookingForm.fieldError("time") ? (
             <span className="mt-1 block text-sm text-error" role="alert">
               {bookingForm.fieldError("time")}
@@ -235,7 +276,7 @@ export function PremiumBookingForm({ locale }: { locale: Locale }) {
             required
             step={1}
             type="number"
-            {...guestsRegister}
+            {...bookingForm.registers.guests}
           />
           {bookingForm.fieldError("guests") ? (
             <span className="mt-1 block text-sm text-error" role="alert">

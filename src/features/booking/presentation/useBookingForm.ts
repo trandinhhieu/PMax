@@ -17,7 +17,7 @@ import { submitBookingRequest, startBookingOtp } from "@/features/booking/infras
 import { getLocalizedBookingFieldError } from "@/features/booking/presentation/error";
 import { trackEvent } from "@/lib/analytics";
 import { formatDateStringInTimeZone } from "@/lib/date";
-import { bookingSchema, otpCodeSchema, type BookingField, type BookingFormValues } from "@/lib/validation/booking";
+import { addFutureBookingTimeIssue, bookingSchema, otpCodeSchema, type BookingField, type BookingFormValues } from "@/lib/validation/booking";
 import type { Locale } from "@/types/common";
 import { getBookingFormCopy } from "./booking-form";
 
@@ -31,7 +31,7 @@ export type BookingFormInput = BookingFormValues & {
 
 const bookingFormSchema = bookingSchema.extend({
   otpCode: z.string(),
-});
+}).superRefine((booking, context) => addFutureBookingTimeIssue(booking, context));
 
 const initialValues: BookingFormInput = {
   name: "",
@@ -66,6 +66,7 @@ export function useBookingForm(locale: Locale) {
     watch,
     reset,
     getValues,
+    setValue,
     setError,
     clearErrors,
     formState: { errors, touchedFields, submitCount },
@@ -320,6 +321,8 @@ export function useBookingForm(locale: Locale) {
     onSubmit,
     requestOtp,
     fieldError,
+    setValue,
+    values,
     registers: {
       contact: registerWithFeedback("contact"),
       otpCode: registerWithFeedback("otpCode"),

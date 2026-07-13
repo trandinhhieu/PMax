@@ -10,6 +10,8 @@ export function useMenuCatalogController() {
   const [activeGroupId, setActiveGroupId] = useState("all");
   const [visibleCount, setVisibleCount] = useState(pageSize);
   const catalogRef = useRef<HTMLElement | null>(null);
+  const mobileNavigationRef = useRef<HTMLDivElement | null>(null);
+  const desktopNavigationRef = useRef<HTMLElement | null>(null);
   const itemsRef = useRef<HTMLDivElement | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -64,34 +66,40 @@ export function useMenuCatalogController() {
     return () => observer.disconnect();
   }, [filteredItems.length, hasMore]);
 
-  const scrollTo = (element: HTMLElement | null) => {
+  const getHeaderOffset = () => (window.innerWidth >= 768 ? 72 : 64);
+
+  const scrollTo = (element: HTMLElement | null, offset: () => number) => {
     window.requestAnimationFrame(() => {
       if (!element) return;
 
       const top = element.getBoundingClientRect().top + window.scrollY;
-      const stickyOffset = window.innerWidth >= 1024 ? 188 : 172;
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       window.scrollTo({
         behavior: prefersReducedMotion ? "auto" : "smooth",
-        top: Math.max(top - stickyOffset, 0),
+        top: Math.max(top - offset(), 0),
       });
     });
   };
 
+  const getItemsOffset = () => {
+    const navigation = window.innerWidth >= 1024 ? desktopNavigationRef.current : mobileNavigationRef.current;
+    return getHeaderOffset() + (navigation?.getBoundingClientRect().height ?? 0) + 16;
+  };
+
   const chooseCategory = (category: MenuCategory) => {
     setActiveCategory(category);
-    scrollTo(catalogRef.current);
+    scrollTo(catalogRef.current, getHeaderOffset);
   };
 
   const chooseGroup = (groupId: string) => {
     setActiveGroupId(groupId);
-    scrollTo(itemsRef.current);
+    scrollTo(itemsRef.current, getItemsOffset);
   };
 
   const resetGroup = () => {
     setActiveGroupId("all");
-    scrollTo(itemsRef.current);
+    scrollTo(itemsRef.current, getItemsOffset);
   };
 
   const loadMore = () => {
@@ -112,9 +120,11 @@ export function useMenuCatalogController() {
     groupCountMap,
     hasMore,
     loadMore,
+    mobileNavigationRef,
     nextCategory,
     resetGroup,
-    scrollToCatalog: () => scrollTo(catalogRef.current),
+    scrollToCatalog: () => scrollTo(catalogRef.current, getHeaderOffset),
+    desktopNavigationRef,
     itemsRef,
     sentinelRef,
     visibleCount,

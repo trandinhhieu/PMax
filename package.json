@@ -6,8 +6,9 @@
   "scripts": {
     "predev": "node scripts/generate-menu-data.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/generate-menu-data.mjs",
+    "prebuild": "node scripts/generate-menu-data.mjs && node scripts/ai/check-tracking-events.mjs && node scripts/seo/check-phase-0-config.mjs",
     "build": "next build",
+    "build:production": "node scripts/generate-menu-data.mjs && node scripts/ai/check-tracking-events.mjs && node scripts/seo/check-phase-0-config.mjs --production && next build",
     "start": "next start",
     "menu:generate": "node scripts/generate-menu-data.mjs",
     "lint": "eslint .",
@@ -22,7 +23,8 @@
     "ai:index": "node scripts/ai/generate-agent-index.mjs",
     "ai:route": "node scripts/ai/resolve-agent-route.mjs",
     "ai:check-tracking": "node scripts/ai/check-tracking-events.mjs",
-    "ai:check-seo": "node scripts/ai/check-seo-files.mjs"
+    "ai:check-seo": "node scripts/ai/check-seo-files.mjs",
+    "seo:check-phase0": "node scripts/seo/check-phase-0-config.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

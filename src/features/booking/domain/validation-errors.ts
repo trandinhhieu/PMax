@@ -15,6 +15,7 @@ export const bookingFieldErrorMessages: Record<BookingFieldErrorCode, string> = 
   BOOKING_DATE_PAST: "Please choose today or a future date.",
   BOOKING_TIME_REQUIRED: "Please choose a time.",
   BOOKING_TIME_INVALID: "Please choose a valid time.",
+  BOOKING_TIME_PAST: "Please choose a time later than the current time.",
   BOOKING_TIME_OUTSIDE_OPENING_HOURS: `Please choose a time between ${businessInfo.openingHoursStructured.opens} and ${businessInfo.openingHoursStructured.closes}.`,
   BOOKING_GUESTS_INTEGER: "Please enter a whole number of guests.",
   BOOKING_GUESTS_MIN: "Please enter at least 1 guest.",

@@ -60,7 +60,11 @@ export function FloatingActionGroup({ locale }: { locale: Locale }) {
   const actionClass = "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 text-sm font-bold text-charcoal transition hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tomato";
 
   return (
-    <div ref={groupRef} className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-4 md:bottom-6 z-40 flex flex-col items-end gap-3 sm:right-6">
+    <div
+      ref={groupRef}
+      className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-4 z-40 flex flex-col items-end gap-3 sm:right-6 md:bottom-6"
+      data-mobile-fixed-action
+    >
       {open ? (
         <section aria-label={en ? "Hermanos contact information" : "Thông tin liên hệ Hermanos"} className="max-h-[calc(100dvh-8rem)] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto rounded-2xl border border-borderWarm bg-porcelain p-4 shadow-large" id={panelId}>
           <div className="flex items-start justify-between gap-4">

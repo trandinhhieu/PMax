@@ -16,7 +16,7 @@ type MenuCatalogProps = {
 
 export function MenuCatalog({ locale }: MenuCatalogProps) {
   const copy = getMenuCopy(locale);
-  const desktopCategoryNavRef = useRef<HTMLElement>(null);
+  const desktopCategoryNavMeasureRef = useRef<HTMLElement>(null);
   const [desktopCategoryNavHeight, setDesktopCategoryNavHeight] = useState(120);
   const {
     activeCategory,
@@ -32,6 +32,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
     groupCountMap,
     hasMore,
     loadMore,
+    mobileNavigationRef,
     nextCategory,
     resetGroup,
     scrollToCatalog,
@@ -40,6 +41,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
     visibleCount,
     visibleItems,
     visibleTotalCount,
+    desktopNavigationRef,
   } = useMenuCatalogController();
   const visibleItemCount = Math.min(visibleCount, filteredItems.length);
   const activeCategoryPrices = menuItems
@@ -51,7 +53,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
     : copy.sidebar.priceUnavailable;
 
   useEffect(() => {
-    const navigation = desktopCategoryNavRef.current;
+    const navigation = desktopCategoryNavMeasureRef.current;
     if (!navigation) return;
 
     const updateHeight = () => setDesktopCategoryNavHeight(navigation.getBoundingClientRect().height);
@@ -64,7 +66,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
 
   return (
     <section className="mt-6 sm:mt-8" id="menu-catalog" ref={catalogRef}>
-      <div className="sticky top-16 z-20 -mx-4 border-y border-borderWarm bg-cream/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 md:top-[72px] lg:hidden">
+      <div className="sticky top-16 z-20 -mx-4 border-y border-borderWarm bg-cream/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 md:top-[72px] lg:hidden" ref={mobileNavigationRef}>
         <div className="mb-3 flex items-end justify-between gap-4">
           <div>
             <p className="text-xs font-semibold text-muted">{copy.nav.currentCategory}</p>
@@ -95,7 +97,10 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
       <nav
         aria-label={copy.nav.categories}
         className="sticky top-[72px] z-20 -mx-8 hidden border-y border-borderWarm bg-cream/95 px-8 py-4 backdrop-blur lg:block"
-        ref={desktopCategoryNavRef}
+        ref={(navigation) => {
+          desktopCategoryNavMeasureRef.current = navigation;
+          desktopNavigationRef.current = navigation;
+        }}
       >
         <div className="flex items-end justify-between gap-6">
           <div className="min-w-0">

@@ -39,6 +39,7 @@ test.describe("menu and supporting pages", () => {
     const firstGroup = menuGroups.find((group) => group.category === defaultCategory.id)!;
 
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto(`${baseUrl}/en/menu`, { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
 
@@ -51,6 +52,19 @@ test.describe("menu and supporting pages", () => {
 
     await page.getByRole("button", { name: new RegExp(escapeRegExp(firstGroup.title.en)) }).click();
     await expect(page.locator("#menu-items h4").filter({ hasText: firstGroup.title.en }).first()).toBeVisible();
+
+    const itemsBox = await page.locator("#menu-items").boundingBox();
+    const stickyBox = await stickyBar.boundingBox();
+    expect(itemsBox).not.toBeNull();
+    expect(stickyBox).not.toBeNull();
+    expect(itemsBox!.y).toBeGreaterThanOrEqual(stickyBox!.y + stickyBox!.height);
+    expect(itemsBox!.y).toBeLessThanOrEqual(stickyBox!.y + stickyBox!.height + 24);
+
+    const nextCategory = menuCategories[1]!;
+    await page.getByRole("button", { name: nextCategory.label.en, exact: true }).click();
+    const switchedStickyBox = await stickyBar.boundingBox();
+    expect(switchedStickyBox).not.toBeNull();
+    expect(switchedStickyBox!.y).toBeLessThanOrEqual(72);
   });
 
   test("respects reduced motion during menu navigation scrolling", async ({ page }) => {

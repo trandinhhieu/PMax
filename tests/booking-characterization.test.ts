@@ -32,6 +32,33 @@ test.describe("booking behavior characterization", () => {
     expect(formatBookingValidationIssues(parsed.error)).toMatchObject({ fieldErrors: { date: "Please choose today or a future date." }, fieldErrorCodes: { date: "BOOKING_DATE_PAST" } });
   });
 
+  test("rejects same-day booking times that are not later than the restaurant clock", () => {
+    const { bookingRequestSchema: controlledSchema } = createBookingSchemas({
+      now: new Date("2026-07-13T10:15:00Z"),
+    });
+    const baseBooking = {
+      name: "Nguyen Van A",
+      contact: "+84905906842",
+      contactChannel: "phone" as const,
+      date: "2026-07-13",
+      guests: 2,
+      locale: "en" as const,
+    };
+
+    for (const time of ["17:00", "17:15"]) {
+      const parsed = controlledSchema.safeParse({ ...baseBooking, time });
+      expect(parsed.success).toBe(false);
+      if (parsed.success) continue;
+      expect(formatBookingValidationIssues(parsed.error)).toMatchObject({
+        fieldErrors: { time: "Please choose a time later than the current time." },
+        fieldErrorCodes: { time: "BOOKING_TIME_PAST" },
+      });
+    }
+
+    expect(controlledSchema.safeParse({ ...baseBooking, time: "17:16" }).success).toBe(true);
+    expect(controlledSchema.safeParse({ ...baseBooking, date: "2026-07-14", time: "16:00" }).success).toBe(true);
+  });
+
   test("localizes booking field errors from stable codes", () => {
     expect(getLocalizedBookingFieldError("en", "contact", "ignored", "BOOKING_OTP_PHONE_INVALID")).toBe("Please enter a valid phone number before requesting OTP.");
     expect(getLocalizedBookingFieldError("vi", "otpCode", "ignored", "BOOKING_OTP_CONTACT_CHANGED")).toBe("Vui lòng lấy mã SMS mới cho đúng số điện thoại đang nhập.");

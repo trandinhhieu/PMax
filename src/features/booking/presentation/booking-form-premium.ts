@@ -12,6 +12,8 @@ export interface PremiumFormCopy {
   successBody: string;
   selectDate: string;
   selectTime: string;
+  customTime: string;
+  customTimeHint: string;
   selectGuests: string;
   contactUnlockHint: string;
   specialRequests: string;
@@ -20,6 +22,7 @@ export interface PremiumFormCopy {
   slotLimited: string;
   slotFull: string;
   slotRemaining: string;
+  noFutureSlots: string;
 }
 
 const premiumCopy: Record<Locale, PremiumFormCopy> = {
@@ -40,6 +43,8 @@ const premiumCopy: Record<Locale, PremiumFormCopy> = {
     successBody: "Hermanos will confirm your table through your preferred channel. Expect a reply shortly.",
     selectDate: "Select a date",
     selectTime: "Choose a time slot",
+    customTime: "Or enter a custom time",
+    customTimeHint: "Custom times must be within opening hours and later than the current time for today.",
     selectGuests: "Number of guests",
     contactUnlockHint: "Pick a date, time, and available slot above to continue.",
     specialRequests: "Special requests (optional)",
@@ -48,6 +53,7 @@ const premiumCopy: Record<Locale, PremiumFormCopy> = {
     slotLimited: "Limited",
     slotFull: "Full",
     slotRemaining: "only {n} left",
+    noFutureSlots: "No later preset slots remain today. Choose another date or enter a later custom time.",
   },
   vi: {
     badge: "Đặt bàn",
@@ -66,6 +72,8 @@ const premiumCopy: Record<Locale, PremiumFormCopy> = {
     successBody: "Hermanos sẽ xác nhận bàn qua kênh liên hệ bạn chọn. Sẽ phản hồi trong thời gian sớm nhất.",
     selectDate: "Chọn ngày",
     selectTime: "Chọn giờ",
+    customTime: "Hoặc nhập giờ khác",
+    customTimeHint: "Giờ tự chọn phải nằm trong giờ mở cửa và muộn hơn thời gian hiện tại nếu đặt hôm nay.",
     selectGuests: "Số khách",
     contactUnlockHint: "Chọn ngày, giờ và slot còn trống bên trên để tiếp tục.",
     specialRequests: "Yêu cầu đặc biệt (không bắt buộc)",
@@ -74,6 +82,7 @@ const premiumCopy: Record<Locale, PremiumFormCopy> = {
     slotLimited: "Sắp hết",
     slotFull: "Hết chỗ",
     slotRemaining: "còn {n} chỗ",
+    noFutureSlots: "Hôm nay không còn khung giờ đặt sẵn nào muộn hơn. Vui lòng chọn ngày khác hoặc nhập giờ muộn hơn.",
   },
 };
 

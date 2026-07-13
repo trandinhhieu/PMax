@@ -1,16 +1,16 @@
-﻿import type { Metadata } from "next";
-import Script from "next/script";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Header } from "@/features/landing";
-import { StickyMobileCTA } from "@/features/landing";
+import { GoogleTagManager } from "@/components/analytics/GoogleTagManager";
 import { Footer } from "@/components/layout/Footer";
 import { businessInfo } from "@/config/business";
+import { getGtmId } from "@/config/public-env";
+import { Header, StickyMobileCTA } from "@/features/landing";
 import { getDeploymentUrl } from "@/lib/site-url";
 import { isLocale, locales, type Locale } from "@/types/common";
 import "../globals.css";
 
 const deploymentUrl = getDeploymentUrl();
-const gtmId = process.env.NEXT_PUBLIC_GTM_ID?.trim();
+const gtmId = getGtmId();
 
 export const metadata: Metadata = {
   metadataBase: deploymentUrl ? new URL(deploymentUrl) : undefined,
@@ -45,30 +45,8 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      {gtmId ? (
-        <Script
-          id="gtm-base"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':` +
-              `new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],` +
-              `j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=` +
-              `'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);` +
-              `})(window,document,'script','dataLayer','${gtmId}');`,
-          }}
-        />
-      ) : null}
       <body className="font-sans">
-        {gtmId ? (
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
-              height="0"
-              width="0"
-              style={{ display: "none", visibility: "hidden" }}
-            />
-          </noscript>
-        ) : null}
+        <GoogleTagManager gtmId={gtmId} />
         <Header locale={locale as Locale} />
         {children}
         <Footer locale={locale as Locale} />

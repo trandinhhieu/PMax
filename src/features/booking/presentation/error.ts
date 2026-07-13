@@ -16,6 +16,7 @@ const viFieldErrorMessages: Record<BookingFieldErrorCode, string> = {
   BOOKING_DATE_PAST: "Vui lòng chọn ngày hợp lệ từ hôm nay trở đi.",
   BOOKING_TIME_REQUIRED: "Vui lòng chọn giờ hợp lệ trong giờ mở cửa.",
   BOOKING_TIME_INVALID: "Vui lòng chọn giờ hợp lệ trong giờ mở cửa.",
+  BOOKING_TIME_PAST: "Vui lòng chọn giờ muộn hơn thời gian hiện tại.",
   BOOKING_TIME_OUTSIDE_OPENING_HOURS: "Vui lòng chọn giờ hợp lệ trong giờ mở cửa.",
   BOOKING_GUESTS_INTEGER: "Vui lòng nhập số khách nguyên từ 1 đến 20.",
   BOOKING_GUESTS_MIN: "Vui lòng nhập số khách nguyên từ 1 đến 20.",

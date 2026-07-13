@@ -47,4 +47,17 @@ pnpm-debug.log*
 !/docs/refactor-C/
 /docs/refactor-C/*
 !/docs/refactor-C/design-system.md
-/scripts/
+
+# Local SEO implementation notes and verification suites
+/playwright.gtm.config.ts
+/tests/analytics.test.ts
+/tests/google-tag-manager.integration.spec.ts
+/tests/google-tag-manager.test.ts
+/tests/helpers/gtm-global-setup.mjs
+/tests/phase-0-config-gate.test.ts
+/tests/public-env.test.ts
+/tests/tracking-contract.test.ts
+
+/scripts/*
+!/scripts/seo/
+!/scripts/seo/**

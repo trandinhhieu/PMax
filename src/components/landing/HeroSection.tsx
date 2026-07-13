@@ -1,75 +1,46 @@
 import Image from "next/image";
-import { CalendarCheck, MapPin, Utensils } from "lucide-react";
 import { businessInfo } from "@/config/business";
-import { trackingEvents } from "@/config/tracking";
 import { copy } from "@/data/content";
 import type { Locale } from "@/types/common";
-import { TrackedLink } from "./TrackedLink";
 
 export function HeroSection({ locale }: { locale: Locale }) {
   const t = copy[locale];
 
   return (
-    <section className="relative min-h-[680px] overflow-hidden bg-charcoal text-white lg:min-h-[760px]">
+    <section className="relative min-h-[640px] overflow-hidden bg-charcoal text-white min-[600px]:min-h-[720px]">
       <div className="absolute inset-0">
         <Image
           priority
-          alt="Wood-fired pizza served at Hermanos Da Nang"
-          className="object-cover"
+          alt=""
+          className="object-cover object-[64%_center] min-[390px]:object-[61%_center] min-[600px]:object-[58%_center] lg:object-center"
           fetchPriority="high"
           fill
           quality={72}
           sizes="100vw"
           src={businessInfo.assets.hero}
         />
-        <div className="absolute inset-0 bg-black/35" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1E120C]/90 via-[#1E120C]/60 to-[#1E120C]/20" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_55%,rgba(196,154,90,0.20),transparent_38%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/45 to-black/80 min-[600px]:from-black/15 min-[600px]:via-black/40 min-[600px]:to-black/75 lg:to-black/45" />
+        <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-[#160d08]/70 via-[#160d08]/35 to-transparent min-[600px]:w-[90%] min-[600px]:from-[#160d08]/75 min-[600px]:via-[#160d08]/30 lg:w-[68%] lg:from-[#160d08]/85" />
       </div>
-      <div className="relative mx-auto flex min-h-[680px] max-w-7xl items-center px-4 pb-14 pt-24 sm:px-6 lg:min-h-[760px] lg:px-8">
-        <div className="max-w-3xl">
-          <p className="mb-6 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur">
+
+      <div className="relative mx-auto flex min-h-[640px] max-w-7xl items-start px-4 pb-24 pt-60 min-[390px]:px-5 min-[600px]:min-h-[720px] min-[600px]:px-6 min-[600px]:pb-24 min-[600px]:pt-[20.5rem] md:px-8 md:pt-[21rem] lg:items-center lg:px-8 lg:pb-16 lg:pt-20">
+        <div className="w-full max-w-[36rem] md:max-w-[42.5rem] lg:max-w-[46rem]">
+          <p className="mb-6 inline-flex rounded-full border border-white/25 bg-black/30 px-4 py-2 text-sm font-semibold text-white backdrop-blur-md min-[600px]:mb-7">
             {t.hero.eyebrow}
           </p>
-          <h1 className="font-display text-5xl font-bold leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl">
-            {t.hero.title}
+
+          <h1 className="font-display text-5xl font-bold leading-[0.92] tracking-[-0.03em] min-[390px]:text-[3.25rem] min-[600px]:whitespace-nowrap min-[600px]:text-[3.5rem] md:text-[4rem] lg:text-[4.25rem]">
+            <span className="block min-[600px]:inline">{t.hero.titleLead}</span>
+            <span className="block min-[600px]:inline"> {t.hero.titleRest}</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-white/85 sm:text-xl">{t.hero.body}</p>
-          <p className="mt-6 max-w-2xl text-sm font-semibold leading-6 text-white/80 sm:inline-flex sm:items-center">
+
+          <p className="mt-5 max-w-[36ch] text-[0.9375rem] leading-6 text-white/90 min-[390px]:max-w-[40ch] min-[390px]:text-base min-[600px]:mt-6 min-[600px]:max-w-[34rem] min-[600px]:text-lg min-[600px]:leading-8 md:max-w-[38rem] lg:text-xl">
+            {t.hero.body}
+          </p>
+
+          <p className="mt-5 max-w-xl text-[0.9375rem] font-semibold leading-6 text-white/95 [text-shadow:0_1px_8px_rgba(0,0,0,0.65)] min-[600px]:mt-6">
             {t.hero.trustLine}
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <TrackedLink
-              className="inline-flex min-h-14 items-center justify-center rounded-2xl bg-tomato px-7 py-4 text-base font-bold text-white shadow-large transition hover:-translate-y-0.5 hover:bg-tomato-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tomato focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal"
-              event={trackingEvents.viewMenu}
-              href={`/${locale}/menu`}
-              locale={locale}
-              location="hero"
-            >
-              <Utensils aria-hidden className="mr-2 h-5 w-5" />
-              {t.hero.menu}
-            </TrackedLink>
-            <TrackedLink
-              className="inline-flex min-h-14 items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-7 py-4 text-base font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tomato focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal"
-              event={trackingEvents.bookingStart}
-              href="#booking"
-              locale={locale}
-              location="hero"
-            >
-              <CalendarCheck aria-hidden className="mr-2 h-5 w-5" />
-              {t.hero.booking}
-            </TrackedLink>
-            <TrackedLink
-              className="inline-flex min-h-14 items-center justify-center rounded-2xl px-7 py-4 text-base font-bold text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tomato focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal"
-              event={trackingEvents.clickGetDirections}
-              href={businessInfo.googleMapsUrl}
-              locale={locale}
-              location="hero"
-            >
-              <MapPin aria-hidden className="mr-2 h-5 w-5" />
-              {t.hero.directions}
-            </TrackedLink>
-          </div>
         </div>
       </div>
     </section>
