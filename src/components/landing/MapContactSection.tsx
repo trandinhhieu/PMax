@@ -3,7 +3,7 @@
 import { Copy, Facebook, Instagram, MapPin, MessageCircle, Music2, Phone } from "lucide-react";
 import type { Locale } from "@/types/common";
 import { businessInfo } from "@/config/business";
-import { trackingEvents } from "@/config/tracking";
+import { trackingCtaTypes, trackingEvents } from "@/config/tracking";
 import { copy } from "@/data/content";
 import { trackEvent } from "@/lib/analytics";
 import { TrackedLink } from "./TrackedLink";
@@ -14,6 +14,7 @@ export function MapContactSection({ locale }: { locale: Locale }) {
   const copyAddress = async () => {
     await navigator.clipboard.writeText(businessInfo.address[locale]);
     trackEvent(trackingEvents.copyAddress, {
+      cta_type: trackingCtaTypes.copyAddress,
       location: "map_section",
       page_language: locale,
     });
@@ -39,6 +40,7 @@ export function MapContactSection({ locale }: { locale: Locale }) {
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
             <TrackedLink
               className="inline-flex min-h-12 items-center justify-center rounded-lg bg-tomato px-5 py-3 font-bold text-white hover:bg-tomato-hover"
+              ctaType={trackingCtaTypes.directions}
               event={trackingEvents.clickGetDirections}
               href={businessInfo.googleMapsUrl}
               locale={locale}
@@ -53,6 +55,7 @@ export function MapContactSection({ locale }: { locale: Locale }) {
             </button>
             <TrackedLink
               className="inline-flex min-h-12 items-center justify-center rounded-lg border border-white/50 px-5 py-3 font-bold text-white hover:bg-white/10"
+              ctaType={trackingCtaTypes.call}
               event={trackingEvents.clickCall}
               href={`tel:${businessInfo.phone}`}
               locale={locale}
@@ -68,6 +71,7 @@ export function MapContactSection({ locale }: { locale: Locale }) {
           <div className="mt-6 grid gap-3">
             <TrackedLink
               className="inline-flex min-h-12 items-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal hover:border-tomato"
+              ctaType={trackingCtaTypes.facebookMessage}
               event={trackingEvents.clickFacebookMessage}
               href={businessInfo.socials.facebook}
               locale={locale}
@@ -78,6 +82,7 @@ export function MapContactSection({ locale }: { locale: Locale }) {
             </TrackedLink>
             <TrackedLink
               className="inline-flex min-h-12 items-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal hover:border-tomato"
+              ctaType={trackingCtaTypes.social}
               event={trackingEvents.socialClick}
               href={businessInfo.socials.instagram}
               locale={locale}
@@ -88,6 +93,7 @@ export function MapContactSection({ locale }: { locale: Locale }) {
             </TrackedLink>
             <TrackedLink
               className="inline-flex min-h-12 items-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal hover:border-tomato"
+              ctaType={trackingCtaTypes.whatsapp}
               event={trackingEvents.clickWhatsapp}
               href={businessInfo.socials.whatsapp}
               locale={locale}
@@ -99,6 +105,7 @@ export function MapContactSection({ locale }: { locale: Locale }) {
             {businessInfo.socials.zalo ? (
               <TrackedLink
                 className="inline-flex min-h-12 items-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal hover:border-tomato"
+                ctaType={trackingCtaTypes.zalo}
                 event={trackingEvents.clickZalo}
                 href={businessInfo.socials.zalo}
                 locale={locale}
@@ -111,6 +118,7 @@ export function MapContactSection({ locale }: { locale: Locale }) {
             {businessInfo.socials.tiktok ? (
               <TrackedLink
                 className="inline-flex min-h-12 items-center rounded-lg border border-borderWarm bg-white px-5 py-3 font-bold text-charcoal hover:border-tomato"
+                ctaType={trackingCtaTypes.social}
                 event={trackingEvents.socialClick}
                 href={businessInfo.socials.tiktok}
                 locale={locale}

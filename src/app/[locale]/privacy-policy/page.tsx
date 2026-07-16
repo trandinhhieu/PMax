@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { Container, Stack } from "@/components/ui";
-import { siteConfig } from "@/config/business";
-import { getLocalizedPaths } from "@/lib/locale-routing";
+import { buildPrivacyPageGraph } from "@/lib/schema";
+import { buildLocalizedMetadata } from "@/lib/seo/metadata";
 import { isLocale, type Locale } from "@/types/common";
 import { privacyPolicyCopy } from "./privacy-policy.copy";
 
@@ -15,20 +16,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!isLocale(locale)) notFound();
 
   const copy = privacyPolicyCopy[locale];
-  const localizedPaths = getLocalizedPaths("/privacy-policy");
-
-  return {
+  return buildLocalizedMetadata({
+    locale,
+    pathname: "/privacy-policy",
     title: copy.title,
-    alternates: {
-      canonical: siteConfig.domain ? `${siteConfig.domain}/${locale}/privacy-policy` : undefined,
-      languages: siteConfig.domain
-        ? {
-            en: `${siteConfig.domain}${localizedPaths.en}`,
-            vi: `${siteConfig.domain}${localizedPaths.vi}`,
-          }
-        : undefined,
-    },
-  };
+    description: copy.description,
+  });
 }
 
 export default async function PrivacyPolicyPage({ params }: PageProps) {
@@ -36,9 +29,15 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
   if (!isLocale(locale)) notFound();
 
   const copy = privacyPolicyCopy[locale as Locale];
+  const schemaGraph = buildPrivacyPageGraph({
+    locale: locale as Locale,
+    title: copy.title,
+    description: copy.description,
+  });
 
   return (
     <main className="min-h-[calc(100vh-312px)] bg-cream pb-16 pt-28">
+      {schemaGraph ? <JsonLd data={schemaGraph} /> : null}
       <Container>
         <div className="mx-auto max-w-3xl rounded-[2rem] border border-borderWarm bg-porcelain/85 p-6 shadow-small sm:p-8 lg:p-10">
           <Stack gap="xl">

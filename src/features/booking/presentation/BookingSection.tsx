@@ -2,7 +2,7 @@
 
 import { Phone, MessageCircle, Shield } from "lucide-react";
 import { businessInfo } from "@/config/business";
-import { trackingEvents } from "@/config/tracking";
+import { trackingCtaTypes, trackingEvents } from "@/config/tracking";
 import { TrackedLink } from "@/components/landing/TrackedLink";
 import { PremiumBookingForm } from "./BookingForm";
 import { getPremiumFormCopy } from "./booking-form-premium";
@@ -54,6 +54,7 @@ export function BookingSection({ locale }: { locale: Locale }) {
             <div className="grid gap-3 sm:grid-cols-2">
               <TrackedLink
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-borderWarm bg-porcelain px-5 py-3 font-bold text-charcoal transition hover:border-tomato hover:shadow-small"
+                ctaType={trackingCtaTypes.call}
                 event={trackingEvents.clickCall}
                 href={`tel:${businessInfo.phone}`}
                 locale={locale}
@@ -64,6 +65,7 @@ export function BookingSection({ locale }: { locale: Locale }) {
               </TrackedLink>
               <TrackedLink
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-borderWarm bg-porcelain px-5 py-3 font-bold text-charcoal transition hover:border-tomato hover:shadow-small"
+                ctaType={trackingCtaTypes.whatsapp}
                 event={trackingEvents.clickWhatsapp}
                 href={businessInfo.socials.whatsapp}
                 locale={locale}

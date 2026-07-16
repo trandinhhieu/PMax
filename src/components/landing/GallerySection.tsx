@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Instagram } from "lucide-react";
 import type { Locale } from "@/types/common";
 import { businessInfo } from "@/config/business";
-import { trackingEvents } from "@/config/tracking";
+import { trackingCtaTypes, trackingEvents } from "@/config/tracking";
 import { copy, gallery } from "@/data/content";
 import { TrackedLink } from "./TrackedLink";
 
@@ -19,6 +19,7 @@ export function GallerySection({ locale }: { locale: Locale }) {
             <p className="mt-4 text-lg leading-8 text-stone-200">{t.sections.galleryBody}</p>
             <TrackedLink
               className="mt-6 inline-flex min-h-12 items-center rounded-lg border border-white/35 px-5 py-3 font-bold text-white transition hover:bg-white/10"
+              ctaType={trackingCtaTypes.social}
               event={trackingEvents.socialClick}
               href={businessInfo.socials.instagram}
               locale={locale}

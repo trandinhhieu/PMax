@@ -17,6 +17,19 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: "/sitemap.xml",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/xml; charset=utf-8",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+        ],
+      },
+      {
         source: "/images/:path*",
         headers: [
           {
@@ -32,22 +45,22 @@ const nextConfig: NextConfig = {
       {
         source: "/",
         destination: "/en",
-        permanent: false,
+        permanent: true,
       },
       {
         source: "/menu",
         destination: "/en/menu",
-        permanent: false,
+        permanent: true,
       },
       {
         source: "/privacy-policy",
         destination: "/en/privacy-policy",
-        permanent: false,
+        permanent: true,
       },
       {
         source: "/thank-you",
         destination: "/en/thank-you",
-        permanent: false,
+        permanent: true,
       },
     ];
   },

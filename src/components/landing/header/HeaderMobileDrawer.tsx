@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CalendarCheck, MapPin, X } from "lucide-react";
 import type { RefObject } from "react";
 import { businessInfo } from "@/config/business";
-import { trackingEvents } from "@/config/tracking";
+import { trackingCtaTypes, trackingEvents } from "@/config/tracking";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/types/common";
 import { Button, Stack } from "@/components/ui";
@@ -121,6 +121,7 @@ export function HeaderMobileDrawer({
           </a>
           <TrackedLink
             className="inline-flex min-h-12 items-center justify-center rounded-lg border border-borderWarm bg-porcelain px-5 py-3 font-bold text-charcoal transition hover:border-tomato hover:text-tomato"
+            ctaType={trackingCtaTypes.directions}
             event={trackingEvents.clickGetDirections}
             href={businessInfo.googleMapsUrl}
             locale={locale}

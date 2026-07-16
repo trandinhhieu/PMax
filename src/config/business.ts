@@ -3,6 +3,22 @@ import type { LocalizedText } from "@/types/common";
 
 const deploymentUrl = getDeploymentUrl();
 
+const businessAssets = {
+  logo: "/images/brand/hermanos-logo.jpg",
+  hero: "/images/hero/hero_img.jpg",
+  ogImage: "/images/food/hero-pizza-tacos.jpeg",
+} as const;
+
+const businessSocials = {
+  facebook: "https://www.facebook.com/hermanosdanang/",
+  instagram: "https://www.instagram.com/hermanospizzadanang/",
+  tripadvisor:
+    "https://www.tripadvisor.com/Restaurant_Review-g298085-d20300702-Reviews-Hermanos_Wood_fired_Pizza-Da_Nang.html",
+  tiktok: "https://www.tiktok.com/@pizzalocui.danang",
+  zalo: "https://zalo.me/84905906842",
+  whatsapp: "https://wa.me/84905906842",
+} as const;
+
 export const businessInfo = {
   name: "Hermanos Wood-fired Pizza",
   displayName: "Hermanos Wood-fired Pizza Da Nang",
@@ -34,20 +50,16 @@ export const businessInfo = {
     latitude: 16.0566711,
     longitude: 108.2442548,
   },
-  assets: {
-    logo: "/images/brand/hermanos-logo.jpg",
-    hero: "/images/hero/hero_img.jpg",
-    ogImage: "/images/food/hero-pizza-tacos.jpeg",
-  },
-  socials: {
-    facebook: "https://www.facebook.com/hermanosdanang/",
-    instagram: "https://www.instagram.com/hermanospizzadanang/",
-    tripadvisor:
-      "https://www.tripadvisor.com/Restaurant_Review-g298085-d20300702-Reviews-Hermanos_Wood_fired_Pizza-Da_Nang.html",
-    tiktok: "https://www.tiktok.com/@pizzalocui.danang",
-    zalo: "https://zalo.me/84905906842",
-    whatsapp: "https://wa.me/84905906842",
-  },
+  assets: businessAssets,
+  images: [businessAssets.hero, businessAssets.ogImage],
+  socials: businessSocials,
+  profiles: [
+    businessSocials.facebook,
+    businessSocials.instagram,
+    businessSocials.tripadvisor,
+    businessSocials.tiktok,
+    businessSocials.zalo,
+  ],
   cuisine: [
     "Wood-fired pizza",
     "Pizza",

@@ -1,12 +1,16 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/business";
 
-export default function robots(): MetadataRoute.Robots {
+export function buildRobots(host: string): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: siteConfig.domain ? `${siteConfig.domain}/sitemap.xml` : undefined,
+    sitemap: host ? `${host}/sitemap.xml` : undefined,
   };
+}
+
+export default function robots(): MetadataRoute.Robots {
+  return buildRobots(siteConfig.domain);
 }

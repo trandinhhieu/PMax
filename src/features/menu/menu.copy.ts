@@ -11,6 +11,12 @@ type MenuCopy = {
     items: (visible: number, total: number) => string;
     totalItems: (count: number) => string;
   };
+  directory: {
+    body: string;
+    categoriesLabel: string;
+    eyebrow: string;
+    title: string;
+  };
   empty: {
     body: string;
     title: string;
@@ -72,6 +78,12 @@ const menuCopy = {
       items: (visible, total) => `${visible} of ${total} items`,
       totalItems: (count) => `${count} dishes`,
     },
+    directory: {
+      body: "Open any category to view every listed dish and price without changing the interactive filters above.",
+      categoriesLabel: "Complete menu categories",
+      eyebrow: "Complete menu list",
+      title: "Browse every menu category",
+    },
     empty: {
       body: "Choose another group or return to all dishes in this category.",
       title: "No dishes are listed in this group right now.",
@@ -131,6 +143,12 @@ const menuCopy = {
       groups: (count) => `${count} nhóm`,
       items: (visible, total) => `${visible} / ${total} món`,
       totalItems: (count) => `${count} món`,
+    },
+    directory: {
+      body: "Mở từng danh mục để xem toàn bộ món và giá đã niêm yết mà không cần thay đổi bộ lọc tương tác phía trên.",
+      categoriesLabel: "Danh mục menu đầy đủ",
+      eyebrow: "Danh sách menu đầy đủ",
+      title: "Xem toàn bộ danh mục món",
     },
     empty: {
       body: "Hãy chọn nhóm khác hoặc quay lại toàn bộ món trong danh mục này.",

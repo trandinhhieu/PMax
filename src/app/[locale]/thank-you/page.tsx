@@ -1,7 +1,10 @@
 import { notFound } from "next/navigation";
 import { Container, Stack } from "@/components/ui";
 import { isLocale, type Locale } from "@/types/common";
+import { thankYouMetadata } from "./metadata";
 import { thankYouCopy } from "./thank-you.copy";
+
+export const metadata = thankYouMetadata;
 
 export default async function ThankYouPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

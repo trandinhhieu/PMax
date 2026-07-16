@@ -1,19 +1,25 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/business";
+import { buildLocalizedUrl } from "@/lib/seo/metadata";
 import { locales } from "@/types/common";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const host = siteConfig.domain;
+const sitemapRoutes = [
+  { changeFrequency: "weekly", pathname: "", priority: 1 },
+  { changeFrequency: "weekly", pathname: "/menu", priority: 0.9 },
+  { changeFrequency: "yearly", pathname: "/privacy-policy", priority: 0.2 },
+] as const;
+
+export function buildSitemap(host: string): MetadataRoute.Sitemap {
   if (!host) return [];
 
-  const routes = ["", "/menu", "/privacy-policy"];
-
   return locales.flatMap((locale) =>
-    routes.map((route) => ({
-      url: `${host}/${locale}${route}`,
-      lastModified: new Date(),
-      changeFrequency: route === "" ? "weekly" : "monthly",
-      priority: route === "" ? 1 : 0.7,
-    })),
+    sitemapRoutes.flatMap(({ changeFrequency, pathname, priority }) => {
+      const url = buildLocalizedUrl(locale, pathname, host);
+      return url ? [{ url, changeFrequency, priority }] : [];
+    }),
   );
+}
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return buildSitemap(siteConfig.domain);
 }

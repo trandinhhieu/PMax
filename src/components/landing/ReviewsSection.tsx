@@ -1,7 +1,7 @@
 import { ExternalLink, ShieldCheck } from "lucide-react";
 import type { Locale } from "@/types/common";
 import { businessInfo } from "@/config/business";
-import { trackingEvents } from "@/config/tracking";
+import { trackingCtaTypes, trackingEvents } from "@/config/tracking";
 import { copy, reviewSources } from "@/data/content";
 import { TrackedLink } from "./TrackedLink";
 
@@ -28,6 +28,7 @@ export function ReviewsSection({ locale }: { locale: Locale }) {
               <p className="mt-3 leading-7 text-muted">{body}</p>
               <TrackedLink
                 className="mt-5 inline-flex items-center font-bold text-tomato underline-offset-4 hover:underline"
+                ctaType={trackingCtaTypes.review}
                 event={trackingEvents.reviewClick}
                 href={sourceUrls[index]}
                 locale={locale}

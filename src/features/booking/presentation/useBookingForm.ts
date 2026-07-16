@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { businessInfo } from "@/config/business";
-import { trackingEvents } from "@/config/tracking";
+import { trackingCtaTypes, trackingEvents } from "@/config/tracking";
 import { copy } from "@/data/content";
 import {
   isBookingFieldErrorCode,
@@ -15,7 +15,7 @@ import {
 } from "@/features/booking/contracts/api";
 import { submitBookingRequest, startBookingOtp } from "@/features/booking/infrastructure/browser/booking-api-client";
 import { getLocalizedBookingFieldError } from "@/features/booking/presentation/error";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackEventOnce } from "@/lib/analytics";
 import { formatDateStringInTimeZone } from "@/lib/date";
 import { addFutureBookingTimeIssue, bookingSchema, otpCodeSchema, type BookingField, type BookingFormValues } from "@/lib/validation/booking";
 import type { Locale } from "@/types/common";
@@ -93,6 +93,7 @@ export function useBookingForm(locale: Locale) {
     if (hasStarted) return;
     setHasStarted(true);
     trackEvent(trackingEvents.bookingStart, {
+      cta_type: trackingCtaTypes.booking,
       location: "booking_section",
       page_language: locale,
     });
@@ -205,6 +206,7 @@ export function useBookingForm(locale: Locale) {
     setSubmitMessage(formCopy.defaultError);
 
     trackEvent(trackingEvents.bookingSubmit, {
+      cta_type: trackingCtaTypes.booking,
       location: "booking_section",
       page_language: locale,
     });
@@ -287,7 +289,8 @@ export function useBookingForm(locale: Locale) {
     reset(initialValues);
 
     try {
-      trackEvent(trackingEvents.bookingSuccess, {
+      trackEventOnce(trackingEvents.bookingSuccess, result.emailId, {
+        cta_type: trackingCtaTypes.booking,
         location: "booking_section",
         page_language: locale,
         handoff_channel: "email",

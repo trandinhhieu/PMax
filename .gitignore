@@ -47,6 +47,10 @@ pnpm-debug.log*
 !/docs/refactor-C/
 /docs/refactor-C/*
 !/docs/refactor-C/design-system.md
+!/docs/initiatives/
+/docs/initiatives/*
+!/docs/initiatives/seo-phase-3/
+!/docs/initiatives/seo-phase-3/**
 
 # Local SEO implementation notes and verification suites
 /playwright.gtm.config.ts

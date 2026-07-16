@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { businessInfo } from "@/config/business";
 import { getGtmId } from "@/config/public-env";
 import { Header, StickyMobileCTA } from "@/features/landing";
+import { getSiteVerificationMetadata } from "@/lib/seo/metadata";
 import { getDeploymentUrl } from "@/lib/site-url";
 import { isLocale, locales, type Locale } from "@/types/common";
 import "../globals.css";
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
     apple: businessInfo.assets.logo,
   },
   openGraph: deploymentUrl ? { images: [`${deploymentUrl}/images/food/hero-pizza-tacos.jpeg`] } : undefined,
+  verification: getSiteVerificationMetadata(),
 };
 
 export function generateStaticParams() {

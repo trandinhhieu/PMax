@@ -3,12 +3,13 @@
 import Link from "next/link";
 import type { MouseEvent, ReactNode } from "react";
 import type { Locale } from "@/types/common";
-import { trackEvent } from "@/lib/analytics";
-import type { TrackingEventName } from "@/config/tracking";
+import { inferOutboundPlatform, trackEvent } from "@/lib/analytics";
+import type { TrackingCtaType, TrackingEventName } from "@/config/tracking";
 
 type TrackedLinkProps = {
   href: string;
   children: ReactNode;
+  ctaType: TrackingCtaType;
   event: TrackingEventName;
   location: string;
   locale: Locale;
@@ -19,6 +20,7 @@ type TrackedLinkProps = {
 export function TrackedLink({
   href,
   children,
+  ctaType,
   event,
   location,
   locale,
@@ -30,6 +32,7 @@ export function TrackedLink({
   const isHttpLink = /^https?:\/\//i.test(href);
   const isPhoneLink = href.startsWith("tel:");
   const shouldUseAnchor = external || isHttpLink || isPhoneLink;
+  const outboundPlatform = inferOutboundPlatform(href);
 
   const handleClick = (clickEvent: MouseEvent<HTMLAnchorElement>) => {
     if (isTodoLink) {
@@ -37,7 +40,9 @@ export function TrackedLink({
     }
 
     trackEvent(event, {
+      cta_type: ctaType,
       location,
+      ...(outboundPlatform ? { outbound_platform: outboundPlatform } : {}),
       page_language: locale,
       confirmed: !isTodoLink,
     });

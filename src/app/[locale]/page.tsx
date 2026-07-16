@@ -2,68 +2,56 @@
 import { notFound } from "next/navigation";
 import { FloatingActionGroup } from "@/components/layout/FloatingActionGroup";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { businessInfo, siteConfig } from "@/config/business";
 import { BookingSection, FaqSection, GallerySection, HeroSection, MapContactSection, MenuPreview, ReviewsSection, TrustBar, WhySection } from "@/features/landing";
-import { getLocalizedPaths } from "@/lib/locale-routing";
-import { restaurantJsonLd } from "@/lib/schema";
+import { buildHomePageGraph } from "@/lib/schema";
+import { buildLocalizedMetadata } from "@/lib/seo/metadata";
 import { isLocale, type Locale } from "@/types/common";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
 };
 
+function getLandingPageMetadata(locale: Locale) {
+  return locale === "en"
+    ? {
+        title: "Hermanos Wood-fired Pizza Da Nang | Wood-fired Pizza Near My Khe",
+        description:
+          "Fresh wood-fired pizza, cold drinks, and cozy open-air dining near My Khe Beach in Da Nang. View menu, get directions or book a table.",
+      }
+    : {
+        title: "Hermanos Wood-fired Pizza \u0110\u00E0 N\u1EB5ng | Pizza n\u01B0\u1EDBng c\u1EE7i g\u1EA7n bi\u1EC3n M\u1EF9 Kh\u00EA",
+        description:
+          "Th\u01B0\u1EDFng th\u1EE9c pizza n\u01B0\u1EDBng c\u1EE7i, m\u00F3n \u0103n d\u1EC5 chia s\u1EBB v\u00E0 kh\u00F4ng gian open-air g\u1EA7n bi\u1EC3n M\u1EF9 Kh\u00EA. Xem menu, ch\u1EC9 \u0111\u01B0\u1EDDng ho\u1EB7c \u0111\u1EB7t b\u00E0n nhanh.",
+      };
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const title =
-    locale === "en"
-      ? "Hermanos Wood-fired Pizza Da Nang | Wood-fired Pizza Near My Khe"
-      : "Hermanos Wood-fired Pizza Đà Nẵng | Pizza nướng củi gần biển Mỹ Khê";
-  const description =
-    locale === "en"
-      ? "Fresh wood-fired pizza, cold drinks, and cozy open-air dining near My Khe Beach in Da Nang. View menu, get directions or book a table."
-      : "Thưởng thức pizza nướng củi, món ăn dễ chia sẻ và không gian open-air gần biển Mỹ Khê. Xem menu, chỉ đường hoặc đặt bàn nhanh.";
-  const localizedPaths = getLocalizedPaths();
-
-  return {
+  const { description, title } = getLandingPageMetadata(locale);
+  return buildLocalizedMetadata({
+    locale,
     title,
     description,
-    alternates: {
-      canonical: siteConfig.domain ? `${siteConfig.domain}/${locale}` : undefined,
-      languages:
-        siteConfig.domain
-          ? {
-              en: `${siteConfig.domain}${localizedPaths.en}`,
-              vi: `${siteConfig.domain}${localizedPaths.vi}`,
-            }
-          : undefined,
-    },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      locale,
-      siteName: businessInfo.displayName,
-      images: siteConfig.domain ? [`${siteConfig.domain}${businessInfo.assets.ogImage}`] : undefined,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: siteConfig.domain ? [`${siteConfig.domain}${businessInfo.assets.ogImage}`] : undefined,
-    },
-  };
+    includeTwitter: true,
+  });
 }
 
 export default async function LandingPage({ params }: PageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const typedLocale = locale as Locale;
+  const { description, title } = getLandingPageMetadata(typedLocale);
+  const schemaGraph = buildHomePageGraph({
+    locale: typedLocale,
+    title,
+    description,
+  });
 
   return (
     <main>
-      <JsonLd data={restaurantJsonLd(typedLocale)} />
+      {schemaGraph ? <JsonLd data={schemaGraph} /> : null}
       <HeroSection locale={typedLocale} />
       <TrustBar locale={typedLocale} />
       <MenuPreview locale={typedLocale} />

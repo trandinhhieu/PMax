@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button, Stack } from "@/components/ui";
+import { trackingCtaTypes, trackingEvents } from "@/config/tracking";
 import { menuItems } from "@/data/menu";
 import { getMenuCopy } from "@/features/menu/menu.copy";
+import { trackEvent } from "@/lib/analytics";
 import type { Locale } from "@/types/common";
 import { CategoryTabs } from "./CategoryTabs";
 import { GroupFilterList } from "./GroupFilterList";
@@ -52,6 +54,16 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
     ? copy.sidebar.priceRange(Math.min(...activeCategoryPrices), Math.max(...activeCategoryPrices))
     : copy.sidebar.priceUnavailable;
 
+  const selectCategory = (category: typeof activeCategory) => {
+    chooseCategory(category);
+    trackEvent(trackingEvents.menuCategoryClick, {
+      cta_type: trackingCtaTypes.menuCategory,
+      location: "menu_catalog",
+      menu_category: category,
+      page_language: locale,
+    });
+  };
+
   useEffect(() => {
     const navigation = desktopCategoryNavMeasureRef.current;
     if (!navigation) return;
@@ -77,7 +89,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
 
         <nav aria-label={copy.nav.categories}>
           <div className="scrollbar-none flex snap-x gap-5 overflow-x-auto pb-1">
-            <CategoryTabs activeCategory={activeCategory} locale={locale} onSelect={chooseCategory} />
+            <CategoryTabs activeCategory={activeCategory} locale={locale} onSelect={selectCategory} />
           </div>
         </nav>
         <nav aria-label={copy.nav.groups} className="mt-3 border-t border-borderWarm pt-3">
@@ -112,7 +124,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
           </div>
          </div>
         <div className="scrollbar-none mt-2 flex snap-x gap-5 overflow-x-auto pb-1">
-          <CategoryTabs activeCategory={activeCategory} locale={locale} onSelect={chooseCategory} />
+          <CategoryTabs activeCategory={activeCategory} locale={locale} onSelect={selectCategory} />
         </div>
       </nav>
 
@@ -186,7 +198,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
                   <Button className="rounded-full" onClick={resetGroup} size="md" variant="secondary">
                     {copy.results.showAllGroups}
                   </Button>
-                  <Button className="rounded-full" onClick={() => chooseCategory(nextCategory.id)} size="md" variant="primary">
+                  <Button className="rounded-full" onClick={() => selectCategory(nextCategory.id)} size="md" variant="primary">
                     {copy.results.viewNextCategory(nextCategory.label[locale])}
                   </Button>
                 </div>
@@ -243,7 +255,7 @@ export function MenuCatalog({ locale }: MenuCatalogProps) {
                     <Button className="rounded-full" onClick={scrollToCatalog} size="md" variant="secondary">
                       {copy.results.backToTop}
                     </Button>
-                    <Button className="rounded-full" onClick={() => chooseCategory(nextCategory.id)} size="md" variant="primary">
+                    <Button className="rounded-full" onClick={() => selectCategory(nextCategory.id)} size="md" variant="primary">
                       {copy.results.viewNextCategory(nextCategory.label[locale])}
                     </Button>
                   </div>

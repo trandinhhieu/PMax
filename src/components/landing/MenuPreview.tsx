@@ -7,7 +7,7 @@ import { RecommendedBadge } from "@/components/menu/RecommendedBadge";
 import type { Locale } from "@/types/common";
 import { getMenuItemDescription, getMenuItemImage, getMenuPreviewItems, menuCategories, type MenuCategory } from "@/data/menu";
 import { copy } from "@/data/content";
-import { trackingEvents } from "@/config/tracking";
+import { trackingCtaTypes, trackingEvents } from "@/config/tracking";
 import { trackEvent } from "@/lib/analytics";
 import { TrackedLink } from "./TrackedLink";
 
@@ -31,6 +31,7 @@ export function MenuPreview({ locale }: { locale: Locale }) {
           <div className="hidden xl:flex xl:justify-end">
             <TrackedLink
               className="inline-flex min-h-12 items-center justify-center rounded-full bg-charcoal px-5 py-3 font-bold text-white transition hover:bg-charcoal/90"
+              ctaType={trackingCtaTypes.menu}
               event={trackingEvents.viewMenu}
               href={`/${locale}/menu`}
               locale={locale}
@@ -53,9 +54,10 @@ export function MenuPreview({ locale }: { locale: Locale }) {
               onClick={() => {
                 setActive(category.id);
                 trackEvent(trackingEvents.menuCategoryClick, {
+                  cta_type: trackingCtaTypes.menuCategory,
                   location: "menu_preview",
+                  menu_category: category.id,
                   page_language: locale,
-                  category: category.id,
                 });
               }}
               type="button"
@@ -75,7 +77,9 @@ export function MenuPreview({ locale }: { locale: Locale }) {
                   key={item.id}
                   onClick={() =>
                     trackEvent(trackingEvents.menuItemClick, {
+                      cta_type: trackingCtaTypes.menuItem,
                       location: "menu_preview",
+                      menu_category: item.category,
                       page_language: locale,
                       menu_item_id: item.id,
                     })

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { CalendarCheck, MapPin, Utensils } from "lucide-react";
 import { businessInfo } from "@/config/business";
-import { trackingEvents } from "@/config/tracking";
+import { outboundPlatforms, trackingCtaTypes, trackingEvents } from "@/config/tracking";
 import { trackEvent } from "@/lib/analytics";
 import type { Locale } from "@/types/common";
 
@@ -19,7 +19,9 @@ export function StickyMobileCTA({ locale }: { locale: Locale }) {
         href={businessInfo.googleMapsUrl}
         onClick={() =>
           trackEvent(trackingEvents.clickGetDirections, {
+            cta_type: trackingCtaTypes.directions,
             location: "sticky_mobile_cta",
+            outbound_platform: outboundPlatforms.googleMaps,
             page_language: locale,
           })
         }
@@ -34,6 +36,7 @@ export function StickyMobileCTA({ locale }: { locale: Locale }) {
         href={`/${locale}/menu`}
         onClick={() =>
           trackEvent(trackingEvents.viewMenu, {
+            cta_type: trackingCtaTypes.menu,
             location: "sticky_mobile_cta",
             page_language: locale,
           })
@@ -47,6 +50,7 @@ export function StickyMobileCTA({ locale }: { locale: Locale }) {
         href={`/${locale}#booking`}
         onClick={() =>
           trackEvent(trackingEvents.bookingStart, {
+            cta_type: trackingCtaTypes.booking,
             location: "sticky_mobile_cta",
             page_language: locale,
           })

@@ -4,7 +4,14 @@ import { ArrowUp, Clock3, MapPin, MessageCircle, Phone, X } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "@/components/ui";
 import { businessInfo } from "@/config/business";
-import { trackingEvents } from "@/config/tracking";
+import {
+  outboundPlatforms,
+  trackingCtaTypes,
+  trackingEvents,
+  type OutboundPlatform,
+  type TrackingCtaType,
+  type TrackingEventName,
+} from "@/config/tracking";
 import { trackEvent } from "@/lib/analytics";
 import type { Locale } from "@/types/common";
 
@@ -45,7 +52,13 @@ export function FloatingActionGroup({ locale }: { locale: Locale }) {
   const toggleContact = () => {
     const nextOpen = !open;
     setOpen(nextOpen);
-    if (nextOpen) trackEvent(trackingEvents.contactPanelOpen, { location: "floating_action", page_language: locale });
+    if (nextOpen) {
+      trackEvent(trackingEvents.contactPanelOpen, {
+        cta_type: trackingCtaTypes.contactPanel,
+        location: "floating_action",
+        page_language: locale,
+      });
+    }
   };
 
   const scrollToTop = () => {
@@ -53,8 +66,13 @@ export function FloatingActionGroup({ locale }: { locale: Locale }) {
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   };
 
-  const trackContact = (event: (typeof trackingEvents)[keyof typeof trackingEvents], channel: string) => {
-    trackEvent(event, { channel, location: "floating_action", page_language: locale });
+  const trackContact = (event: TrackingEventName, ctaType: TrackingCtaType, outboundPlatform?: OutboundPlatform) => {
+    trackEvent(event, {
+      cta_type: ctaType,
+      location: "floating_action",
+      ...(outboundPlatform ? { outbound_platform: outboundPlatform } : {}),
+      page_language: locale,
+    });
   };
 
   const actionClass = "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 text-sm font-bold text-charcoal transition hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tomato";
@@ -72,10 +90,10 @@ export function FloatingActionGroup({ locale }: { locale: Locale }) {
             <Button aria-label={en ? "Close contact information" : "Đóng thông tin liên hệ"} className="h-10 w-10 shrink-0 rounded-full" onClick={() => setOpen(false)} size="sm" variant="ghost"><X aria-hidden className="h-5 w-5" /></Button>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2">
-            <a className={actionClass} href={`tel:${businessInfo.phone}`} onClick={() => trackContact(trackingEvents.clickCall, "phone")}><Phone aria-hidden className="h-5 w-5 text-tomato" />{en ? "Call" : "Gọi ngay"}</a>
-            <a className={actionClass} href={businessInfo.googleMapsUrl} onClick={() => trackContact(trackingEvents.clickGetDirections, "maps")} rel="noreferrer" target="_blank"><MapPin aria-hidden className="h-5 w-5 text-tomato" />{en ? "Directions" : "Chỉ đường"}</a>
-            <a className={actionClass} href={businessInfo.socials.whatsapp} onClick={() => trackContact(trackingEvents.clickWhatsapp, "whatsapp")} rel="noreferrer" target="_blank"><MessageCircle aria-hidden className="h-5 w-5 text-tomato" />WhatsApp</a>
-            <a className={actionClass} href={businessInfo.socials.zalo} onClick={() => trackContact(trackingEvents.clickZalo, "zalo")} rel="noreferrer" target="_blank"><MessageCircle aria-hidden className="h-5 w-5 text-tomato" />Zalo</a>
+            <a className={actionClass} href={`tel:${businessInfo.phone}`} onClick={() => trackContact(trackingEvents.clickCall, trackingCtaTypes.call)}><Phone aria-hidden className="h-5 w-5 text-tomato" />{en ? "Call" : "Gọi ngay"}</a>
+            <a className={actionClass} href={businessInfo.googleMapsUrl} onClick={() => trackContact(trackingEvents.clickGetDirections, trackingCtaTypes.directions, outboundPlatforms.googleMaps)} rel="noreferrer" target="_blank"><MapPin aria-hidden className="h-5 w-5 text-tomato" />{en ? "Directions" : "Chỉ đường"}</a>
+            <a className={actionClass} href={businessInfo.socials.whatsapp} onClick={() => trackContact(trackingEvents.clickWhatsapp, trackingCtaTypes.whatsapp, outboundPlatforms.whatsapp)} rel="noreferrer" target="_blank"><MessageCircle aria-hidden className="h-5 w-5 text-tomato" />WhatsApp</a>
+            <a className={actionClass} href={businessInfo.socials.zalo} onClick={() => trackContact(trackingEvents.clickZalo, trackingCtaTypes.zalo, outboundPlatforms.zalo)} rel="noreferrer" target="_blank"><MessageCircle aria-hidden className="h-5 w-5 text-tomato" />Zalo</a>
           </div>
           <div className="mt-3 rounded-xl bg-cream/80 p-3 text-sm text-muted">
             <p className="flex gap-2"><MapPin aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-tomato" /><span>{businessInfo.address[locale]}</span></p>

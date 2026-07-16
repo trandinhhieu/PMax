@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { menuCategories, menuGroups } from "../src/data/menu";
+import { menuCategories, menuGroups, menuItems } from "../src/data/menu";
 
 const baseUrl = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 
@@ -9,6 +9,23 @@ function escapeRegExp(value: string) {
 
 test.describe("menu and supporting pages", () => {
   test.describe.configure({ mode: "serial" });
+
+  test("returns the complete menu directory in raw server HTML", async ({ request }) => {
+    const response = await request.get(`${baseUrl}/en/menu`);
+    const html = await response.text();
+    const renderedItemIds = [
+      ...html.matchAll(/data-menu-item-id="([^"]+)"/g),
+    ].map((match) => match[1]);
+
+    expect(response.ok()).toBe(true);
+    expect(new Set(renderedItemIds)).toEqual(
+      new Set(menuItems.map((item) => item.id)),
+    );
+
+    for (const category of menuCategories) {
+      expect(html).toContain(`href="#menu-directory-${category.id}"`);
+    }
+  });
 
   test("supports desktop category and group navigation with clear next actions", async ({ page }) => {
     const drinksCategory = menuCategories.find((category) => category.id === "drinks") ?? menuCategories[menuCategories.length - 1]!;

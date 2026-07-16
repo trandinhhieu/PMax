@@ -1,47 +1,40 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FloatingActionGroup } from "@/components/layout/FloatingActionGroup";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { Container, Stack } from "@/components/ui";
-import { businessInfo, siteConfig } from "@/config/business";
-import { MenuCatalog } from "@/features/menu";
+import { MenuCatalog, MenuDirectory } from "@/features/menu";
 import { getMenuCopy } from "@/features/menu/menu.copy";
-import { getLocalizedPaths } from "@/lib/locale-routing";
+import { buildMenuPageGraph } from "@/lib/schema";
+import { buildLocalizedMetadata } from "@/lib/seo/metadata";
 import { isLocale, type Locale } from "@/types/common";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
 };
 
+function getMenuPageMetadata(locale: Locale) {
+  const copy = getMenuCopy(locale);
+  return {
+    title:
+      locale === "en"
+        ? "Hermanos Full Menu | Pizza, Tacos, Pasta & Drinks"
+        : "Menu Hermanos | Pizza, Taco, Pasta & \u0110\u1ED3 u\u1ED1ng",
+    description: `${copy.page.body} ${copy.page.pricingValue}.`,
+  };
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const copy = getMenuCopy(locale);
-  const title = locale === "en" ? "Hermanos Full Menu | Pizza, Tacos, Pasta & Drinks" : "Menu Hermanos | Pizza, Taco, Pasta & Đồ uống";
-  const description = `${copy.page.body} ${copy.page.pricingValue}.`;
-  const localizedPaths = getLocalizedPaths("/menu");
-
-  return {
+  const { description, title } = getMenuPageMetadata(locale);
+  return buildLocalizedMetadata({
+    locale,
+    pathname: "/menu",
     title,
     description,
-    alternates: {
-      canonical: siteConfig.domain ? `${siteConfig.domain}/${locale}/menu` : undefined,
-      languages: siteConfig.domain
-        ? {
-            en: `${siteConfig.domain}${localizedPaths.en}`,
-            vi: `${siteConfig.domain}${localizedPaths.vi}`,
-          }
-        : undefined,
-    },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      locale,
-      siteName: businessInfo.displayName,
-      images: siteConfig.domain ? [`${siteConfig.domain}${businessInfo.assets.ogImage}`] : undefined,
-    },
-  };
+  });
 }
 
 export default async function MenuPage({ params }: PageProps) {
@@ -50,9 +43,16 @@ export default async function MenuPage({ params }: PageProps) {
 
   const typedLocale = locale as Locale;
   const copy = getMenuCopy(typedLocale);
+  const { description, title } = getMenuPageMetadata(typedLocale);
+  const schemaGraph = buildMenuPageGraph({
+    locale: typedLocale,
+    title,
+    description,
+  });
 
   return (
     <main className="bg-cream pb-14 pt-20 sm:pt-24" id="menu">
+      {schemaGraph ? <JsonLd data={schemaGraph} /> : null}
       <Container>
         <section className="rounded-[2rem] border border-borderWarm bg-porcelain/80 p-6 shadow-small sm:p-8 lg:p-9">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] lg:items-center">
@@ -76,6 +76,7 @@ export default async function MenuPage({ params }: PageProps) {
         </section>
 
         <MenuCatalog locale={typedLocale} />
+        <MenuDirectory locale={typedLocale} />
       </Container>
       <FloatingActionGroup locale={typedLocale} />
     </main>

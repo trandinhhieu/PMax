@@ -6,7 +6,7 @@ import { CalendarCheck, MapPin, Menu as MenuIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { businessInfo } from "@/config/business";
-import { trackingEvents } from "@/config/tracking";
+import { trackingCtaTypes, trackingEvents } from "@/config/tracking";
 import { copy } from "@/data/content";
 import { trackEvent } from "@/lib/analytics";
 import type { Locale } from "@/types/common";
@@ -38,11 +38,16 @@ export function Header({ locale }: { locale: Locale }) {
   const navLinks = [{ href: `${homePath}/menu`, label: t.nav.menu }, ...homeSectionLinks.map((link) => ({ ...link, href: `${homePath}${link.href}` }))];
 
   const handleBookingClick = (location: string) => {
-    trackEvent(trackingEvents.bookingStart, { location, page_language: locale });
+    trackEvent(trackingEvents.bookingStart, {
+      cta_type: trackingCtaTypes.booking,
+      location,
+      page_language: locale,
+    });
   };
 
   const handleLanguageSwitch = (location: string) => {
     trackEvent(trackingEvents.languageSwitch, {
+      cta_type: trackingCtaTypes.language,
       location,
       page_language: locale,
       target_language: nextLocale,
@@ -63,6 +68,7 @@ export function Header({ locale }: { locale: Locale }) {
             <HeaderDesktopNav isScrolled={usesSolidTheme} links={navLinks} />
             <TrackedLink
               className={`hidden min-h-11 items-center rounded-lg border px-3 py-2 text-sm font-bold transition lg:inline-flex ${usesSolidTheme ? "border-borderWarm text-charcoal hover:border-tomato" : "border-white/50 text-white hover:bg-white/10"}`}
+              ctaType={trackingCtaTypes.directions}
               event={trackingEvents.clickGetDirections}
               href={businessInfo.googleMapsUrl}
               locale={locale}

@@ -1,6 +1,7 @@
 import type { Locale } from "@/types/common";
 
 type PrivacyPolicyCopy = {
+  description: string;
   eyebrow: string;
   sections: Array<{
     body: string;
@@ -11,6 +12,7 @@ type PrivacyPolicyCopy = {
 
 export const privacyPolicyCopy = {
   en: {
+    description: "Learn how Hermanos uses booking contact information and website analytics data.",
     eyebrow: "Privacy",
     sections: [
       {
@@ -25,6 +27,7 @@ export const privacyPolicyCopy = {
     title: "Privacy policy",
   },
   vi: {
+    description: "T\u00ECm hi\u1EC3u c\u00E1ch Hermanos s\u1EED d\u1EE5ng th\u00F4ng tin li\u00EAn h\u1EC7 \u0111\u1EB7t b\u00E0n v\u00E0 d\u1EEF li\u1EC7u ph\u00E2n t\u00EDch website.",
     eyebrow: "Riêng tư",
     sections: [
       {
